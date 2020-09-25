@@ -20,6 +20,7 @@ function __autoload($class)
  *
  * @author adamz
  */
+
 session_start();
 
 if ($_SESSION['loggedIn']==false)
