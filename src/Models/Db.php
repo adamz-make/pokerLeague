@@ -1,34 +1,75 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of Db
- *
- * @author adamz
- */
-    class Db {
+namespace App\Models;
+    
+class Db {
     //put your code here
-        static $conn;
+    static $conn;
+    private static $INSTANCE = null;
+    private $connection = null;
+    
+    private function __construct()
+    {
+        
+    }
+    /**
+     * 
+     * @return Db
+     */
+    public static function getInstance()
+    {
+        if (self::$INSTANCE != null)
+        {
+            return self::$INSTANCE;
+        }
+        self::$INSTANCE = new Db();
+        self::$INSTANCE->init();
+        return self::$INSTANCE;
+    }
+    
+    public function select($Sql,$array)
+    {
+        $stmt = $this->connection->prepare($Sql); 
+        $stmt->execute($array); 
+        $result = $stmt->fetchAll();
+        return $result;
+    }
+       
+    private function init()
+    {
+        $serverName = "localhost";
+        $userName = "root";
+        $password ="";
+        //$serverName = "localhost";
+        //$userName = "srv32332_psl";
+        //$password ="QYA3IA81";
+        $dbName = "pokerleague";
+        //$dbName = "srv32332_psl";
+        
+        try{
+            
+            //self::$conn = new \PDO("mysql:host=$serverName;dbname = pokerleague",$userName,$password);
+            $this->connection = new \PDO("mysql:host=$serverName;dbname=$dbName",$userName,$password);
+        } catch (Exception $ex) {
+          echo $ex;
+        }     
+    }
     
     public static function connect()
     {
         
-       //$serverName = "localhost";
-        //$userName = "root";
-        //$password ="";
         $serverName = "localhost";
-        $userName = "srv32332_psl";
-        $password ="QYA3IA81";
+        $userName = "root";
+        $password ="";
+        //$serverName = "localhost";
+        //$userName = "srv32332_psl";
+        //$password ="QYA3IA81";
+        $dbName = "pokerleague";
+        //$dbName = "srv32332_psl";
         
         try{
             
-            //self::$conn = new PDO("mysql:host=$serverName;dbname = pokerleague",$userName,$password);
-            self::$conn = new PDO("mysql:host=$serverName;dbname = srv32332_psl",$userName,$password);
+            //self::$conn = new \PDO("mysql:host=$serverName;dbname = pokerleague",$userName,$password);
+            self::$conn = new \PDO("mysql:host=$serverName;dbname=$dbName",$userName,$password);
         } catch (Exception $ex) {
           echo $ex;
         }     
@@ -84,8 +125,8 @@
         }
         $array = [$login,$password];
         
-        //$Sql = "Select * from pokerleague.users where Login =? and Haslo =?";
-        $Sql = "Select * from srv32332_psl.users where Login =? and Haslo =?";
+        $Sql = "Select * from pokerleague.users where Login =? and Haslo =?";
+        //$Sql = "Select * from srv32332_psl.users where Login =? and Haslo =?";
         $result = self::executeSql($Sql,$array,1); 
         return (empty($result)) ? false : true;
     }
