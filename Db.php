@@ -193,11 +193,12 @@
         $user = self::getUserIdbyLogin($userLogin);
         $array = [$user[0][0]];
         $Sql ="";
-        switch ($attribute)
-        {
-          case "points":
+        $Sql = "select sum($attribute) from srv32332_psl.wyniki where idUsera = ?";
+       // switch ($attribute)
+       // {
+         // case "points":
               
-                    $Sql = "Select SUM(liczbaPunktow) from srv32332_psl.wyniki where idUsera = ? ";
+                    /*$Sql = "Select SUM(liczbaPunktow) from srv32332_psl.wyniki where idUsera = ? ";
                     //$Sql = "Select SUM(liczbaPunktow) from pokerleague.wyniki where idUsera = ? ";
                  break;
              case  "beers":
@@ -209,6 +210,8 @@
               //$Sql = "Select SUM(liczbaZetonow) from pokerleague.wyniki where idUsera = ? ";
               break;
         }
+                     * */
+                     
         $result = self::executeSql($Sql,$array,1); 
         return $result;
         

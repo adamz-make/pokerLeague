@@ -35,9 +35,9 @@ function __autoload($class)
             $i = 1;
             foreach ($users as $user)
             {
-                $points = DB::getAttributeForUserLogin($user[0],"points");
-                $beers = DB::getAttributeForUserLogin($user[0],"beers");
-                $tokens = DB::getAttributeForUserLogin($user[0],"tokens");
+                $points = DB::getAttributeForUserLogin($user[0],"liczbaPunktow");
+                $beers = DB::getAttributeForUserLogin($user[0],"liczbaPiw");
+                $tokens = DB::getAttributeForUserLogin($user[0],"liczbaZetonow");
                 echo "<tr>
                 <td>".$i.".</td><td>".$user[0]."</td><td>".$points[0][0].". pkt</td><td>".$beers[0][0]."piw/".$tokens[0][0]."zetonow</td>           
                 </tr>";
