@@ -26,12 +26,27 @@ class Db {
         return self::$INSTANCE;
     }
     
-    public function select($Sql,$array)
+    public function select($sql, $array)
     {
-        $stmt = $this->connection->prepare($Sql); 
+        $stmt = $this->connection->prepare($sql); 
         $stmt->execute($array); 
         $result = $stmt->fetchAll();
         return $result;
+    }
+    
+    public function insert ($sql, $array)
+    {
+        try
+        {
+            $stmt = $this->connection->prepare($sql);
+            $stmt->execute(array_values($array));
+            return true;
+        }   catch (Exception $ex) 
+        {
+            return false;
+        }
+        
+        
     }
        
     private function init()

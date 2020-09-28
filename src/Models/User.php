@@ -9,7 +9,7 @@ class User implements \JsonSerializable {
     private $password = "";
     private $mail = "";
     
-    public function __construct($id, $login, $password, $mail)
+    public function __construct($login, $password, $mail, $id = null)
     {
         $this->id = $id;
         $this->login = $login;
@@ -22,9 +22,10 @@ class User implements \JsonSerializable {
         return $this->password;
     }
 
-    public function jsonSerialize() 
+    public function jsonSerialize($withId = true)
     {
-        $array = ['id' => $this->id, 'login' => $this->login, 'password' => $this->password, 'mail' => $this->mail];   
+        $array = $withId === true ? ['id' => $this->id, 'login' => $this->login, 'password' => $this->password, 'mail' => $this->mail] : 
+            ['login' => $this->login, 'password' => $this->password, 'mail' => $this->mail]; 
         return $array;      
     }
 
