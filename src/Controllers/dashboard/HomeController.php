@@ -31,11 +31,16 @@ class HomeController extends \App\Controllers\AbstractController{
                 $_SESSION['user']=json_encode($user);
                 header('Location: /dashboard/home/loggedin'); 
                 exit;
-            }              
+            }
+            else
+            {
+                $this->render('dashboard/login.html.twig', array(
+                'notLoggedIn' => 'Niepoprawne login lub hasło. Spróbuj ponownie'
+                ));
+                exit;
+            }
         }
-        $this->render('dashboard/login.html.twig', array(
-            'notLoggedIn' => 'Niepoprawne login lub hasło. Spróbuj ponownie'
-        ));
+        $this->render('dashboard/login.html.twig');
     }
     
     public function loggedin()
