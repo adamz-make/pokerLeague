@@ -1,7 +1,9 @@
 <?php
 
+declare (strict_types=1);
 
-namespace App\Models;
+namespace App\Domain\Model;
+
 
 class User implements \JsonSerializable {
     private $id ="";
@@ -17,11 +19,13 @@ class User implements \JsonSerializable {
         $this->mail = $mail;
     }    
 
+    //dodać gettery
     public function getPassword()
     {
         return $this->password;
     }
 
+    //zostawić domyślną tak jak było - metody, które istnieją, nie zmieniać
     public function jsonSerialize($withId = true)
     {
         $array = $withId === true ? ['id' => $this->id, 'login' => $this->login, 'password' => $this->password, 'mail' => $this->mail] : 

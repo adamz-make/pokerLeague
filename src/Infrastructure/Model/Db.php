@@ -1,10 +1,14 @@
 <?php
-namespace App\Models;
+namespace App\Infrastructure\Model;
     
 class Db {
     //put your code here
     static $conn;
     private static $INSTANCE = null;
+    /**
+     *
+     * @var \Doctrine\DBAL\Connection
+     */
     private $connection = null;
     
     private function __construct()
@@ -28,10 +32,8 @@ class Db {
     
     public function select($sql, $array)
     {
-        $stmt = $this->connection->prepare($sql); 
-        $stmt->execute($array); 
-        $result = $stmt->fetchAll();
-        return $result;
+        $stmt = $this->connection->executeQuery($sql,$array);
+        return $stmt->fetchAllAssociative();
     }
     
     public function insert ($sql, $array)
@@ -51,44 +53,21 @@ class Db {
        
     private function init()
     {
-        $serverName = "localhost";
-        $userName = "root";
-        $password ="";
-        //$serverName = "localhost";
-        //$userName = "srv32332_psl";
-        //$password ="QYA3IA81";
-        $dbName = "pokerleague";
-        //$dbName = "srv32332_psl";
+        $connectionParams =[
+            'dbname' => $_ENV['DB_NAME'],
+            'user' => $_ENV['DB_USER_NAME'],
+            'password' => $_ENV['DB_PASSWORD'],
+            'host' => $_ENV['DB_SERVER_NAME'],
+            'driver' => 'pdo_mysql',
+        ]; 
         
         try{
-            
-            //self::$conn = new \PDO("mysql:host=$serverName;dbname = pokerleague",$userName,$password);
-            $this->connection = new \PDO("mysql:host=$serverName;dbname=$dbName",$userName,$password);
+            $this->connection = \Doctrine\DBAL\DriverManager::getConnection($connectionParams);
         } catch (Exception $ex) {
           echo $ex;
         }     
     }
     
-    public static function connect()
-    {
-        
-        $serverName = "localhost";
-        $userName = "root";
-        $password ="";
-        //$serverName = "localhost";
-        //$userName = "srv32332_psl";
-        //$password ="QYA3IA81";
-        $dbName = "pokerleague";
-        //$dbName = "srv32332_psl";
-        
-        try{
-            
-            //self::$conn = new \PDO("mysql:host=$serverName;dbname = pokerleague",$userName,$password);
-            self::$conn = new \PDO("mysql:host=$serverName;dbname=$dbName",$userName,$password);
-        } catch (Exception $ex) {
-          echo $ex;
-        }     
-    }
     public static function addNewUser($login, $password, $mail)
     {
         $array = [$login,$password,$mail];

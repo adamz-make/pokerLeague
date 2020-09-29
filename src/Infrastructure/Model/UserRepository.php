@@ -1,10 +1,9 @@
 <?php
 
-
-namespace App\Models;
-
-
-class UserRepository {
+namespace App\Infrastructure\Model;
+use App\Domain\Model\UserRepositoryInterface;
+use App\Domain\Model\User;
+class UserRepository implements UserRepositoryInterface{
    
    /**
     * 
@@ -12,7 +11,7 @@ class UserRepository {
     * @param type $value
     * @return \App\Models\User
     */
-    public function getBy($attribute, $value)
+     public function getBy($attribute, $value): User
     {
         $db = Db::getInstance();
         $array = [$value];
@@ -25,12 +24,14 @@ class UserRepository {
         
         return null;
     }
+    
+    // zostawić metodę getByLogin + dodać dodatkowo metodę exists (po mailu/loginie)
     /**
      * 
      * @param \App\Models\User $user
      * @return type
      */
-        
+        //register zamist registerNewUser
     public function registerNewUser(User $user)
     {
         $db = Db::getInstance();

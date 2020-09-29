@@ -3,6 +3,8 @@
 session_start();
 require_once '../vendor/autoload.php';
 
+$dotenv = new \Symfony\Component\Dotenv\Dotenv();
+$dotenv->loadEnv('../.env');
 
 $loader = new Twig\Loader\FilesystemLoader('../templates');
 $twig = new Twig\Environment($loader, [
@@ -17,7 +19,7 @@ $pathArray = explode('/', $pathUri);
 $pathArray = array_values(array_filter($pathArray, function($item) {
     return !empty($item);
 }));
-$baseDirPath = '../src/Controllers';
+$baseDirPath = '../src/Infrastructure/Ui/Controllers';
 getController($baseDirPath, $pathArray, 0, $twig);
 
 
@@ -47,14 +49,14 @@ function getController($currentDir, $pathArray, $iPathArray, $twig)
                     $newPath = $currentDir . DIRECTORY_SEPARATOR . $dirEntry;
                     if (strcasecmp($pathArray[$i] . 'Controller.php', $dirEntry) === 0 && is_file($newPath))
                     {
-                        $baseClassStr = 'App\\Controllers\\';
+                        $baseClassStr = 'App\\Infrastructure\\Ui\\Controllers\\';
                         $currentPathArray = array_slice($pathArray, 0, $i + 1);
                         $currentPathArray [count($currentPathArray)-1] = ucfirst($currentPathArray [count($currentPathArray)-1]);
                         $classStr = $baseClassStr . implode('\\', $currentPathArray) . 'Controller';
                         if (!empty($classStr))
                         {
                             $class = new $classStr();
-                            if ($class instanceof \App\Controllers\AbstractController && method_exists($class, end($pathArray)))
+                            if ($class instanceof App\Infrastructure\Ui\Controllers\AbstractController && method_exists($class, end($pathArray)))
                             {
                                 $method = end($pathArray);
                                 $class->setTwig($twig);
@@ -76,14 +78,14 @@ function getController($currentDir, $pathArray, $iPathArray, $twig)
             }
             else
             {
-                $baseClassStr = 'App\\Controllers\\';
+                $baseClassStr = 'App\\Infrastructure\\Ui\\Controllers\\';
                 $currentPathArray = array_slice($pathArray, 0, $i + 1);
                 $currentPathArray [count($currentPathArray)-1] = ucfirst($currentPathArray [count($currentPathArray)-1]);
                 $classStr = $baseClassStr . implode('\\', $currentPathArray) . 'Controller';
                 if (!empty($classStr))
                 {
                     $class = new $classStr();
-                    if ($class instanceof \App\Controllers\AbstractController && method_exists($class, 'index'))
+                    if ($class instanceof App\Infrastructure\Ui\Controllers\AbstractController && method_exists($class, 'index'))
                     {
                         $class->setTwig($twig);
                         $class->index();

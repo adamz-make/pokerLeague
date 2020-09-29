@@ -1,14 +1,14 @@
 <?php
 
+declare (strict_types=1);
+
+namespace App\Infrastructure\Ui\Controllers\dashboard;
+use App\Domain\Model\User;
+use App\Infrastructure\Model\UserRepository;
+use App\Application\services\LoginService;
 
 
-namespace App\Controllers\dashboard;
-
-use App\Models\User;
-use App\Models\UserRepository;
-
-
-class HomeController extends \App\Controllers\AbstractController{
+class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractController{
 
     public function index()
     {
@@ -26,7 +26,8 @@ class HomeController extends \App\Controllers\AbstractController{
         {
             $login = $_POST['login'];
             $password = $_POST['pass'];
-            if (($user = $this->validate($login, $password)) != null)
+            $loginService = new LoginService(new UserRepository());
+            if (($user = $loginService->execute($login, $password)) != null)
             {
                 $_SESSION['user']=json_encode($user);
                 header('Location: /dashboard/home/loggedin'); 
@@ -122,22 +123,11 @@ class HomeController extends \App\Controllers\AbstractController{
     
     public function logout()
     {
-       header('Location: /dashboard/home/login');
        session_destroy();
+       header('Location: /dashboard/home/login'); 
        exit;
     }
-    
-    private function validate($login, $password)
-    {
-        $userRepo = new UserRepository();
-        $user = $userRepo->getBy('login',$login);
-        if ($user instanceof User && $user->getPassword() == $password)
-        {
-            return $user;
-        }
-        return null;
-    }
-    
+        
     private function checkMail($mail)
     {
 

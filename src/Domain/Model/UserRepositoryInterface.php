@@ -6,13 +6,13 @@
  * and open the template in the editor.
  */
 
-namespace App\Models;
-
+namespace App\Domain\Model;
 /**
- * Description of MatchRepository
+ * Description of UserRepositoryInterface
  *
  * @author adamz
  */
-class MatchRepository {
-    //put your code here
+interface UserRepositoryInterface {
+    public function getBy($attribute, $value): User;
 }
+

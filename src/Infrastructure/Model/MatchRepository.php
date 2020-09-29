@@ -6,13 +6,8 @@
  * and open the template in the editor.
  */
 
-namespace App\Models;
+namespace App\Infrastructure\Model;
 
-/**
- * Description of Match
- *
- * @author adamz
- */
-class Match {
-    //put your code here
+class MatchRepository {
+
 }
