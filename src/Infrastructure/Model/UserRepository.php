@@ -1,4 +1,5 @@
 <?php
+declare (strict_types=1);
 
 namespace App\Infrastructure\Model;
 use App\Domain\Model\UserRepositoryInterface;
@@ -11,34 +12,51 @@ class UserRepository implements UserRepositoryInterface{
     * @param type $value
     * @return \App\Models\User
     */
-     public function getBy($attribute, $value): User
+     public function getByLogin($login): User
     {
         $db = Db::getInstance();
-        $array = [$value];
-        $sql = $attribute == 'mail' ? "Select Id, Login, Haslo, Mail from users where Mail =? limit 1" : "Select Id, Login, Haslo, Mail from users where Login =? limit 1";   
+        $array = [$login];
+        $sql = "Select Id, Login, Haslo, Mail from users where Login =? limit 1";   
         $result = $db->select($sql, $array);
         foreach ($result as $row)
         {
-            return new User($row['Login'], $row['Haslo'], $row['Mail'],$row['Id']);
-        }
-        
+            return new User($row['Id'], $row['Login'], $row['Haslo'], $row['Mail']);
+        }        
         return null;
     }
     
-    // zostawić metodę getByLogin + dodać dodatkowo metodę exists (po mailu/loginie)
     /**
      * 
      * @param \App\Models\User $user
      * @return type
      */
-        //register zamist registerNewUser
-    public function registerNewUser(User $user)
+    
+    public function register(User $user)
     {
         $db = Db::getInstance();
-        $array=$user->jsonSerialize(false);
-        $sql = "Insert into users (Login, Haslo, Mail) values (?, ?, ?)";
-        return $db->insert($sql, $array);
-
+        $table = 'users';
+        $array = ['Login' => $user->getLogin(),'Haslo' => $user->getPassword(), 'Mail' => $user->getMail()];
+        return $db->insert($table, $array);
     }
-    
+   /**
+    * 
+    * @param string $login
+    * @param string $mail
+    * @return User
+    */
+
+    public function userExists(string $login, string $mail)
+    {
+        $db = Db::getInstance();
+        $array =[$login, $mail];
+        $sql = "Select Id, Login, Haslo, Mail from users where Login =? or Mail =?";
+        $result = $db->select($sql, $array);
+        foreach ($result as $row)
+        {
+            return new User($row['Id'], $row['Login'], $row['Haslo'], $row['Mail']);
+        }               
+        return null;
+    }
+
+
 }

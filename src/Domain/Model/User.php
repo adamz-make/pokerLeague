@@ -11,7 +11,7 @@ class User implements \JsonSerializable {
     private $password = "";
     private $mail = "";
     
-    public function __construct($login, $password, $mail, $id = null)
+    public function __construct($id, $login, $password, $mail )
     {
         $this->id = $id;
         $this->login = $login;
@@ -20,16 +20,22 @@ class User implements \JsonSerializable {
     }    
 
     //dodać gettery
+    public function getLogin()
+    {
+        return $this->login;
+    }
+    public function getMail()
+    {
+        return $this->mail;
+    }
     public function getPassword()
     {
         return $this->password;
     }
 
-    //zostawić domyślną tak jak było - metody, które istnieją, nie zmieniać
-    public function jsonSerialize($withId = true)
+    public function jsonSerialize()
     {
-        $array = $withId === true ? ['id' => $this->id, 'login' => $this->login, 'password' => $this->password, 'mail' => $this->mail] : 
-            ['login' => $this->login, 'password' => $this->password, 'mail' => $this->mail]; 
+        $array = ['id' => $this->id, 'login' => $this->login, 'password' => $this->password, 'mail' => $this->mail] ;
         return $array;      
     }
 

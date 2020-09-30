@@ -6,6 +6,8 @@ namespace App\Infrastructure\Ui\Controllers\dashboard;
 use App\Domain\Model\User;
 use App\Infrastructure\Model\UserRepository;
 use App\Application\services\LoginService;
+use App\Application\services\Utils\ValidationHandler;
+use App\Domain\Services\Utils\RegisterLogicException;
 
 
 class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractController{
@@ -62,51 +64,33 @@ class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractControll
             $password = $_POST['pass'];
             $checkPassword = $_POST['pass2'];
             $mail = $_POST['mail'];
-            if ($this->checkMail($mail) === true)
+            $validationHandler = new ValidationHandler();
+            $registerService = new \App\Application\services\RegisterService(new UserRepository(),$validationHandler);
+            try
             {
-                if($password !== $checkPassword)
+                if (($user = $registerService->execute($login, $mail, $password, $checkPassword)) !== null)
                 {
-                    $this->render('dashboard/register.html.twig', array(
-                    'registerNewUser' => 'Hasła się nie zgadzają'
-                    ));
-                exit;
-                }
-            }
-            else
-            {
-                $this->render('dashboard/register.html.twig', array(
-                    'registerNewUser' => 'Niepoprawny mail'
-                    ));
-                exit;
-            }     
-            $userRepo = new UserRepository();
-            if ($userRepo->getBy('mail', $mail) === null && $userRepo->getBy('login', $mail)=== null)
-            {
-                $user = new User($login, $password, $mail);
-                if ($userRepo->registerNewUser($user) === true)
-                {
-                    $this->render('dashboard/register.html.twig', array(
-                        'registerNewUser' => "Zarejestrowano nowego użytkownika o loginie $login"
-                    ));
-                    exit;
+                   $this->render('dashboard/register.html.twig',[
+                       'addedNewUser' => "Dodano użytkownika $login"
+                       ]);
+                   exit;
                 }
                 else
                 {
-                    $this->render('dashboard/register.html.twig', array(
-                        'registerNewUser' => "Nie udało się zarejestrować nowego użytkownika"
-                    ));
-                    exit;
-                }
-                
+                   $this->render('dashboard/register.html.twig', array(
+                       'validationErros' => $validationHandler->getErrorMesages()
+                       ));
+                   exit;
+                }   
+            } 
+            catch (RegisterLogicException $ex) 
+            {       
+                $this->render('dashboard/register.html.twig', array(
+                       'validationErros' => [$ex->getMessage()]
+                       ));
+                exit;
             }
-            $this->render('dashboard/register.html.twig', array(
-                        'registerNewUser' => 'Już jest zarejestrowany użytkownik o podanym mailu lub loginie'
-                    ));
-                    exit;
         }
-            
-            
-        
         $this->render('dashboard/register.html.twig');
     }
     
@@ -126,19 +110,5 @@ class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractControll
        session_destroy();
        header('Location: /dashboard/home/login'); 
        exit;
-    }
-        
-    private function checkMail($mail)
-    {
-
-        $pattern ='/^[a-zA-Z0-9\.\-_]+\@[a-zA-Z0-9\.\-_]+\.[a-z A-Z]+/'; 
-        $result = preg_match($pattern,$mail);
-        if ($result == 1)
-        {
-            return true; 
-        }
-        return false;
-    }
-
-    
+    }        
 }

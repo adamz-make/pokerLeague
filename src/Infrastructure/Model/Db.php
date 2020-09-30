@@ -36,12 +36,12 @@ class Db {
         return $stmt->fetchAllAssociative();
     }
     
-    public function insert ($sql, $array)
+    public function insert ($table, $array)
     {
         try
         {
-            $stmt = $this->connection->prepare($sql);
-            $stmt->execute(array_values($array));
+         //   $stmt = $this->connection->executeQuery($sql, $array);
+            $this->connection->insert($table, $array);
             return true;
         }   catch (Exception $ex) 
         {
