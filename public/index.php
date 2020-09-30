@@ -1,5 +1,7 @@
 <?php
 
+use App\Infrastructure\Ui\Controllers\dashboard\HomeController;
+
 session_start();
 require_once '../vendor/autoload.php';
 
@@ -10,6 +12,36 @@ $loader = new Twig\Loader\FilesystemLoader('../templates');
 $twig = new Twig\Environment($loader, [
     'cache' => false
 ]);
+
+//$route = new Symfony\Component\Routing\Route();
+$routes = new Symfony\Component\Routing\RouteCollection();
+$route = new Symfony\Component\Routing\Route('/home', ['controller' => 'HomeController', 'method' => 'index']);
+$routes->add('home_route', $route);
+$route = new Symfony\Component\Routing\Route('/home/login', ['controller' => 'HomeController', 'method' => 'login']);
+$routes->add('login_route', $route);
+
+$context = new \Symfony\Component\Routing\RequestContext();
+
+$context->fromRequest(\Symfony\Component\HttpFoundation\Request::createFromGlobals());
+$matcher = new Symfony\Component\Routing\Matcher\UrlMatcher($routes,$context);
+
+$parameters = $matcher->match($context->getPathInfo());
+var_dump($parameters);
+
+$classStr = $parameters['controller'];
+$method = $parameters['method'];
+$uri = "App\\Infrastructure\\Ui\\Controllers\\dashboard\\";
+$uri .= $classStr;
+echo $uri;
+class_exists($uri);
+$class = new $uri();
+$class->setTwig($twig);
+$class->$method();
+
+//$routes->add('home', new Symfony\Component\Routing\Route('/home'), [
+//    'controller' => [App\Infrastructure\Ui\Controllers\dashboard\HomeController::class,'method' => 'Index']
+//]);
+/*
 $pathUri = $_SERVER['REQUEST_URI'];
 if (strpos($_SERVER['REQUEST_URI'],'?') !== false)
 {
@@ -97,7 +129,7 @@ function getController($currentDir, $pathArray, $iPathArray, $twig)
     }
 }
 
-
+*/
 
 
 //var_dump(App\Controllers\dashboard\HomeController::class);

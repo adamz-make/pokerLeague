@@ -8,10 +8,15 @@ use App\Infrastructure\Model\UserRepository;
 use App\Application\services\LoginService;
 use App\Application\services\Utils\ValidationHandler;
 use App\Domain\Services\Utils\RegisterLogicException;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-
+//class HomeController extends AbstractController{
 class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractController{
-
+    /**
+     * @Route("/home", name="home")
+     */
     public function index()
     {
         //Przekazanie zmiennej do widoku
@@ -56,7 +61,7 @@ class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractControll
         $this->render('dashboard/loggedin.html.twig');
     }
     
-    public function registerNewUser()
+    public function register()
     {
         if ($_SERVER['REQUEST_METHOD']=='POST')
         {
