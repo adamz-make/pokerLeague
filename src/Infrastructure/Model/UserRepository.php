@@ -12,7 +12,7 @@ class UserRepository implements UserRepositoryInterface{
     * @param type $value
     * @return \App\Models\User
     */
-     public function getByLogin($login): User
+     public function getByLogin($login)
     {
         $db = Db::getInstance();
         $array = [$login];

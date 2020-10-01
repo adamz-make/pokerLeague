@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Application\services;
+namespace App\Application\Services;
+
 use App\Domain\Model\UserRepositoryInterface;
 use App\Domain\Services\LoginService as LoginDomainService;
 
@@ -19,8 +20,12 @@ class LoginService{
     
     public function execute(string $login,string $password) 
     {
-        $user = $this->userRepo->getBy('login',$login);
+        $user = $this->userRepo->getByLogin($login);
         $loginService = new LoginDomainService();
-        return $loginService->execute($user,$password);
+        if ($user != null)
+        {
+            return $loginService->execute($user,$password);
+        }
+        return null;
     }
 }

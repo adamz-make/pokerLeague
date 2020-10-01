@@ -1,11 +1,11 @@
 <?php
 declare (strict_types=1);
 
-namespace App\Application\services;
+namespace App\Application\Services;
 
 use App\Domain\Model\UserRepositoryInterface;
 use App\Domain\Services\RegisterService as RegisterDomainService;
-use App\Application\services\Utils\ValidationHandler;
+use App\Application\Services\Utils\ValidationHandler;
 use App\Domain\Model\User;
 
 class RegisterService {

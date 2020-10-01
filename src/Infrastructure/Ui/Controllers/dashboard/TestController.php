@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 class TestController extends \Symfony\Bundle\FrameworkBundle\Controller\AbstractController
 {
     /**
-     * @Route(path="/test", name="home")
+     * @Route(path="/test", name="asc")
      */
     public function test()
     {

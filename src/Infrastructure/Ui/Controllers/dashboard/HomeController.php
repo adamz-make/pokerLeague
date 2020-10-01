@@ -3,20 +3,21 @@
 declare (strict_types=1);
 
 namespace App\Infrastructure\Ui\Controllers\dashboard;
+
 use App\Domain\Model\User;
 use App\Infrastructure\Model\UserRepository;
-use App\Application\services\LoginService;
-use App\Application\services\Utils\ValidationHandler;
+use App\Application\Services\LoginService;
+use App\Application\Services\Utils\ValidationHandler;
 use App\Domain\Services\Utils\RegisterLogicException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
-//class HomeController extends AbstractController{
-class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractController{
+class HomeController extends AbstractController{
+//class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractController{
     /**
-     * @Route(path="/test", name="home")
+     * @Route(path="/home", name="home")
      */
     public function index()
     {
@@ -25,8 +26,12 @@ class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractControll
             'zmienna' => 'przekazalem',
         ));
          */
-        $this->render('dashboard/index.html.twig');
+        return $this->render('dashboard/index.html.twig');
     }
+    
+    /**
+     * @Route(path="/home/login", name="login")
+     */
     
     public function login()
     {
@@ -49,14 +54,18 @@ class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractControll
                 exit;
             }
         }
-        $this->render('dashboard/login.html.twig');
+       return $this->render('dashboard/login.html.twig',[
+            'notLoggedIn' => ''
+        ]);
     }
-    
+   /**
+    * @Route(path="/dashboard/home/loggedin", name="loggedin")
+    */ 
     public function loggedin()
     {
         if ($this->getUser() == null)
         {
-            header('Location: /dashboard/home');
+            header('Location: /home');
             exit;
         }
         $this->render('dashboard/loggedin.html.twig');
@@ -71,7 +80,7 @@ class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractControll
             $checkPassword = $_POST['pass2'];
             $mail = $_POST['mail'];
             $validationHandler = new ValidationHandler();
-            $registerService = new \App\Application\services\RegisterService(new UserRepository(),$validationHandler);
+            $registerService = new \App\Application\Services\RegisterService(new UserRepository(),$validationHandler);
             try
             {
                 if (($user = $registerService->execute($login, $mail, $password, $checkPassword)) !== null)
@@ -104,7 +113,7 @@ class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractControll
     {
         if ($this->getUser() == null)
         {
-            header('Location: /dashboard/home');
+            header('Location: /home');
             exit;
         }
         $this->render('dashboard/addResults.html.twig');
@@ -114,7 +123,7 @@ class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractControll
     public function logout()
     {
        session_destroy();
-       header('Location: /dashboard/home/login'); 
+       header('Location: /home/login'); 
        exit;
     }        
 }

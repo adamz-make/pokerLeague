@@ -1,7 +1,7 @@
 <?php
 declare (strict_types=1);
 
-namespace App\Application\services\Utils;
+namespace App\Application\Services\Utils;
 
 class ValidationHandler {
 
