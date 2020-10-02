@@ -2,9 +2,12 @@
 declare (strict_types=1);
 
 namespace App\Infrastructure\Model;
+
 use App\Domain\Model\UserRepositoryInterface;
 use App\Domain\Model\User;
-class UserRepository implements UserRepositoryInterface{
+use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
+
+class UserRepository implements UserRepositoryInterface, UserLoaderInterface{
    
    /**
     * 
@@ -58,5 +61,17 @@ class UserRepository implements UserRepositoryInterface{
         return null;
     }
 
+    public function loadUserByUsername(string $username)
+    {
+        $db = Db::getInstance();
+        $array = [$username];
+        $sql = "Select Id, Login, Haslo, Mail from users where Login =? limit 1";   
+        $result = $db->select($sql, $array);
+        foreach ($result as $row)
+        {
+            return new User($row['Id'], $row['Login'], $row['Haslo'], $row['Mail']);
+        }        
+        return null;
+    }
 
 }

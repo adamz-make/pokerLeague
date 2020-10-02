@@ -12,6 +12,7 @@ use App\Domain\Services\Utils\RegisterLogicException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 
 class HomeController extends AbstractController{
@@ -32,7 +33,7 @@ class HomeController extends AbstractController{
     /**
      * @Route(path="/home/login", name="login")
      */
-    
+    /*
     public function login()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST')
@@ -57,18 +58,68 @@ class HomeController extends AbstractController{
        return $this->render('dashboard/login.html.twig',[
             'notLoggedIn' => ''
         ]);
+    }*/
+    
+    /**
+     * @Route(path="/home/login", name="login")
+     */
+    
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    {
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUserName = $authenticationUtils->getLastUsername();
+        return $this->render('dashboard/login.html.twig',[
+            'lastUserName' => $lastUserName,
+            'error' => $error
+        ]);
+                /*
+        if ($_SERVER['REQUEST_METHOD'] == 'POST')
+        {
+            $login = $_POST['login'];
+            $password = $_POST['pass'];
+            $loginService = new LoginService(new UserRepository());
+            if (($user = $loginService->execute($login, $password)) != null)
+            {
+                $_SESSION['user']=json_encode($user);
+                header('Location: /dashboard/home/loggedin'); 
+                exit;
+            }
+            else
+            {
+                $this->render('dashboard/login.html.twig', array(
+                'notLoggedIn' => 'Niepoprawne login lub hasło. Spróbuj ponownie'
+                ));
+                exit;
+            }
+        }
+       return $this->render('dashboard/login.html.twig',[
+            'notLoggedIn' => ''
+        ]);
+                 
+        */
     }
+    
+    
    /**
-    * @Route(path="/dashboard/home/loggedin", name="loggedin")
+    * @Route(path="/home/loggedin", name="loggedin")
     */ 
     public function loggedin()
     {
-        if ($this->getUser() == null)
-        {
-            header('Location: /home');
-            exit;
-        }
-        $this->render('dashboard/loggedin.html.twig');
+        dump($this->getUser());
+//        if ($this->getUser() == null)
+//        {
+//            header('Location: /home/login');
+//            exit;
+//        }
+        return $this->render('dashboard/loggedin.html.twig');
+    }
+    
+    /**
+    * @Route(path="/home/logout", name="logout")
+    */
+    public function logout()
+    {
+        return $this->redirectToRoute('login');
     }
     
     public function register()
@@ -118,12 +169,5 @@ class HomeController extends AbstractController{
         }
         $this->render('dashboard/addResults.html.twig');
         
-    }
-    
-    public function logout()
-    {
-       session_destroy();
-       header('Location: /home/login'); 
-       exit;
-    }        
+    }    
 }

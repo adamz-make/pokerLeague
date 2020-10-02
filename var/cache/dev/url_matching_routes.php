@@ -15,7 +15,8 @@ return [
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
         '/home' => [[['_route' => 'home', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::index'], null, null, null, false, false, null]],
         '/home/login' => [[['_route' => 'login', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::login'], null, null, null, false, false, null]],
-        '/dashboard/home/loggedin' => [[['_route' => 'loggedin', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::loggedin'], null, null, null, false, false, null]],
+        '/home/loggedin' => [[['_route' => 'loggedin', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::loggedin'], null, null, null, false, false, null]],
+        '/home/logout' => [[['_route' => 'logout', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::logout'], null, null, null, false, false, null]],
         '/test' => [[['_route' => 'asc', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\TestController::test'], null, null, null, false, false, null]],
     ],
     [ // $regexpList

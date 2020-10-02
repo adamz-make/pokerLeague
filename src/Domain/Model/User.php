@@ -4,8 +4,11 @@ declare (strict_types=1);
 
 namespace App\Domain\Model;
 
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 
-class User implements \JsonSerializable {
+class User implements UserInterface, EquatableInterface, \JsonSerializable
+{
     private $id ="";
     private $login = "";
     private $password = "";
@@ -37,6 +40,31 @@ class User implements \JsonSerializable {
     {
         $array = ['id' => $this->id, 'login' => $this->login, 'password' => $this->password, 'mail' => $this->mail] ;
         return $array;      
+    }
+    
+    public function getRoles()
+    {
+        return ['ROLE_USER'];
+    }
+    
+    public function getSalt()
+    {
+        return null;
+    }
+    
+    public function getUsername()
+    {
+        return $this->login;
+    }
+    
+    public function eraseCredentials()
+    {
+        $this->password = null;
+    }
+
+    public function isEqualTo(UserInterface $user): bool {
+        // @TODO implement
+        return true;
     }
 
 }
