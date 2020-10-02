@@ -7,6 +7,8 @@ use App\Domain\Model\UserRepositoryInterface;
 use App\Domain\Services\RegisterService as RegisterDomainService;
 use App\Application\Services\Utils\ValidationHandler;
 use App\Domain\Model\User;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface; 
+
 
 class RegisterService {
 
@@ -16,11 +18,16 @@ class RegisterService {
      */
     private $userRepo;
     private $validator;
+    private $passwordEncoder;
     
-    public function __construct(UserRepositoryInterface $userRepo, ValidationHandler $validator)
+    public function __construct(
+            UserRepositoryInterface $userRepo,
+            ValidationHandler $validator,
+            UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->userRepo = $userRepo;
         $this->validator = $validator;
+        $this->passwordEncoder = $passwordEncoder;
     }
     
     public function execute($login, $mail, $password, $checkPassword)
@@ -40,6 +47,8 @@ class RegisterService {
             if ($user === null)
             {
                 $user = new User(null, $login, $password, $mail);
+                $passwordHash = $this->passwordEncoder->encodePassword($user, $password);
+                $user->setPassword($passwordHash);
                 $registerDomainService = new RegisterDomainService();
                 if(($registerDomainService->execute($login, $mail, $password, $checkPassword)))
                 {

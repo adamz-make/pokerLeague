@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
 class HomeController extends AbstractController{
@@ -105,7 +106,7 @@ class HomeController extends AbstractController{
     */ 
     public function loggedin()
     {
-        dump($this->getUser());
+        $this->denyAccessUnlessGranted('ROLE_USER');
 //        if ($this->getUser() == null)
 //        {
 //            header('Location: /home/login');
@@ -119,10 +120,13 @@ class HomeController extends AbstractController{
     */
     public function logout()
     {
-        return $this->redirectToRoute('login');
+        
     }
     
-    public function register()
+    /**
+    * @Route(path="/home/register", name="register")
+    */   
+    public function register(UserPasswordEncoderInterface $passwordEncoder)
     {
         if ($_SERVER['REQUEST_METHOD']=='POST')
         {
@@ -131,33 +135,30 @@ class HomeController extends AbstractController{
             $checkPassword = $_POST['pass2'];
             $mail = $_POST['mail'];
             $validationHandler = new ValidationHandler();
-            $registerService = new \App\Application\Services\RegisterService(new UserRepository(),$validationHandler);
+            $registerService = new \App\Application\Services\RegisterService(new UserRepository(),$validationHandler, $passwordEncoder);
             try
             {
                 if (($user = $registerService->execute($login, $mail, $password, $checkPassword)) !== null)
                 {
-                   $this->render('dashboard/register.html.twig',[
+                    return $this->render('dashboard/register.html.twig',[
                        'addedNewUser' => "Dodano użytkownika $login"
                        ]);
-                   exit;
                 }
                 else
                 {
-                   $this->render('dashboard/register.html.twig', array(
-                       'validationErros' => $validationHandler->getErrorMesages()
+                    return $this->render('dashboard/register.html.twig', array(
+                       'validationErrors' => $validationHandler->getErrorMesages()
                        ));
-                   exit;
                 }   
             } 
             catch (RegisterLogicException $ex) 
-            {       
-                $this->render('dashboard/register.html.twig', array(
-                       'validationErros' => [$ex->getMessage()]
+            {
+                return $this->render('dashboard/register.html.twig', array(
+                       'validationErrors' => [$ex->getMessage()]
                        ));
-                exit;
             }
         }
-        $this->render('dashboard/register.html.twig');
+        return $this->render('dashboard/register.html.twig');
     }
     
     public function addResults()

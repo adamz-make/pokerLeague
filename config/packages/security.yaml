@@ -1,10 +1,10 @@
 security:
 #    enable_authenticator_manager: true
     encoders:
-        App\Entity\User:
-            algorithm: auto
-        App\Security\User:
-            algorithm: auto
+#        App\Entity\User:
+#            algorithm: auto
+#        App\Security\User:
+#            algorithm: auto
         App\Domain\Model\User:
             algorithm: auto
 
@@ -20,7 +20,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: false
+            anonymous: true
             lazy: true
             provider: app_user_provider
             guard:
@@ -40,5 +40,5 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/home/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         # - { path: ^/profile, roles: ROLE_USER }

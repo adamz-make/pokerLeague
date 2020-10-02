@@ -14,10 +14,12 @@
                      <input id= "loginBtn" type="submit" value = "Zarejestruj się">
                 </form>
             </div>
-     {{ addedNewUser }}
-    {% for item in validationErros %}
+    {#{ { addedNewUser} }#}
+    {% if validationErrors is defined %}
+    {% for item in validationErrors %}
         <p>{{ item }}</p>
     {% endfor %}
+    {% endif %}
     
     </body>
     </head>

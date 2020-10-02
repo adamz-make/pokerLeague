@@ -35,13 +35,18 @@ class User implements UserInterface, EquatableInterface, \JsonSerializable
     {
         return $this->password;
     }
+    
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
 
     public function jsonSerialize()
     {
         $array = ['id' => $this->id, 'login' => $this->login, 'password' => $this->password, 'mail' => $this->mail] ;
         return $array;      
     }
-    
+    //w zaleznsoci od tego kto sie rejestruje to rozne role mozna by nadawac i zapisywac w BD
     public function getRoles()
     {
         return ['ROLE_USER'];

@@ -17,6 +17,7 @@ return [
         '/home/login' => [[['_route' => 'login', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::login'], null, null, null, false, false, null]],
         '/home/loggedin' => [[['_route' => 'loggedin', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::loggedin'], null, null, null, false, false, null]],
         '/home/logout' => [[['_route' => 'logout', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::logout'], null, null, null, false, false, null]],
+        '/home/register' => [[['_route' => 'register', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::register'], null, null, null, false, false, null]],
         '/test' => [[['_route' => 'asc', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\TestController::test'], null, null, null, false, false, null]],
     ],
     [ // $regexpList
