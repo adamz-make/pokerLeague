@@ -6,11 +6,9 @@ namespace App\Application\Services;
 use App\Domain\Model\User;
 use App\Domain\Model\Match;
 use App\Domain\Model\ResultRepositoryInterface;
-use App\Domain\Model\Result;
 use App\Domain\Services\Utils\AddResultService as DomainAddResultService;
-//nie mam meczu dodaj mecz, i dodaj wynik dla użytkownika
-// przekaz usera i match
 
+//jeżeli użytkownik ma już dodany wynik do meczu to nie dodawaj kolejnego
 
 class AddResultService {
     
