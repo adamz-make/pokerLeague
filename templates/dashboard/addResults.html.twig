@@ -42,5 +42,8 @@
             <p>Żetony<input type ="text" name ="tokens"></p></p>
             <p><input type ="submit" value="Zapisz">            
         </form>
+        {% if resultForUserAdded != null %}
+        {{ resultForUserAdded }}
+        {% endif %}
     </body>
 </html>

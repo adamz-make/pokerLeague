@@ -11,7 +11,6 @@ class AddResultService {
     
     public function execute(User $user, Match $match, $params)
     {
-        return new Result(null, $user->getId(), $match->getMatchId(), $params['points'], $params['beers'], $params['tokens']);
-           
+        return new Result(null, $user->getId(), $match->getMatchId(), $params['points'], $params['beers'], $params['tokens']);        
     }
 }

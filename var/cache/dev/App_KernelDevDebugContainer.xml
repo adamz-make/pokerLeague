@@ -327,6 +327,7 @@
     <service id="App\Application\Services\AddResultService" class="App\Application\Services\AddResultService" autowire="true" autoconfigure="true"/>
     <service id="App\Application\Services\LoginService" class="App\Application\Services\LoginService" autowire="true" autoconfigure="true"/>
     <service id="App\Application\Services\RegisterService" class="App\Application\Services\RegisterService" autowire="true" autoconfigure="true"/>
+    <service id="App\Application\Services\Utils\ResultAddedForUserException" class="App\Application\Services\Utils\ResultAddedForUserException" autowire="true" autoconfigure="true"/>
     <service id="App\Application\Services\Utils\ValidationException" class="App\Application\Services\Utils\ValidationException" autowire="true" autoconfigure="true"/>
     <service id="App\Application\Services\Utils\ValidationHandler" class="App\Application\Services\Utils\ValidationHandler" autowire="true" autoconfigure="true"/>
     <service id="App\Domain\Services\LoginService" class="App\Domain\Services\LoginService" autowire="true" autoconfigure="true"/>

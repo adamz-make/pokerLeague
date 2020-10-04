@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Application\Services\AddResultService;
 use App\Infrastructure\Model\ResultRepository;
 use App\Domain\Model\Match;
+use App\Application\Services\Utils\ResultAddedForUserException;
 
 
 class HomeController extends AbstractController{
@@ -180,6 +181,7 @@ class HomeController extends AbstractController{
         $match = null;
         $lastMatch = $matchRepository->getLastMatch();
         $users = $userRepository->getAllUsers();
+        $resultForUserAdded = null;
         if ($_SERVER['REQUEST_METHOD']=='POST')
         {
             $parameters = $request->request->all();
@@ -187,19 +189,27 @@ class HomeController extends AbstractController{
             $match = $matchRepository->getMatchByNr($nrMatch);
             $userLogin = $parameters['user'];
             $user = $userRepository->getByLogin($userLogin);
-            if ($match===null)
+            if ($match === null)
             {
                 $match = new Match(null,$lastMatch->getMatchNr() + 1, date("Y-m-d H:i:s"));
-                $matchRepository->add($match);
+                $matchRepository->add($match); //dodaje do bazy danych i automatycznie mam nadany nr ID
+                $match = $matchRepository->getMatchByNr($nrMatch); // jeszcze raz pobieram, bo przekazuje bez ID - konstruktor tworzy z null 
             }
             $addResultService = new AddResultService($user, $match, $parameters);
-            $addResultService->execute(new ResultRepository());
-                                       
+            try
+            {
+             $result = $addResultService->execute(new ResultRepository());   
+            } 
+            catch (\App\Application\Services\Utils\ResultAddedForUserException $ex)
+            {
+                $resultForUserAdded = $ex->getMessage();
+            }                                                  
         }
-       return $this->render('dashboard/addResults.html.twig', [
+        return $this->render('dashboard/addResults.html.twig', [
            'match' => $match,
            'lastMatch' => $lastMatch,
-           'users' => $users   
+           'users' => $users,
+           'resultForUserAdded' => $resultForUserAdded
        ]);
         
     }    
