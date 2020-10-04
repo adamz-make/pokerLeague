@@ -22,6 +22,10 @@ class User implements UserInterface, EquatableInterface, \JsonSerializable
         $this->mail = $mail;
     }    
 
+    public function getId()
+    {
+        return $this->id;
+    }
     //dodać gettery
     public function getLogin()
     {
@@ -46,7 +50,7 @@ class User implements UserInterface, EquatableInterface, \JsonSerializable
         $array = ['id' => $this->id, 'login' => $this->login, 'password' => $this->password, 'mail' => $this->mail] ;
         return $array;      
     }
-    //w zaleznsoci od tego kto sie rejestruje to rozne role mozna by nadawac i zapisywac w BD
+    //w zaleznsoci od tego kto sie rejestruje to roznze role mozna by nadawac i zapisywac w BD
     public function getRoles()
     {
         return ['ROLE_USER'];

@@ -324,15 +324,27 @@
       <tag name="controller.service_arguments"/>
       <tag name="routing.route_loader"/>
     </service>
+    <service id="App\Application\Services\AddResultService" class="App\Application\Services\AddResultService" autowire="true" autoconfigure="true"/>
     <service id="App\Application\Services\LoginService" class="App\Application\Services\LoginService" autowire="true" autoconfigure="true"/>
     <service id="App\Application\Services\RegisterService" class="App\Application\Services\RegisterService" autowire="true" autoconfigure="true"/>
     <service id="App\Application\Services\Utils\ValidationException" class="App\Application\Services\Utils\ValidationException" autowire="true" autoconfigure="true"/>
     <service id="App\Application\Services\Utils\ValidationHandler" class="App\Application\Services\Utils\ValidationHandler" autowire="true" autoconfigure="true"/>
     <service id="App\Domain\Services\LoginService" class="App\Domain\Services\LoginService" autowire="true" autoconfigure="true"/>
     <service id="App\Domain\Services\RegisterService" class="App\Domain\Services\RegisterService" autowire="true" autoconfigure="true"/>
+    <service id="App\Domain\Services\Utils\AddResultService" class="App\Domain\Services\Utils\AddResultService" autowire="true" autoconfigure="true"/>
     <service id="App\Domain\Services\Utils\RegisterLogicException" class="App\Domain\Services\Utils\RegisterLogicException" autowire="true" autoconfigure="true"/>
     <service id="App\Infrastructure\Model\MatchRepository" class="App\Infrastructure\Model\MatchRepository" autowire="true" autoconfigure="true"/>
+    <service id="App\Infrastructure\Model\ResultRepository" class="App\Infrastructure\Model\ResultRepository" autowire="true" autoconfigure="true"/>
     <service id="App\Infrastructure\Model\UserRepository" class="App\Infrastructure\Model\UserRepository" autowire="true" autoconfigure="true"/>
+    <service id="App\Infrastructure\Security\LoginFormAuthenticator" class="App\Infrastructure\Security\LoginFormAuthenticator" autowire="true" autoconfigure="true">
+      <argument type="service" id="App\Infrastructure\Model\UserRepository"/>
+      <argument type="service" id="router.default"/>
+      <argument type="service" id="security.csrf.token_manager"/>
+      <argument type="service" id="security.user_password_encoder.generic"/>
+    </service>
+    <service id="App\Infrastructure\Security\UserProvider" class="App\Infrastructure\Security\UserProvider" autowire="true" autoconfigure="true">
+      <argument type="service" id="App\Infrastructure\Model\UserRepository"/>
+    </service>
     <service id="App\Infrastructure\Ui\Controllers\AbstractController" class="App\Infrastructure\Ui\Controllers\AbstractController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
     </service>
@@ -349,19 +361,6 @@
       <call method="setContainer">
         <argument type="service" id=".service_locator.g9CqTPp.App\Infrastructure\Ui\Controllers\dashboard\TestController"/>
       </call>
-    </service>
-    <service id="App\Repository\UserRepository" class="App\Repository\UserRepository" autowire="true" autoconfigure="true">
-      <tag name="doctrine.repository_service"/>
-      <argument type="service" id="doctrine"/>
-    </service>
-    <service id="App\Security\UserProvider" class="App\Security\UserProvider" autowire="true" autoconfigure="true">
-      <argument type="service" id="App\Infrastructure\Model\UserRepository"/>
-    </service>
-    <service id="App\Domain\Model\LoginFormAuthenticator" class="App\Domain\Model\LoginFormAuthenticator" autowire="true" autoconfigure="true">
-      <argument type="service" id="App\Infrastructure\Model\UserRepository"/>
-      <argument type="service" id="router.default"/>
-      <argument type="service" id="security.csrf.token_manager"/>
-      <argument type="service" id="security.user_password_encoder.generic"/>
     </service>
     <service id="argument_metadata_factory" class="Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory" public="false"/>
     <service id="response_listener" class="Symfony\Component\HttpKernel\EventListener\ResponseListener" public="false">
@@ -3587,7 +3586,7 @@
       <factory class="Doctrine\ORM\EntityManager" method="create"/>
     </service>
     <service id="doctrine.orm.container_repository_factory" class="Doctrine\Bundle\DoctrineBundle\Repository\ContainerRepositoryFactory" public="false">
-      <argument type="service" id=".service_locator.ptFjzsg"/>
+      <argument type="service" id=".service_locator.0yahJpG"/>
     </service>
     <service id="doctrine.orm.manager_configurator.abstract" class="Doctrine\Bundle\DoctrineBundle\ManagerConfigurator" abstract="true">
       <argument type="collection"/>
@@ -4152,7 +4151,7 @@
       <tag name="monolog.logger" channel="security"/>
       <argument type="service" id="security.untracked_token_storage"/>
       <argument type="iterator">
-        <argument type="service" id="App\Security\UserProvider"/>
+        <argument type="service" id="App\Infrastructure\Security\UserProvider"/>
       </argument>
       <argument></argument>
       <argument type="service" id="monolog.logger.security" on-invalid="null"/>
@@ -4451,9 +4450,9 @@
       <argument>null</argument>
       <argument>true</argument>
       <argument>false</argument>
-      <argument>App\Security\UserProvider</argument>
+      <argument>App\Infrastructure\Security\UserProvider</argument>
       <argument>main</argument>
-      <argument>App\Domain\Model\LoginFormAuthenticator</argument>
+      <argument>App\Infrastructure\Security\LoginFormAuthenticator</argument>
       <argument>null</argument>
       <argument>null</argument>
       <argument type="collection">
@@ -4491,7 +4490,7 @@
     <service id="security.context_listener.0" class="Symfony\Component\Security\Http\Firewall\ContextListener" public="false">
       <argument type="service" id="security.untracked_token_storage"/>
       <argument type="iterator">
-        <argument type="service" id="App\Security\UserProvider"/>
+        <argument type="service" id="App\Infrastructure\Security\UserProvider"/>
       </argument>
       <argument>main</argument>
       <argument type="service" id="monolog.logger.security" on-invalid="null"/>
@@ -4522,20 +4521,20 @@
     </service>
     <service id="security.authentication.provider.guard.main" class="Symfony\Component\Security\Guard\Provider\GuardAuthenticationProvider" public="false">
       <argument type="iterator">
-        <argument type="service" id="App\Domain\Model\LoginFormAuthenticator"/>
+        <argument type="service" id="App\Infrastructure\Security\LoginFormAuthenticator"/>
       </argument>
-      <argument type="service" id="App\Security\UserProvider"/>
+      <argument type="service" id="App\Infrastructure\Security\UserProvider"/>
       <argument>main</argument>
       <argument type="service" id="security.user_checker"/>
       <argument type="service" id="security.user_password_encoder.generic"/>
     </service>
     <service id="security.authentication.listener.guard.main" class="Symfony\Component\Security\Guard\Firewall\GuardAuthenticationListener" public="false">
-      <tag name="security.remember_me_aware" id="main" provider="App\Security\UserProvider"/>
+      <tag name="security.remember_me_aware" id="main" provider="App\Infrastructure\Security\UserProvider"/>
       <argument type="service" id="security.authentication.guard_handler"/>
       <argument type="service" id="security.authentication.manager"/>
       <argument>main</argument>
       <argument type="iterator">
-        <argument type="service" id="App\Domain\Model\LoginFormAuthenticator"/>
+        <argument type="service" id="App\Infrastructure\Security\LoginFormAuthenticator"/>
       </argument>
       <argument type="service" id="monolog.logger.security" on-invalid="null"/>
     </service>
@@ -4553,7 +4552,7 @@
       <argument type="service" id="security.authentication.trust_resolver"/>
       <argument type="service" id="security.http_utils"/>
       <argument>main</argument>
-      <argument type="service" id="App\Domain\Model\LoginFormAuthenticator"/>
+      <argument type="service" id="App\Infrastructure\Security\LoginFormAuthenticator"/>
       <argument>null</argument>
       <argument>null</argument>
       <argument type="service" id="monolog.logger.security" on-invalid="null"/>
@@ -4958,8 +4957,6 @@
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Infrastructure\Ui\Controllers\dashboard\TestController" class="App\Infrastructure\Ui\Controllers\dashboard\TestController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Infrastructure\Ui\Controllers\dashboard\TestController" class="App\Infrastructure\Ui\Controllers\dashboard\TestController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Infrastructure\Ui\Controllers\dashboard\TestController" class="App\Infrastructure\Ui\Controllers\dashboard\TestController" autowire="true" autoconfigure="true" abstract="true"/>
-    <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\UserRepository" class="App\Repository\UserRepository" autowire="true" abstract="true"/>
-    <service id=".abstract.instanceof.App\Repository\UserRepository" class="App\Repository\UserRepository" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".service_locator.WaGDpDt" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -5225,9 +5222,17 @@
         <argument key="passwordEncoder" type="service" id="security.user_password_encoder.generic"/>
       </argument>
     </service>
-    <service id=".service_locator.1avsYMG" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+    <service id=".service_locator.Ur5wT9k" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="matchRepository" type="service" id="App\Infrastructure\Model\MatchRepository"/>
+        <argument key="userRepository" type="service" id="App\Infrastructure\Model\UserRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.9SOnoxk" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="App\Infrastructure\Ui\Controllers\dashboard\HomeController::addResults" type="service" id=".service_locator.Ur5wT9k"/>
         <argument key="App\Infrastructure\Ui\Controllers\dashboard\HomeController::login" type="service" id=".service_locator.xA8Fw_."/>
         <argument key="App\Infrastructure\Ui\Controllers\dashboard\HomeController::register" type="service" id=".service_locator.j5_bHjD"/>
         <argument key="App\Kernel::loadRoutes" type="service" id=".service_locator.C9JCBPC"/>
@@ -5236,6 +5241,7 @@
         <argument key="kernel::loadRoutes" type="service" id=".service_locator.C9JCBPC"/>
         <argument key="kernel::registerContainerConfiguration" type="service" id=".service_locator.C9JCBPC"/>
         <argument key="kernel::terminate" type="service" id=".service_locator.beq5mCo"/>
+        <argument key="App\Infrastructure\Ui\Controllers\dashboard\HomeController:addResults" type="service" id=".service_locator.Ur5wT9k"/>
         <argument key="App\Infrastructure\Ui\Controllers\dashboard\HomeController:login" type="service" id=".service_locator.xA8Fw_."/>
         <argument key="App\Infrastructure\Ui\Controllers\dashboard\HomeController:register" type="service" id=".service_locator.j5_bHjD"/>
         <argument key="kernel:loadRoutes" type="service" id=".service_locator.C9JCBPC"/>
@@ -5323,11 +5329,9 @@
         <argument key="doctrine.orm.default_listeners.attach_entity_listeners" type="service" id="doctrine.orm.default_listeners.attach_entity_listeners"/>
       </argument>
     </service>
-    <service id=".service_locator.ptFjzsg" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+    <service id=".service_locator.0yahJpG" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="App\Repository\UserRepository" type="service" id="App\Repository\UserRepository"/>
-      </argument>
+      <argument type="collection"/>
     </service>
     <service id="debug.security.voter.security.access.authenticated_voter" class="Symfony\Component\Security\Core\Authorization\Voter\TraceableVoter">
       <argument type="service" id="security.access.authenticated_voter"/>
@@ -5702,12 +5706,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" public="false">
-      <argument type="service" id=".service_locator.1avsYMG"/>
+      <argument type="service" id=".service_locator.9SOnoxk"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" public="false"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver" public="false"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver" public="false">
-      <argument type="service" id=".service_locator.1avsYMG"/>
+      <argument type="service" id=".service_locator.9SOnoxk"/>
     </service>
     <service id=".debug.http_client.inner" class="Symfony\Contracts\HttpClient\HttpClientInterface" public="false">
       <argument type="collection"/>
@@ -6096,9 +6100,9 @@
     <service id="Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface" alias="security.authentication.manager" public="false"/>
     <service id="Symfony\Component\Security\Guard\GuardAuthenticatorHandler" alias="security.authentication.guard_handler" public="false"/>
     <service id="security.firewall" alias="debug.security.firewall" public="false"/>
-    <service id="security.user.provider.concrete.app_user_provider" alias="App\Security\UserProvider" public="false"/>
-    <service id="security.user_providers" alias="App\Security\UserProvider" public="false"/>
-    <service id="Symfony\Component\Security\Core\User\UserProviderInterface" alias="App\Security\UserProvider"/>
+    <service id="security.user.provider.concrete.app_user_provider" alias="App\Infrastructure\Security\UserProvider" public="false"/>
+    <service id="security.user_providers" alias="App\Infrastructure\Security\UserProvider" public="false"/>
+    <service id="Symfony\Component\Security\Core\User\UserProviderInterface" alias="App\Infrastructure\Security\UserProvider"/>
     <service id="security.authentication.session_strategy.main" alias="security.authentication.session_strategy"/>
     <service id="security.user_checker.main" alias="security.user_checker" public="false"/>
     <service id="Symfony\Component\Security\Core\User\UserCheckerInterface" alias="security.user_checker" public="false"/>
@@ -6106,7 +6110,7 @@
     <service id="Psr\Log\LoggerInterface" alias="monolog.logger" public="false"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.WaGDpDt" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem" public="false"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.1avsYMG"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.9SOnoxk"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id="Psr\Log\LoggerInterface $requestLogger" alias="monolog.logger.request"/>
     <service id="Psr\Log\LoggerInterface $consoleLogger" alias="monolog.logger.console"/>

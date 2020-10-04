@@ -13,7 +13,8 @@ security:
     providers:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
-            id: App\Security\UserProvider
+            #id: App\Security\UserProvider
+            id: App\Infrastructure\Security\UserProvider
         # used to reload user from session & other features (e.g. switch_user)
     firewalls:
         dev:
@@ -25,7 +26,7 @@ security:
             provider: app_user_provider
             guard:
                 authenticators:
-                    - App\Domain\Model\LoginFormAuthenticator
+                    - App\Infrastructure\Security\LoginFormAuthenticator
             logout:
                 path: logout
                 target: login

@@ -1,13 +1,46 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+declare (strict_types=1);
 
 namespace App\Infrastructure\Model;
 
-class MatchRepository {
+use App\Domain\Model\Match;
+use App\Domain\Model\MatchRepositoryInterface;
 
+class MatchRepository implements MatchRepositoryInterface {
+
+    public function getLastMatch(): Match
+    {
+        $db = Db::getInstance();
+        $sql = 'select Id, nrMeczu, dataDodania from mecze order by nrMeczu desc limit 1'; 
+        $array = [];
+        $result = $db->select($sql, $array);
+        if (!empty ($result))
+        {
+            $row = reset($result);
+            return new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+        }
+        return null;        
+    }
+    
+    public function getMatchByNr($nr)
+    {
+        $db = Db::getInstance();
+        $sql = 'select Id, nrMeczu, dataDodania from mecze where nrMeczu =?'; 
+        $array = [$nr];
+        $result = $db->select($sql, $array);
+        if (!empty ($result))
+        {
+            $row = reset($result);
+            return new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+        }
+        return null;   
+    }
+    
+    public function add(Match $match)
+    {
+        $db = Db::getInstance();
+        $table = 'mecze';
+        $array = ['nrMeczu' => $match->getMatchNr(), 'dataDodania' => $match->getDateOfMatch()];
+        $db->insert($table, $array);        
+    }
 }

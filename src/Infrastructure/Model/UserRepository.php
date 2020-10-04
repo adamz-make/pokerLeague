@@ -72,6 +72,23 @@ class UserRepository implements UserRepositoryInterface, UserLoaderInterface{
             return new User($row['Id'], $row['Login'], $row['Haslo'], $row['Mail']);
         }        
         return null;
+    }     
+    /**
+     * 
+     * @return User[]
+     */
+    public function getAllUsers() : array
+    {
+        $db = Db::getInstance();
+        $array = [];
+        $sql = "Select Id, Login, Haslo, Mail from users";   
+        $result = $db->select($sql, $array);
+        $users = [];
+        foreach ($result as $row)
+        {
+            $users[] = new User($row['Id'], $row['Login'], $row['Haslo'], $row['Mail']);
+        }        
+        return $users;
     }
 
 }
