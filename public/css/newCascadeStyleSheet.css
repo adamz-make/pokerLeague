@@ -51,15 +51,34 @@ and open the template in the editor.
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
-}
+    }
     ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
-}
+    }
     .header{
         float:left;
         width: 100%;
         
     }
+    .userScore{
+        display: inline;
+        color: red;
+        width: 100%;
+    }
+    
+    user{
+        float:left;
+        width: 95%;
+    }
+    
+    .score{
+        float: left;
+        width: 5%;
+        font-size: 120%;
+        font-weight: bold;
+        
+    }
+    
     

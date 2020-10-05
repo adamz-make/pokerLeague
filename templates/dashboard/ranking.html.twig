@@ -1,0 +1,29 @@
+<html>
+    <head>
+     <meta charset="UTF-8">
+     <link rel="stylesheet" href="/css/newCascadeStyleSheet.css">   
+    </head>
+    <body>            
+        <div class ="header">
+            <nav>
+                <ul>
+                    <li><a href ="{{ url('addResults') }}">Dodaj Wyniki</a></li>
+                    <li><a href ="{{ url('ranking') }}">Ranking</a></li>
+                    <li><a href ="">Nagrody</a></li>
+                    <li><a href ="{{ url('logout') }}">Wyloguj się</a></li>
+                </ul>
+            </nav>
+        </div>
+        {% for userRanking in ranking %}
+            <div class = "userRanking">
+                <div class = "userScore"><div class ="user" <p>{{ loop.index }} {{ userRanking.user.login }}</p></div>      
+                <div class = "score"><p>{{ userRanking.points }}</p></div>
+                    </div>        
+            <p>{{ userRanking.beers }}</p>            
+            <p>{{ userRanking.tokens }}</p>
+            </div>
+        {% endfor %}
+         
+    </body>
+</html>
+

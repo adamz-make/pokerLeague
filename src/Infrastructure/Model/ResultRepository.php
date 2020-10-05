@@ -5,6 +5,8 @@ namespace App\Infrastructure\Model;
 
 use App\Domain\Model\Result;
 use App\Domain\Model\ResultRepositoryInterface;
+use App\Domain\Model\TotalResultForUser;
+use App\Infrastructure\Model\UserRepository;
 
 class ResultRepository implements ResultRepositoryInterface{
     
@@ -14,8 +16,7 @@ class ResultRepository implements ResultRepositoryInterface{
         $table = 'wyniki';
         $array = ['idUsera' => $result->getUserId() , 'idMeczu' => $result->getMatchId(), 'liczbaPiw' => $result->getBeers(),
             'LiczbaPunktow' => $result->getPoints(), 'LiczbaZetonow' => $result->getTokens()];
-        $db->insert($table, $array);
-        
+        $db->insert($table, $array);        
     }
     
     public function isResultForUserAdded(Result $result)
@@ -26,4 +27,20 @@ class ResultRepository implements ResultRepositoryInterface{
         $result = $db->select($sql, $array);
         return !empty($result);
     }
+    
+    public function getResultsForRanking()
+    {
+        $db = Db::getInstance();
+        $sql = 'select idUsera, sum(liczbaPiw) as liczbaPiw, sum(LiczbaPunktow) as liczbaPunktow, sum(LiczbaZetonow) as liczbaZetonow'
+                . ' from wyniki group by IdUsera order by sum(LiczbaPunktow) desc';
+        $array =[];
+        $result = $db->select($sql, $array);
+        foreach($result as $row)
+        {
+            $userRepo = new UserRepository();
+            $resultArray[] = new TotalResultForUser( $userRepo->getById($row['idUsera']), $row['liczbaPunktow'], $row['liczbaPiw'], $row['liczbaZetonow']);  
+        }
+        return $resultArray;
+    }
+    
 }

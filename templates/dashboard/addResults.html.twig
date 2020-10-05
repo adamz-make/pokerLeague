@@ -18,8 +18,8 @@
         <div class ="header">
             <nav>
                 <ul>
-                    <li><a href ="AddResults.php">Dodaj Wyniki</a></li>
-                    <li><a href ="Ranking.php">Ranking</a></li>
+                    <li><a href ="{{ url('addResults') }}">Dodaj Wyniki</a></li>
+                    <li><a href ="{{ url('ranking') }}">Ranking</a></li>
                     <li><a href ="">Nagrody</a></li>
                     <li><a href ="{{ url('logout') }}">Wyloguj się</a></li>
                 </ul>
@@ -29,8 +29,10 @@
         <form method ="POST">
             {% if match != null %}
                 <p>Dodajesz Wyniki do meczu nr<input type ="text" value ="{{ match.matchNr }}" name ="matchNr"></p>  
+            {% elseif lastMatch!=null %}
+                <p>Dodajesz Wyniki do meczu nr<input type ="text" value ="{{ lastMatch.matchNr + 1}}" name ="matchNr"></p>
             {% else %}
-                <p>Dodajesz Wyniki do meczu nr<input type ="text" value ="{{ lastMatch.matchNr + 1}}" name ="matchNr"></p>  
+                <p>Dodajesz Wyniki do meczu nr<input type ="text" value ="1" name ="matchNr"></p>
             {% endif %}
             <select name ="user">
                 {% for user in users%}

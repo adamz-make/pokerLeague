@@ -8,7 +8,7 @@ use App\Domain\Model\MatchRepositoryInterface;
 
 class MatchRepository implements MatchRepositoryInterface {
 
-    public function getLastMatch(): Match
+    public function getLastMatch()
     {
         $db = Db::getInstance();
         $sql = 'select Id, nrMeczu, dataDodania from mecze order by nrMeczu desc limit 1'; 

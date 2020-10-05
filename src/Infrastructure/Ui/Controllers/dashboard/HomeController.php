@@ -20,6 +20,7 @@ use App\Application\Services\AddResultService;
 use App\Infrastructure\Model\ResultRepository;
 use App\Domain\Model\Match;
 use App\Application\Services\Utils\ResultAddedForUserException;
+use App\Application\Services\CreateRankingService;
 
 
 class HomeController extends AbstractController{
@@ -168,9 +169,8 @@ class HomeController extends AbstractController{
     }
     
     /**
-     * @Route (path="/home/addResults", name="addResults")
-     */
-    
+     * @Route(path="/home/addResults", name="addResults")
+     */    
     public function addResults(Request $request, MatchRepository $matchRepository, UserRepository $userRepository)
     {
         if ($this->getUser() == null)
@@ -191,16 +191,23 @@ class HomeController extends AbstractController{
             $user = $userRepository->getByLogin($userLogin);
             if ($match === null)
             {
-                $match = new Match(null,$lastMatch->getMatchNr() + 1, date("Y-m-d H:i:s"));
+                if ($lastMatch !== null)
+                {
+                   $match = new Match(null,$lastMatch->getMatchNr() + 1, date("Y-m-d H:i:s")); 
+                }
+                else
+                {
+                   $match = new Match(null, 1, date("Y-m-d H:i:s")); 
+                }
                 $matchRepository->add($match); //dodaje do bazy danych i automatycznie mam nadany nr ID
-                $match = $matchRepository->getMatchByNr($nrMatch); // jeszcze raz pobieram, bo przekazuje bez ID - konstruktor tworzy z null 
+                $match = $matchRepository->getMatchByNr($nrMatch); // jeszcze raz pobieram, bo przekazuje bez ID - konstruktor tworzy z null  (dwie linie wyżej)
             }
             $addResultService = new AddResultService($user, $match, $parameters);
             try
             {
              $result = $addResultService->execute(new ResultRepository());   
             } 
-            catch (\App\Application\Services\Utils\ResultAddedForUserException $ex)
+            catch (ResultAddedForUserException $ex)
             {
                 $resultForUserAdded = $ex->getMessage();
             }                                                  
@@ -210,7 +217,16 @@ class HomeController extends AbstractController{
            'lastMatch' => $lastMatch,
            'users' => $users,
            'resultForUserAdded' => $resultForUserAdded
-       ]);
-        
-    }    
+       ]);        
+    }
+    /**
+     * @Route(path="/home/ranking", name="ranking")
+     */
+    public function ranking(CreateRankingService $createRankingService)
+    {
+        $ranking = $createRankingService->execute(new ResultRepository());
+        return $this->render('dashboard/ranking.html.twig',[
+            'ranking' => $ranking
+        ]);
+    }
 }

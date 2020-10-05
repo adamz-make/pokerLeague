@@ -8,5 +8,6 @@ interface UserRepositoryInterface {
     public function getByLogin($login);
     public function userExists(string $login,string $mail);
     public function register (User $user);
+    public function getById($id);
 }
 

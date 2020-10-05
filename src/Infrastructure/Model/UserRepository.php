@@ -90,5 +90,18 @@ class UserRepository implements UserRepositoryInterface, UserLoaderInterface{
         }        
         return $users;
     }
+    
+    public function getById($id)
+    {
+        $db = Db::getInstance();
+        $array = [$id];
+        $sql = "Select Id, Login, Haslo, Mail from users where id =? limit 1";   
+        $result = $db->select($sql, $array);
+        foreach ($result as $row)
+        {
+            return new User($row['Id'], $row['Login'], $row['Haslo'], $row['Mail']);
+        }        
+        return null;
+    }
 
 }
