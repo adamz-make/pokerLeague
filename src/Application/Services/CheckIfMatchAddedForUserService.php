@@ -7,8 +7,8 @@ use App\Domain\Model\User;
 use App\Domain\Model\Match;
 use App\Domain\Model\ResultRepositoryInterface;
 use App\Domain\Model\Result;
-
-class CheckIfMatchAddedForUser {
+//userMatchResult
+class CheckIfMatchAddedForUserService {
     private $user;
     private $match;
     

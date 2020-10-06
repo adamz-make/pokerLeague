@@ -5,7 +5,7 @@ declare (strict_types=1);
 namespace App\Domain\Model;
 
 
-class Match{
+class Match implements \JsonSerializable{
     private $id = "";
     private $matchNr = "";
     private $dateOfMatch = "";
@@ -30,6 +30,11 @@ class Match{
     public function getDateOfMatch()
     {
         return $this->dateOfMatch;
+    }
+
+    public function jsonSerialize() 
+    {
+        return ['id' => $this->id, 'matchNr' => $this->matchNr, 'dateOfMatch' => $this->dateOfMatch];
     }
 
 }

@@ -6,10 +6,17 @@ namespace App\Application\Services;
 use App\Domain\Model\ResultRepositoryInterface;
 
 class CreateRankingService {
+    
+    private $resultRepo;
+    
+    public function __construct (ResultRepositoryInterface $resultRepo)
+    {
+        $this->resultRepo = $resultRepo;
+    }
 
-    public function execute(ResultRepositoryInterface $resultRepo)
+    public function execute()
     {      
-        $results = $resultRepo->getResultsForRanking();
+        $results = $this->resultRepo->getResultsForRanking();
         return $results;
     }
 }

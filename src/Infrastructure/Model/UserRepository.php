@@ -13,7 +13,7 @@ class UserRepository implements UserRepositoryInterface, UserLoaderInterface{
     * 
     * @param type $attribute
     * @param type $value
-    * @return \App\Models\User
+    * @return \App\Domain\Models\User
     */
      public function getByLogin($login): ?User
     {

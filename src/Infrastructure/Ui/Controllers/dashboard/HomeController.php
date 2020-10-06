@@ -21,9 +21,9 @@ use App\Infrastructure\Model\ResultRepository;
 use App\Domain\Model\Match;
 use App\Application\Services\Utils\ResultAddedForUserException;
 use App\Application\Services\CreateRankingService;
-use App\Application\Services\CheckIfMatchAddedForUser;
+use App\Application\Services\CheckIfMatchAddedForUserService;
 
-
+//kontrolery porobić
 class HomeController extends AbstractController{
 //class HomeController extends \App\Infrastructure\Ui\Controllers\AbstractController{
     /**
@@ -225,7 +225,7 @@ class HomeController extends AbstractController{
      */
     public function ranking(CreateRankingService $createRankingService)
     {
-        $ranking = $createRankingService->execute(new ResultRepository());
+        $ranking = $createRankingService->execute();
         return $this->render('dashboard/ranking.html.twig',[
             'ranking' => $ranking
         ]);
@@ -233,17 +233,34 @@ class HomeController extends AbstractController{
     /**
      * @Route(path="/home/addResults/MatchAddedForUser", name="matchAddedForUser")
      */
-
-    public function MatchAddedForUser(Request $request)
+    //żadąć userrepositoryInterface - ogólnie interfejsów
+    public function MatchAddedForUser(Request $request, UserRepository $userRepo)
     {
-        $userRepo = new UserRepository();
-        $user = $userRepo->getByLogin($request->get('user'));
-        $matchRepo = new MatchRepository();
-        $match = $matchRepo->getMatchByNr($request->get('matchNr'));
-        $checkifMatchAddedForUser = new CheckIfMatchAddedForUser($user, $match);
-        if ($checkifMatchAddedForUser->execute(new ResultRepository()))
+        if ($_SERVER['REQUEST_METHOD']=='GET')
         {
-            //zwroc do javascriptu żeby wyświetlił cusia
+            $user = $userRepo->getByLogin($request->get('user'));
+            $user->eraseCredentials();
+            $matchRepo = new MatchRepository();
+            $match = $matchRepo->getMatchByNr($request->get('matchNr'));
+            if ($user === null || $match === null)
+            {
+                return new Response(json_encode([
+                    'matchResult' => null
+                ]));
+            }
+            $checkifMatchAddedForUserService = new CheckIfMatchAddedForUserService($user, $match);
+            if ($checkifMatchAddedForUserService->execute(new ResultRepository()))
+            {
+                $outData = [
+                    'user' => $user,
+                    'match' => $match
+                ];
+                
+                return new Response(json_encode($outData));  
+            }
         }
+        return new Response(json_encode([
+            'matchResult' => null
+        ]));
     }
 }
