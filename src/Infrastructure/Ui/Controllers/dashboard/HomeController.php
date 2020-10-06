@@ -21,6 +21,7 @@ use App\Infrastructure\Model\ResultRepository;
 use App\Domain\Model\Match;
 use App\Application\Services\Utils\ResultAddedForUserException;
 use App\Application\Services\CreateRankingService;
+use App\Application\Services\CheckIfMatchAddedForUser;
 
 
 class HomeController extends AbstractController{
@@ -193,7 +194,7 @@ class HomeController extends AbstractController{
             {
                 if ($lastMatch !== null)
                 {
-                   $match = new Match(null,$lastMatch->getMatchNr() + 1, date("Y-m-d H:i:s")); 
+                   $match = new Match(null,$lastMatch->getMatchNr() + 1, date("Y-m-d H:i:s"));  // to dodane jeżeli peirwszy mecz nie jest dodany
                 }
                 else
                 {
@@ -228,5 +229,21 @@ class HomeController extends AbstractController{
         return $this->render('dashboard/ranking.html.twig',[
             'ranking' => $ranking
         ]);
+    }
+    /**
+     * @Route(path="/home/addResults/MatchAddedForUser", name="matchAddedForUser")
+     */
+
+    public function MatchAddedForUser(Request $request)
+    {
+        $userRepo = new UserRepository();
+        $user = $userRepo->getByLogin($request->get('user'));
+        $matchRepo = new MatchRepository();
+        $match = $matchRepo->getMatchByNr($request->get('matchNr'));
+        $checkifMatchAddedForUser = new CheckIfMatchAddedForUser($user, $match);
+        if ($checkifMatchAddedForUser->execute(new ResultRepository()))
+        {
+            //zwroc do javascriptu żeby wyświetlił cusia
+        }
     }
 }

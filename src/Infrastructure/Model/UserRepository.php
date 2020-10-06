@@ -15,7 +15,7 @@ class UserRepository implements UserRepositoryInterface, UserLoaderInterface{
     * @param type $value
     * @return \App\Models\User
     */
-     public function getByLogin($login)
+     public function getByLogin($login): ?User
     {
         $db = Db::getInstance();
         $array = [$login];
@@ -48,7 +48,7 @@ class UserRepository implements UserRepositoryInterface, UserLoaderInterface{
     * @return User
     */
 
-    public function userExists(string $login, string $mail)
+    public function userExists(string $login, string $mail): ?User
     {
         $db = Db::getInstance();
         $array =[$login, $mail];
@@ -61,7 +61,7 @@ class UserRepository implements UserRepositoryInterface, UserLoaderInterface{
         return null;
     }
 
-    public function loadUserByUsername(string $username)
+    public function loadUserByUsername(string $username): ?User
     {
         $db = Db::getInstance();
         $array = [$username];
@@ -91,7 +91,7 @@ class UserRepository implements UserRepositoryInterface, UserLoaderInterface{
         return $users;
     }
     
-    public function getById($id)
+    public function getById($id): ?User
     {
         $db = Db::getInstance();
         $array = [$id];

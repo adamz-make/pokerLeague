@@ -1,7 +1,8 @@
 <html>
     <head>
      <meta charset="UTF-8">
-     <link rel="stylesheet" href="/css/newCascadeStyleSheet.css">   
+     <link rel="stylesheet" href="/css/newCascadeStyleSheet.css">
+     <script src="/JavaScripts/javascripts.js"></script>
     </head>
     <body>
               
@@ -10,11 +11,7 @@
         <p>{{ item }}</p>
     {% endfor %}
     {% endif %}
-        
-        {#<?php
-       
-        $_SESSION["nrMatch"] = Db::getNrMatch()[0][0] +1;
-        ?>#}
+
         <div class ="header">
             <nav>
                 <ul>
@@ -47,5 +44,7 @@
         {% if resultForUserAdded != null %}
         {{ resultForUserAdded }}
         {% endif %}
+        <p><div id ="test">test</div></p>
+        <button type="button" onclick="myFunction()">Try it</button>   
     </body>
 </html>
