@@ -13,9 +13,7 @@ use App\Application\Services\Utils\ResultAddedForUserException;
 
 class AddResultService {
     
-    private $user;
-    private $match;
-    private $params =[];
+    private $resultRepo;
     
     /**
      * 
@@ -23,24 +21,22 @@ class AddResultService {
      * @param Match $match
      * @param type $params
      */
-    public function __construct(User $user, Match $match, $params)
+    public function __construct(ResultRepositoryInterface $resultRepo )
     {
-        $this->user = $user;
-        $this->match = $match;
-        $this->params = $params;
+        $this->resultRepo = $resultRepo;
     }
     
-    public function execute(ResultRepositoryInterface $resultRepo )
+    public function execute(User $user, Match $match, $params )
     {
         $domainAddResultService = new DomainAddResultService();
-        $result =  $domainAddResultService->execute($this->user, $this->match, $this->params);
-        if (!$resultRepo->isResultForUserAdded($result))
+        $result =  $domainAddResultService->execute($user, $match, $params);
+        if (!$this->resultRepo->isResultForUserAdded($result))
         {
-          $resultRepo->add($result);
-          return $result;
+            $this->resultRepo->add($result);
+            return $result;
         }
         throw new ResultAddedForUserException("Użytkownik " .
-                $this->user->getLogin() . " ma już dodany wynik do meczu o numerze " . $this->match->getMatchNr());
+            $user->getLogin() . " ma już dodany wynik do meczu o numerze " . $this->match->getMatchNr());
         return null;
         }
 }

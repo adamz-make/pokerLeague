@@ -19,13 +19,19 @@ class ResultRepository implements ResultRepositoryInterface{
         $db->insert($table, $array);        
     }
     
-    public function isResultForUserAdded(Result $result)
+    public function isResultForUserAdded(Result $result): ?Result
     {
         $db = Db::getInstance();
-        $sql = 'select 1 from wyniki where idUsera =? and idMeczu=?';
+        $sql = 'select Id, idUsera, IdMeczu, liczbaPunktow, LiczbaPiw, LiczbaZetonow from wyniki where idUsera =? and idMeczu=?';
         $array = [$result->getUserId(), $result->getMatchId()];
         $result = $db->select($sql, $array);
-        return !empty($result);
+        if (!empty($result))
+        {
+            var_dump($result);
+            exit;
+            return new Result($result['Id'], $result['idUsera'], $result['IdMeczu'], $result['liczbaPunktow'], $result['LiczbaPiw'], $result['LiczbaZetonow']);
+        }
+        return null;
     }
     
     public function getResultsForRanking()

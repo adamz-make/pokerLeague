@@ -33,3 +33,8 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Domain\Model\ResultRepositoryInterface: 
         class: App\Infrastructure\Model\ResultRepository
+    App\Domain\Model\MatchRepositoryInterface:
+        class: App\Infrastructure\Model\MatchRepository
+    App\Domain\Model\UserRepositoryInterface:
+        class: App\Infrastructure\Model\UserRepository
+        

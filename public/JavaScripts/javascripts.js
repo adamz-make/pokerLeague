@@ -15,11 +15,10 @@ function userHasAddedMatch()
 	data: "user=" + user.options[user.selectedIndex].value + "&matchNr=" + matchNr.value
     }).done(function(result) {
         let resultJson = JSON.parse(result);
-        if (resultJson.match != null && resultJson.user != null)
+        if (resultJson.match != null && resultJson.user != null && reusltJson.result != null)
         {
-            console.log(resultJson);
-            console.log(resultJson.match.matchNr);
-            alert('Użytkownik ma już zapisany wynik w podanym meczu');
+            document.getElementsByName("beers").innerHTML = resultJson.result.beers;
+            document.getElement(ResultForUserExist).innerHTML = "Użytkownik o loginie " + resultJson.user.login + " ma już dodany wynik do meczu nr" + resultJson.match.matchNr;
         }
        
     });

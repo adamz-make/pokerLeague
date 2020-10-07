@@ -9,18 +9,17 @@ use App\Domain\Model\ResultRepositoryInterface;
 use App\Domain\Model\Result;
 //userMatchResult
 class CheckIfMatchAddedForUserService {
-    private $user;
-    private $match;
     
-    public function __construct(User $user, Match $match)
+    private $resultRepo;
+    
+    public function __construct(ResultRepositoryInterface $resultRepo)
     {
-        $this->user = $user;
-        $this->match = $match;
+       $this->resultRepo = $resultRepo;
     }
     
-    public function execute(ResultRepositoryInterface $resultRepo)
+    public function execute(User $user, Match $match)
     {
-        $result = new Result(null,$this->user->getId(),$this->match->getMatchId(),null,null,null);
-        return $resultRepo->isResultForUserAdded($result);
+        $result = new Result(null,$user->getId(),$match->getMatchId(),null,null,null);
+        return $this->resultRepo->isResultForUserAdded($result);
     }
 }
