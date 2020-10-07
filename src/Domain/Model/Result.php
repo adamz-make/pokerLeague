@@ -3,7 +3,7 @@ declare (strict_types=1);
 
 namespace App\Domain\Model;
 
-class Result {
+class Result implements \JsonSerializable{
     
     private $id;
     private $userId;
@@ -51,4 +51,11 @@ class Result {
     {
         return $this->tokens;
     }
+
+    public function jsonSerialize() 
+    {
+        return ['id' => $this->id, 'userId' => $this->userId, 'matchId' => $this->matchId, 'points' => $this->points,
+                'beers' => $this->beers, 'tokens' => $this->tokens];
+    }
+
 }

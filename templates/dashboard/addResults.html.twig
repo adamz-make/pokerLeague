@@ -27,11 +27,11 @@
         
         <form method ="POST">
             {% if match != null %}
-                <p>Dodajesz Wyniki do meczu nr<input type ="text" id="nrMatch" value ="{{ match.matchNr }}" name ="matchNr"></p>  
+                <p>Dodajesz Wyniki do meczu nr<input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ match.matchNr }}" name ="matchNr"></p>  
             {% elseif lastMatch!=null %}
-                <p>Dodajesz Wyniki do meczu nr<input type ="text" id="nrMatch" value ="{{ lastMatch.matchNr + 1}}" name ="matchNr"></p>
+                <p>Dodajesz Wyniki do meczu nr<input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ lastMatch.matchNr + 1}}" name ="matchNr"></p>
             {% else %}
-                <p>Dodajesz Wyniki do meczu nr<input type ="text" id="nrMatch" value ="1" name ="matchNr"></p>
+                <p>Dodajesz Wyniki do meczu nr<input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="1" name ="matchNr"></p>
             {% endif %}
             
             <select  onchange="userHasAddedMatch()" id = "user"  name ="user">
@@ -39,9 +39,9 @@
                     <option  value ={{ user.login }}>{{ user.login }} </option>
                 {% endfor %}                
             </select>
-            <p>Punkty<input  type="text" name ="points"></p>
-            <p>Piwa<input  type="text" name ="beers" ></p>
-            <p>Żetony<input type ="text" name ="tokens"></p></p>
+            <p>Punkty<input  type="text" id="points" name ="points"></p>
+            <p>Piwa<input  type="text" id="beers" name ="beers" ></p>
+            <p>Żetony<input type ="text" id="tokens" name ="tokens"></p></p>
             <p><input type ="submit" value="Zapisz">            
         </form>
         {% if resultForUserAdded != null %}

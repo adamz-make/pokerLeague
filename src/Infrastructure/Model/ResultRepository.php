@@ -25,11 +25,9 @@ class ResultRepository implements ResultRepositoryInterface{
         $sql = 'select Id, idUsera, IdMeczu, liczbaPunktow, LiczbaPiw, LiczbaZetonow from wyniki where idUsera =? and idMeczu=?';
         $array = [$result->getUserId(), $result->getMatchId()];
         $result = $db->select($sql, $array);
-        if (!empty($result))
+        foreach ($result as $row)
         {
-            var_dump($result);
-            exit;
-            return new Result($result['Id'], $result['idUsera'], $result['IdMeczu'], $result['liczbaPunktow'], $result['LiczbaPiw'], $result['LiczbaZetonow']);
+            return new Result($row['Id'], $row['idUsera'], $row['IdMeczu'], $row['liczbaPunktow'], $row['LiczbaPiw'], $row['LiczbaZetonow']);
         }
         return null;
     }
