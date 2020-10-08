@@ -7,7 +7,6 @@ use App\Domain\Model\User;
 use App\Domain\Model\Match;
 use App\Domain\Model\ResultRepositoryInterface;
 use App\Domain\Services\Utils\AddResultService as DomainAddResultService;
-use App\Application\Services\Utils\ResultAddedForUserException;
 
 //jeżeli użytkownik ma już dodany wynik do meczu to nie dodawaj kolejnego
 
@@ -35,8 +34,7 @@ class AddResultService {
             $this->resultRepo->add($result);
             return $result;
         }
-        throw new ResultAddedForUserException("Użytkownik " .
-            $user->getLogin() . " ma już dodany wynik do meczu o numerze " . $this->match->getMatchNr());
-        return null;
-        }
+    }
+    
+        
 }

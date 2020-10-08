@@ -60,25 +60,6 @@ and open the template in the editor.
     .header{
         float:left;
         width: 100%;
-        
-    }
-    .userScore{
-        display: inline;
-        color: red;
-        width: 100%;
-    }
-    
-    user{
-        float:left;
-        width: 95%;
-    }
-    
-    .score{
-        float: left;
-        width: 5%;
-        font-size: 120%;
-        font-weight: bold;
-        
     }
     
     

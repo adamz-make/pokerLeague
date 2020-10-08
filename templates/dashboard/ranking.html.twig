@@ -1,7 +1,7 @@
 <html>
     <head>
      <meta charset="UTF-8">
-     <link rel="stylesheet" href="/css/newCascadeStyleSheet.css">
+     <link rel="stylesheet" href="/css/rankingCss.css">
     </head>
     <body>            
         <div class ="header">
@@ -14,15 +14,16 @@
                 </ul>
             </nav>
         </div>
+        <div class ="content">
         {% for userRanking in ranking %}
             <div class = "userRanking">
-                <div class = "userScore"><div class ="user" <p>{{ loop.index }} {{ userRanking.user.login }}</p></div>      
-                <div class = "score"><p>{{ userRanking.points }}</p></div>
-                    </div>        
-            <p>{{ userRanking.beers }}</p>            
-            <p>{{ userRanking.tokens }}</p>
+                <div class = "userScore"><div class ="user"><div class ="number">{{ loop.index }}.</div><div class ="userlogin">{{ userRanking.user.login }}</div></div>      
+                    <div class = "score">{{ userRanking.points }} pkt</div>
+                </div>        
+                <div class ="beersTokens">{{ userRanking.beers }} piw /{{ userRanking.tokens }}</div>            
             </div>
         {% endfor %} 
+        </div>
     </body>
 </html>
 

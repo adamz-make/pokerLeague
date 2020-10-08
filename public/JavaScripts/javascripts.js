@@ -14,14 +14,22 @@ function userHasAddedMatch()
         type: "GET",
 	data: "user=" + user.options[user.selectedIndex].value + "&matchNr=" + matchNr.value
     }).done(function(result) {
+
+        document.getElementById("ResultForUserExist").innerHTML = "";
+        document.getElementById("beers").value = "";
+        document.getElementById("tokens").value = "";
+        document.getElementById("points").value = "";
+
         let resultJson = JSON.parse(result);
         if (resultJson.result !== null)
         {
             document.getElementById("beers").value = resultJson.result.beers;
             document.getElementById("tokens").value = resultJson.result.tokens;
             document.getElementById("points").value = resultJson.result.points;
-            document.getElementById("ResultForUserExist").innerHTML = "Użytkownik o loginie " + resultJson.user.login + " ma już dodany wynik do meczu nr" + resultJson.match.matchNr;
+            document.getElementById("ResultForUserExist").innerHTML = "Użytkownik o loginie " + resultJson.user.login + " ma już dodany wynik do meczu nr " + resultJson.match.matchNr;
         }
+        
+
     });
     
     
