@@ -15,6 +15,7 @@ return [
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
         '/home' => [[['_route' => 'home', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::index'], null, null, null, false, false, null]],
         '/home/loggedin' => [[['_route' => 'loggedin', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::loggedin'], null, null, null, false, false, null]],
+        '/home/rankingReport' => [[['_route' => 'rankingReport', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\ReportController::allUsersReport'], null, null, null, false, false, null]],
         '/home/addResults' => [[['_route' => 'addResults', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\ResultController::addResults'], null, null, null, false, false, null]],
         '/home/ranking' => [[['_route' => 'ranking', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\ResultController::ranking'], null, null, null, false, false, null]],
         '/home/addResults/MatchAddedForUser' => [[['_route' => 'matchAddedForUser', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\ResultController::MatchAddedForUser'], null, null, null, false, false, null]],

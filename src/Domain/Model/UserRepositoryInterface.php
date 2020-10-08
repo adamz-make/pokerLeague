@@ -9,5 +9,6 @@ interface UserRepositoryInterface {
     public function userExists(string $login,string $mail): ?User;
     public function register (User $user);
     public function getById($id): ?User;
+    public function getAllUsers();
 }
 
