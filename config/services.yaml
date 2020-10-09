@@ -37,4 +37,6 @@ services:
         class: App\Infrastructure\Model\MatchRepository
     App\Domain\Model\UserRepositoryInterface:
         class: App\Infrastructure\Model\UserRepository
+    App\Domain\Model\ReportRepositoryInterface:
+        class: App\Infrastructure\Model\ReportRepository
         
