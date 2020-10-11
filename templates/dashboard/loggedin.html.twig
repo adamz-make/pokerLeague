@@ -13,6 +13,9 @@
                     <li><a href ="{{ url('ranking') }}">Ranking</a></li>
                     <li><a href ="">Nagrody</a></li>
                     <li><a href ="{{ url('logout') }}">Wyloguj się</a></li>
+                    {% if report!= null %}
+                    {{ report }}
+                    {% endif %}
                 </ul>
             </nav>
         </div>

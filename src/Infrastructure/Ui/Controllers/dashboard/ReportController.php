@@ -10,40 +10,69 @@ use App\Domain\Model\UserRepositoryInterface;
 use App\Domain\Model\ReportRepositoryInterface;
 use App\Infrastructure\Model\Report;
 use App\Application\Services\CreateReportService;
+use Symfony\Component\HttpFoundation\Request;
+use App\Application\Services\Utils\NoReportException;
+use App\Infrastructure\Factory\AbstractReportFactory;
+use App\Application\Payload\ReportFilters;
+use Symfony\Component\HttpFoundation\Response;
 
 class ReportController extends AbstractController{
-    
+        
+     /**
+     *@Route (path="/home/Reports", name="Reports")
+     */
+    public function reports(Request $request,ReportRepositoryInterface $reportRepo)
+    {
+        $reportName ="";
+        if ($_SERVER['REQUEST_METHOD']=='GET')
+        {
+            $reportName = ($request->query->get('report'));                
+            $createReportService = new CreateReportService($reportRepo);
+            try
+            {
+                $spreadSheet = $createReportService->execute($reportName);
+                $report = new Report ($reportName, $spreadSheet);
+                $report->saveFileToXlsx();
+                return $this->render('dashboard/loggedin.html.twig',[
+                    'report' => null
+                ]);  
+            } catch (NoReportException $ex) 
+            {
+                return $this->render('dashboard/loggedin.html.twig',[
+                    'report' => $ex->getMessage()
+                ]);  
+            }
+        }
+        return $this->render('dashboard/loggedin.html.twig',[
+            'report' => null
+        ]); 
+    }
     /**
-     *@Route (path="/home/rankingReport", name="rankingReport")
+     * @Route (path="/reports/getReports/{reportName}/{reportOutput}", name ="getReports", methods = {"GET"})
      */
-    public function rankingReport(UserRepositoryInterface $userRepo)
+    public function getReports(Request $request, string $reportName, string $reportOutput)
     {
-        return $this->render('dashboard/loggedin.html.twig');
-    }
-    
-     /**
-     *@Route (path="/home/usersReport", name="usersReport")
-     */
-    public function allUsersReport(ReportRepositoryInterface $reportRepo)
-    {
-        $createReportService = new CreateReportService($reportRepo);
-        $reportName = 'AllUsersReport';
-        $spreadSheet = $createReportService->execute($reportName);    
-        $report = new Report ($reportName, $spreadSheet);
-        $report->saveFileToXlsx();
-        return $this->render('dashboard/loggedin.html.twig');
-    }
-    
-     /**
-     *@Route (path="/home/resultsForAllUsers", name="usersReport")
-     */
-    public function resultsForAllUsers(ReportRepositoryInterface $reportRepo)
-    {
-        $createReportService = new CreateReportService($reportRepo);
-        $reportName = 'resultsForAllUsers';
-        $spreadSheet = $createReportService->execute($reportName);    
-        $report = new Report ($reportName, $spreadSheet);
-        $report->saveFileToXlsx();
-        return $this->render('dashboard/loggedin.html.twig');
+        $factory = AbstractReportFactory::getFactory($reportName);
+        $dataCreator = $factory->getDataCreator();
+        $reportFilters = new ReportFilters();
+         if ($_SERVER['REQUEST_METHOD']=='GET')
+         {
+              $reportFilters->setDateFrom($request->query->get('dateFrom'));
+              $reportFilters->setDateTo($request->query->get('dateTo'));
+              $reportFilters->setUsers($request->query->get('users'));  
+         }
+        $dataCreator->setFilters($reportFilters);
+        $dataCreator->prepareData();
+        $reportExporter = $factory->getReportExporter();
+        if ($reportOutput == 'html')
+        {
+            return new Response($reportExporter->exportToHtml($dataCreator->getData()));
+        }
+        elseif ($reportOutput == 'excel')
+        {
+            list($path, $fileName) = $reportExporter->exportToExcel($dataCreator->getData());
+            return $this->file($path, $fileName);
+        }
+        return new Response('Niepoprawne parametry wywołania', 400);
     }
 }

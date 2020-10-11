@@ -1,0 +1,30 @@
+ul,li{
+    
+    float: left;
+    }
+    
+    a{
+        text-decoration:none;
+        color: black;
+    }
+    
+    li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    }
+    ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    }
+    .header{
+        padding-top: 1%;
+        float:left;
+        font-size: 130%;
+        margin-left: 25%;
+        width: 50%;
+        
+    }

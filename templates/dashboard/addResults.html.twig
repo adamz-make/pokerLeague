@@ -1,7 +1,8 @@
 <html>
     <head>
      <meta charset="UTF-8">
-     <link rel="stylesheet" href="/css/newCascadeStyleSheet.css">
+     <link rel="stylesheet" href="/css/header.css">
+     <link rel="stylesheet" href="/css/addResults.css">
      <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
      <script src="/JavaScripts/javascripts.js"></script>
        
@@ -14,41 +15,58 @@
     {% endfor %}
     {% endif %}
 
-        <div class ="header">
-            <nav>
-                <ul>
-                    <li><a href ="{{ url('addResults') }}">Dodaj Wyniki</a></li>
-                    <li><a href ="{{ url('ranking') }}">Ranking</a></li>
-                    <li><a href ="">Nagrody</a></li>
-                    <li><a href ="{{ url('logout') }}">Wyloguj się</a></li>
-                </ul>
-            </nav>
+    <div class ="header">
+        <nav>
+            <ul>
+                <li><a href ="{{ url('addResults') }}">Dodaj Wyniki</a></li>
+                <li><a href ="{{ url('ranking') }}">Ranking</a></li>
+                <li><a href ="">Nagrody</a></li>
+                <li><a href ="{{ url('logout') }}">Wyloguj się</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class ="content">
+        <div class ="form">
+            <form method ="POST">
+                <div class ="nrMatch">
+                    {% if match != null %}
+                        <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
+                        <div class ="matchNr"></div><div><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ match.matchNr }}" name ="matchNr"></div>
+                    {% elseif lastMatch!=null %}
+                    <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
+                    <div class ="matchNr"></div><div><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ lastMatch.matchNr + 1}}" name ="matchNr"></div>
+                    {% else %}
+                    <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
+                    <div class ="matchNr"></div><div><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="1" name ="matchNr"></div>
+                    {% endif %}
+                </div>
+                <select  onchange="userHasAddedMatch()" id = "user"  name ="user">
+                    {% for user in users%}
+                        <option  value ={{ user.login }}>{{ user.login }} </option>
+                    {% endfor %}                
+                </select>
+                <div class ="inputResult">
+                    <div class ="inputTitle">
+                        <div class = "inputTitles">Punkty</div>
+                        <div class ="inputTitles">Piwa</div>
+                        <div class ="inputTitles">Żetony</div>
+                    </div>
+                    <div class ="inputValue">
+                        <div class = "inputValues"><input type="text" id="points" name ="points"></div>
+                        <div class ="inputValues"><input  type="text" id="beers" name ="beers" ></div>
+                        <div class = "inputValues"><input type ="text" id="tokens" name ="tokens"></div>
+                    </div>   
+                </div>
+
+                <div class ="savebtn"><input id ="savebtn" type ="submit" value="Zapisz"></div>
+            </form>
         </div>
-        
-        <form method ="POST">
-            {% if match != null %}
-                <p>Dodajesz Wyniki do meczu nr<input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ match.matchNr }}" name ="matchNr"></p>  
-            {% elseif lastMatch!=null %}
-                <p>Dodajesz Wyniki do meczu nr<input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ lastMatch.matchNr + 1}}" name ="matchNr"></p>
-            {% else %}
-                <p>Dodajesz Wyniki do meczu nr<input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="1" name ="matchNr"></p>
-            {% endif %}
-            
-            <select  onchange="userHasAddedMatch()" id = "user"  name ="user">
-                {% for user in users%}
-                    <option  value ={{ user.login }}>{{ user.login }} </option>
-                {% endfor %}                
-            </select>
-            <p>Punkty<input  type="text" id="points" name ="points"></p>
-            <p>Piwa<input  type="text" id="beers" name ="beers" ></p>
-            <p>Żetony<input type ="text" id="tokens" name ="tokens"></p></p>
-            <p><input type ="submit" value="Zapisz">            
-        </form>
         {% if resultForUserAdded != null %}
         {{ resultForUserAdded }}
         {% endif %}
         
-        <p><div id ="ResultForUserExist"></div></p>   
+        <div id ="ResultForUserExist"></div>
+    </div>
 
     </body>
 </html>

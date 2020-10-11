@@ -1,0 +1,58 @@
+    .content{
+        padding-top: 5%;
+        padding-left: 5%;
+        margin-left: 28%;
+    }
+    
+    #savebtn{
+
+    }
+    .form{
+        height: 100%;
+        width: 50%;
+    }
+    .nrMatch{
+        width: 90%;
+        padding-bottom: 3%;
+    }
+    .matchNr{
+        float: left;
+        width: 50%;
+    }
+    #nrMatch{
+        border-style: none;
+        width: 10%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    
+    .matchText{
+        float: left;
+        width:50%
+    }
+    .savebtn{
+        background-color: black;
+        color: white;
+        width: 25%;
+        height: 6%; 
+    }
+    .inputResult{
+        background-color: gray;
+        /*opacity:0.1;*/
+        width: 20%;
+        color: black;
+    }
+    .inputTitle{
+        float:left;
+        width: 35%;
+        
+    }
+    .inputValue{
+        float:left;
+        width:65%;
+    }
+    #points, #beers, #tokens{
+        width:100%;
+    }
+    
+    
+

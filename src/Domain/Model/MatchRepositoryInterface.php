@@ -7,6 +7,5 @@ Interface MatchRepositoryInterface {
  public function getLastMatch(): ?Match;
  public function getMatchByNr($nr): ?Match;
  public function add(Match $match);
-    
- 
+ public function getAllMatches();
 }

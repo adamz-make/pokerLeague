@@ -22,6 +22,19 @@ class MatchRepository implements MatchRepositoryInterface {
         return null;        
     }
     
+    public function getAllMatches()
+    {
+        $db = Db::getInstance();
+        $sql = 'select Id, nrMeczu, dataDodania from mecze'; 
+        $array = [];
+        $result = $db->select($sql, $array);
+        foreach ($result as $row)
+        {
+            $matchArray[]= new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+        }
+        return $matchArray;      
+    }
+    
     public function getMatchByNr($nr): ?Match
     {
         $db = Db::getInstance();

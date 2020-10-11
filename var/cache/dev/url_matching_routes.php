@@ -15,8 +15,7 @@ return [
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
         '/home' => [[['_route' => 'home', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::index'], null, null, null, false, false, null]],
         '/home/loggedin' => [[['_route' => 'loggedin', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\HomeController::loggedin'], null, null, null, false, false, null]],
-        '/home/rankingReport' => [[['_route' => 'rankingReport', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\ReportController::rankingReport'], null, null, null, false, false, null]],
-        '/home/usersReport' => [[['_route' => 'usersReport', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\ReportController::allUsersReport'], null, null, null, false, false, null]],
+        '/home/Reports' => [[['_route' => 'Reports', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\ReportController::reports'], null, null, null, false, false, null]],
         '/home/addResults' => [[['_route' => 'addResults', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\ResultController::addResults'], null, null, null, false, false, null]],
         '/home/ranking' => [[['_route' => 'ranking', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\ResultController::ranking'], null, null, null, false, false, null]],
         '/home/addResults/MatchAddedForUser' => [[['_route' => 'matchAddedForUser', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\ResultController::MatchAddedForUser'], null, null, null, false, false, null]],
@@ -42,6 +41,7 @@ return [
                         .'|(*:159)'
                     .')'
                 .')'
+                .'|/reports/getReports/([^/]++)/([^/]++)(*:206)'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
@@ -51,8 +51,9 @@ return [
         116 => [[['_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'], ['token'], null, null, false, false, null]],
         136 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
         149 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
-        159 => [
-            [['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null],
+        159 => [[['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null]],
+        206 => [
+            [['_route' => 'getReports', '_controller' => 'App\\Infrastructure\\Ui\\Controllers\\dashboard\\ReportController::getReports'], ['reportName', 'reportOutput'], ['GET' => 0], null, false, true, null],
             [null, null, null, null, false, false, 0],
         ],
     ],

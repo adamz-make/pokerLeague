@@ -47,4 +47,18 @@ class ResultRepository implements ResultRepositoryInterface{
         return $resultArray;
     }
     
+    public function getAllResults()
+    {
+        $db = Db::getInstance();
+        $sql = 'select id,idUsera, idMeczu, liczbaPiw, LiczbaPunktow, LiczbaZetonow  from wyniki';
+        $array =[];
+        $result = $db->select($sql, $array);
+        foreach($result as $row)
+        {
+            $resultArray[] = new Result($row['id'], $row['idUsera'], $row['idMeczu'], $row['LiczbaPunktow'], $row['liczbaPiw'], $row['iczbaZetonow']);  
+        }
+        return $resultArray;
+        
+    }
+    
 }

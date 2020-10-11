@@ -5,4 +5,5 @@ namespace App\Domain\Model;
 
 interface ReportRepositoryInterface {
     public function allUsers();
+    public function resultsForUsers();
 }

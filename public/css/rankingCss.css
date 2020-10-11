@@ -1,41 +1,15 @@
-    ul,li{
-    
-    float: left;
-    }
-    
-    a{
-        text-decoration:none;
-        color: black;
-    }
-    
-    li a {
-    display: block;
-    color: black;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    }
-    ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    }
-    .header{
-        padding-top: 1%;
-        float:left;
-        width: 100%;
-        font-size: 130%;
-        
-    }
+
     .content{
         padding-top: 5%;
         padding-left: 5%;
+        margin-left: 28%;
     }
     .userRanking{
         /*background-color: black;*/
-        width: 15%;
+        width: 25%;
         border-bottom: thin solid gray;
         padding-top: 1%;
+
     }
     .userScore{
         /*background-color: silver;*/
@@ -46,12 +20,12 @@
         float: left;
         /*background-color: yellow;*/
         width: 40%;
-        font-size: 150%;
+        font-size: 170%;
     }
     
     .score{
         float: left;
-        font-size: 120%;
+        font-size: 140%;
         /*background-color: green;*/
         width: 60%;
         text-align:right;

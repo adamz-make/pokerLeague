@@ -50,6 +50,8 @@ class HomeController extends AbstractController{
 //            header('Location: /home/login');
 //            exit;
 //        }
-        return $this->render('dashboard/loggedin.html.twig');
+        return $this->render('dashboard/loggedin.html.twig',[
+            'report' => null
+        ]);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Domain\Services\Utils;
+namespace App\Domain\Services;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
