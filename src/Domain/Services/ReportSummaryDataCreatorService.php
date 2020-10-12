@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Domain\Services;
 
 use App\Domain\Model\Match;
+use App\Domain\Model\Result;
+use App\Domain\Model\User;
 
 class ReportSummaryDataCreatorService {
     
@@ -13,12 +15,13 @@ class ReportSummaryDataCreatorService {
         $filteredUsers = null;
         $filteredResults = null;
         $filteredMatches = $this->getMatches($matches, $filters['dateFrom'], filters['dateTo']);
+        $filteredUsers = $users; //są już pobrani wyfiltorwani Userzy
+        $filteredResults = $this->getResults($results, $filteredUsers, $filteredMatches);
         
-        //users
         
         // i z dwóch powyższych powybierać Rezultaty
         
-        $data = [$filteredMatches, $users, $results];
+        $data = ['Matches' => $filteredMatches, 'Users' => $filteredUsers, 'Results' => $filteredResults];
         return $data;
     }
     
@@ -55,4 +58,40 @@ class ReportSummaryDataCreatorService {
         }       
         return $filteredMatches;
     }
+    
+    private function getResults(Result $results, User $users, Match $matches)
+    {
+        $filteredResults = null;
+        foreach ($results as $result)
+        {
+            foreach ($users as $user)
+                if ($result->getUserId() === $user->getId ())
+                {
+                    $filteredResults[] = $result;
+                }
+        }
+        foreach($results as $result)
+        {
+            foreach ($matches as $match)
+            {
+                if ($result->getMatchId() === $match->getMatchId())
+                {
+                    $addResult = true;
+                    foreach ($filteredResults as $filteredResult) // sprawdzić trzeba, czy już rezultat nie został dodany w userze (żeby nie dublować)
+                    {
+                        if ($result->getId() === $filteredResult->getId())
+                        {
+                            $addResult = false;
+                        }
+                    }
+                    if ($addResult === true)
+                    {
+                        $filetedResults[] = $result;
+                    }
+                }
+            }
+        }
+        return $filteredResults;   
+    }
+    
 }

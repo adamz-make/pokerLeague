@@ -15,6 +15,9 @@ use App\Application\Services\Utils\NoReportException;
 use App\Infrastructure\Factory\AbstractReportFactory;
 use App\Application\Payload\ReportFilters;
 use Symfony\Component\HttpFoundation\Response;
+use App\Infrastructure\Model\UserRepository;
+use App\Infrastructure\Model\MatchRepository;
+use App\Infrastructure\Model\ResultRepository;
 
 class ReportController extends AbstractController{
         
@@ -62,7 +65,7 @@ class ReportController extends AbstractController{
               $reportFilters->setUsers($request->query->get('users'));  
          }
         $dataCreator->setFilters($reportFilters);
-        $dataCreator->prepareData();
+        $dataCreator->prepareData(new UserRepository(), new ResultRepository(), new MatchRepository() );
         $reportExporter = $factory->getReportExporter();
         if ($reportOutput == 'html')
         {

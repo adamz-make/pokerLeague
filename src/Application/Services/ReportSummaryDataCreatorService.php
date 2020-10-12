@@ -14,31 +14,24 @@ use App\Domain\Services\ReportSummaryDataCreatorService as DomainReportSummaryDa
 class ReportSummaryDataCreatorService implements ReportDataCreatorInterface 
 {
 
-    private $userRepo;
-    private $resultRepo;
-    private $matchRepo;
     /**
      *
      * @var ReportFilters
      */
     private $filters;
     private $data;
-    
-    public function __construct(UserRepositoryInterface $userRepo, ResultRepositoryInterface $resultRepo, MatchRepositoryInterface $matchRepo)
+
+    public function prepareData(UserRepositoryInterface $userRepo, ResultRepositoryInterface $resultRepo, MatchRepositoryInterface $matchRepo) 
     {
-        $this->userRepo = $userRepo;
-        $this->resultRepo = $resultRepo;
-        $this->matchRepo = $matchRepo;
-    }
-    
-    public function prepareData() 
-    {
-        $matches = $this->matchRepo->getAllMatches();
-        $results = $this->resultRepo->getAllResults();
-        $users = $this->userRepo->getAllUsers();
-        $filtersArray = ['dateFrom' => $this->filters->getDateFrom(), 'dateTo' => $this->filters->getDateTo(), 'users' => $this->filters->getUsers()];
+        $matches = $matchRepo->getAllMatches();
+        $results = $resultRepo->getAllResults();
+        foreach($this->filters->getUsers() as $userName)
+        {
+            $users[] = $userRepo->getByLogin($userName); //users są już tutaj pobrani
+        }
+        $filtersArray = ['dateFrom' => $this->filters->getDateFrom(), 'dateTo' => $this->filters->getDateTo()];
         $domainReportSummaryDataCreatorService = new DomainReportSummaryDataCreatorService();
-        $domainReportSummaryDataCreatorService->Execute($matches, $users , $results, $filtersArray);
+        $this->data = $domainReportSummaryDataCreatorService->Execute($matches, $users , $results, $filtersArray); 
     }
     
     /**
@@ -52,7 +45,7 @@ class ReportSummaryDataCreatorService implements ReportDataCreatorInterface
 
     public function getData() 
     {
-        return 'dane';    
+        return $data;
     }
 
 }
