@@ -9,50 +9,26 @@ use App\Domain\Model\User;
 use App\Domain\Model\Match;
 use App\Domain\Model\Result;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Html;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as Readxlsx;
 
 class ReportSummaryExporterService implements ReportExporterInterface{
     
     public function exportToExcel($data): array 
     {
-        $spreadSheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+       dd($data);
+       exit;
+        $spreadSheet = new Spreadsheet();
         $sheet = $spreadSheet->getActiveSheet();
         $sheet->mergeCells('A1:C1');
-        $sheet->setCellValue('A1', 'Summary Report');
-        
-        $headers = $this->setHeaders($data['Users']);
-        $r = 4;
-        $c = 1;
-        //nagłówki raportu
-        foreach ($headers as $header)
-        {
-            $sheet->setCellValueByColumnAndRow($c, $r, $header);
-            $c += 1;
-        }
-        $r = 5;
-        $c = 1;
-        //numery meczów
-        $matchNrList = $this->getMatchNumbers($data['Matches']);
-        foreach ($matchNrList as $matchNr)
-        {
-            $sheet->setCellValueByColumnAndRow($c, $r, $header);
-            $r += 1;
-        }
-        //Liczba piw po każdym meczu dla każdego gracza
-        $results = $data['Results'];
-        foreach($results as $result)
-        {
-            $resultNrMatch = $this->getNrMatchFromResult($result,$data['Matches']);
-            $rowCoordinator = $this->getRowNrFromExcel($resultNrMatch, $spreadSheet);
-            $resultUser = $this->getUserNameForResult($result, $data['Users']);
-            $columnCoordinator = $this->getColumnNrFromExcel ($resultUser, $spreadSheet);
-            $sheet->setCellValueByColumnAndRow($columnCoordinator, $rowCoordinator, $this->getBeersFromResult($result));
-        }
-        
-        
+        $sheet->setCellValue('A1', 'Summary Report');   
+        $this->setHeaders($data['Users'], $spreadSheet); //nagłówki w tabeli
+        $this->setMatchNumbersList($this->getMatchNumbers($data['Matches']), $spreadSheet); // nr meczy jeden pod drugim
+        $this->setDataForUserAndMatchNr($data,$spreadSheet); // dane dla danego użytkownika w danym meczu
+        $this->doSummary($spreadSheet, $data);   //podsumowanie dla każdego gracza w ilu meczach brał udział i jaki ma bilans
         $writer = new Xlsx($spreadSheet);
-        $writer->save('report');
-        //użyć php spreadsheet. Spreadsheet (odpwoiednia metoda) moze dane zapisać do Excela, albo wyrzucić w Htmlu
-        //return ['sciezka do pliku razem z nazwa pliku', 'nazwa pliku wyrzucana do przegladarki'];
+        $writer->save('report.xlsx');
+        return [getcwd() . '\report.xlsx','report.xlsx'];
     }
 
     /**
@@ -61,31 +37,98 @@ class ReportSummaryExporterService implements ReportExporterInterface{
      */
     public function exportToHtml($data): string  //obiekt który ma informację jacy są użytkownicy, mecze rezultaty itd.
     {
+        $reader = new Readxlsx;
+        $spreadSheet = $reader->load('C:\xampp\htdocs\PokerLeague\public\report.xlsx');
+        $writer = new Html($spreadSheet);
+        $writer->save('asscsa.html');
+        return $spreadSheet->getProperties()->getTitle();
+ 
+        
+
+        
+        
         return "Raport Podsumowania Html :$data";
     }
+    
+    private function doSummary(Spreadsheet &$spreadSheet, $data)
+    {
+        $row = $spreadSheet->getActiveSheet()->getHighestRow() + 3;
+        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(2, $row, 'Podsumowanie:');
+        $row += 1;
+        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(2, $row, 'Gracze:');
+        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(3, $row, 'LiczbaMeczy:');
+        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(4, $row, 'LiczbaPiw:');
+        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(5, $row, 'LiczbaZetonow:');
+        $row +=1;
+        $rowForUsers = $row;
+
+        foreach ($data['Users'] as $user)
+        {
+            $countMatchesForUser = 0;
+            $countBeersForUser = 0;
+            $countTokensForUser = 0;
+            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(2, $rowForUsers, $user->getLogin());
+            foreach ($data['Results'] as $result)
+            {
+                if ($user->getId() === $result->getUserId())
+                {
+                    $countMatchesForUser += 1;
+                    $countBeersForUser += $result->getBeers();
+                    $countTokensForUser += $result->getTokens();
+                    
+                }
+            }
+            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(3, $rowForUsers, $countMatchesForUser);
+            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(4, $rowForUsers, $countBeersForUser);
+            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(5, $rowForUsers, $countTokensForUser);
+            $rowForUsers += 1;
+        }
+ 
+    }
+    private function getBeersFromPreviousResultRow($row, $column, Spreadsheet $spreadSheet)
+    {
+        if (is_numeric($spreadSheet->getActiveSheet()->getCellByColumnAndRow($column, $row - 1)->getValue()))
+        {
+            return $spreadSheet->getActiveSheet()->getCellByColumnAndRow($column, $row - 1)->getValue();
+        }
+        return 0;
+        
+    }
+    
+    private function getMatchNumbers ($matches)
+    {
+        $matchesNrList = null;
+        foreach ($matches as $match)
+        {
+            $matchesNrList[] = $match->getMatchNr();
+        }
+        return $matchesNrList;
+    }
+        
+    
     
     private function getBeersFromResult(Result $result)
     {
         return $result->getBeers();
     }
     
-    private function getColumnNrFromExcel($resultUser, Spreadsheet $spreadSheet)
+    private function getUserColumnNrFromExcel($resultUser, Spreadsheet $spreadSheet)
     {
         $r = 4; //dane odnośnie użytkownikow są w 4 wierszu
         $c = 2; // dane zaczynają się od drugiej kolumnny
          do 
          {
-            $userName = $spreadSheet->getActiveSheet()->getCellByColumnAndRow($c, $r);
+            $userName = $spreadSheet->getActiveSheet()->getCellByColumnAndRow($c, $r)->getValue();
             if ($userName === $resultUser)
             {
                 return $c;
             }
             $c +=1;
-         } while ($spreadSheet->getActiveSheet->getCellByColumnAndRow($c,$r) !== '');
+         } while ($spreadSheet->getActiveSheet()->getCellByColumnAndRow($c,$r)->getValue() !== '');
          return $c;
     }
     
-    private function getUserNameForResult(Result $result, User $users)
+    private function getUserNameForResult( $result, $users)
     {
         $userId = $result->getUserId();
         foreach ($users as $user)
@@ -98,23 +141,23 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         return null;
     }
     
-    private function getRowNrFromExcel($resultNrMatch, Spreadsheet $spreadSheet)
+    private function getMatchRowNrFromExcel($resultNrMatch, Spreadsheet $spreadSheet)
     {
         $r = 5; //dane odnośnie nr meczu są od 5 wiersza
         $c = 1; //dane są w 1 kolumnie
-         do 
-         {
-            $nrMatch = $spreadSheet->getActiveSheet()->getCellByColumnAndRow($c, $r);
-            if ($nrMatch === $resultNrMatch)
+        $highestRow = $spreadSheet->getActiveSheet()->getHighestRow();
+        for ($r = 5; $r <= $highestRow; $r++)
+        {
+            $nrMatch = $spreadSheet->getActiveSheet()->getCellByColumnAndRow($c, $r)->getValue();
+             if ($nrMatch == $resultNrMatch)
             {
                 return $r;
             }
-            $r +=1;
-         } while ($spreadSheet->getActiveSheet->getCellByColumnAndRow($c,$r) !== '');
-         return $r;
+        }
+        return null;
     }
     
-    private function getNrMatchFromResult(Result $result, Match $matches)
+    private function getNrMatchFromResult(Result $result, $matches)
     {
         $resultMatchId = $result->getMatchId();
         $nrMatch = null;
@@ -128,13 +171,41 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         return $nrMatch;
     }
     
-    private function setHeaders(User $users)
+    private function setHeaders($users, Spreadsheet &$spreadSheet)
     {
-        $headers = ['Nr meczu'];
+        $r = 4;
+        $c = 1;
+        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow($c, $r, 'Nr meczu');
+        $c += 1;
         foreach ($users as $user)
         {
-            $headers[] = $user->getLogin();
+            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow($c, $r,$user->getLogin());
+            $c +=1;
         }            
-        return $headers;        
+    }
+    
+    private function setMatchNumbersList($matchNumbers, Spreadsheet &$spreadSheet)
+    {
+        $r = 5;
+        $c = 1;
+        foreach ($matchNumbers as $matchNr)
+        {
+            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow($c, $r, $matchNr);
+            $r += 1;
+        }
+    }
+    
+    private function setDataForUserAndMatchNr($data, Spreadsheet &$spreadSheet)
+    {
+        $results = $data['Results'];
+        foreach($results as $result)
+        {
+            $resultNrMatch = $this->getNrMatchFromResult($result,$data['Matches']);
+            $rowCoordinator = $this->getMatchRowNrFromExcel($resultNrMatch, $spreadSheet);
+            $resultUser = $this->getUserNameForResult($result, $data['Users']);
+            $columnCoordinator = $this->getUserColumnNrFromExcel($resultUser, $spreadSheet);
+            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow($columnCoordinator,
+                    $rowCoordinator, ($this->getBeersFromResult($result) + $this->getBeersFromPreviousResultRow($rowCoordinator,$columnCoordinator, $spreadSheet)));
+        }
     }
 }

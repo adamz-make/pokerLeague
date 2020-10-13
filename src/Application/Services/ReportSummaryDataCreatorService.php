@@ -20,19 +20,26 @@ class ReportSummaryDataCreatorService implements ReportDataCreatorInterface
      */
     private $filters;
     private $data;
-
-    public function prepareData(UserRepositoryInterface $userRepo, ResultRepositoryInterface $resultRepo, MatchRepositoryInterface $matchRepo) 
+    private $userRepo;
+    private $resultRepo;
+    private $matchRepo;
+    
+    public function __construct(UserRepositoryInterface $userRepo, ResultRepositoryInterface $resultRepo, MatchRepositoryInterface $matchRepo)
     {
-        $matches = $matchRepo->getAllMatches();
-        $results = $resultRepo->getAllResults();
-        foreach($this->filters->getUsers() as $userName)
-        {
-            $users[] = $userRepo->getByLogin($userName); //users są już tutaj pobrani
-        }
-        $filtersArray = ['dateFrom' => $this->filters->getDateFrom(), 'dateTo' => $this->filters->getDateTo()];
+        $this->userRepo = $userRepo;
+        $this->matchRepo = $matchRepo;
+        $this->resultRepo = $resultRepo;
+    }
+
+    public function prepareData() 
+    {
+        $matches = $this->matchRepo->getAllMatches();
+        $results = $this->resultRepo->getAllResults();
+        $users = $this->userRepo->getAllUsers();    
+        $filtersArray = ['dateFrom' => $this->filters->getDateFrom(), 'dateTo' => $this->filters->getDateTo(), 'users' => $this->filters->getUsers()];
         $domainReportSummaryDataCreatorService = new DomainReportSummaryDataCreatorService();
         $this->data = $domainReportSummaryDataCreatorService->Execute($matches, $users , $results, $filtersArray); 
-    }
+        }
     
     /**
      * 
@@ -45,7 +52,7 @@ class ReportSummaryDataCreatorService implements ReportDataCreatorInterface
 
     public function getData() 
     {
-        return $data;
+        return $this->data;
     }
 
 }

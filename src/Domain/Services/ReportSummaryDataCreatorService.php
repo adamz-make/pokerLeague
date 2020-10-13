@@ -9,13 +9,13 @@ use App\Domain\Model\User;
 
 class ReportSummaryDataCreatorService {
     
-    public function Execute(Match $matches, $users, $results, $filters)
+    public function Execute($matches, $users, $results, $filters)
     {
         $filteredMatches = null;
         $filteredUsers = null;
         $filteredResults = null;
-        $filteredMatches = $this->getMatches($matches, $filters['dateFrom'], filters['dateTo']);
-        $filteredUsers = $users; //są już pobrani wyfiltorwani Userzy
+        $filteredMatches = $this->getMatches($matches, $filters['dateFrom'], $filters['dateTo']);
+        $filteredUsers = $this->getUsers($users, $filters['users']);
         $filteredResults = $this->getResults($results, $filteredUsers, $filteredMatches);
         
         
@@ -25,28 +25,51 @@ class ReportSummaryDataCreatorService {
         return $data;
     }
     
-    private function getMatches(Match $matches, $dateFrom, $dateTo)
+    private function getUsers ($users, $filteredUsers)
+    {
+        $usersToReturn = null;
+        if (empty ($filteredUsers))
+        {
+            $usersToReturn = $users;
+        }
+        else
+        {
+            foreach ($users as $user)
+            {
+                foreach ($filteredUsers as $filteredUser)
+                {
+                    if ($user->getLogin() === $filteredUser)
+                    {
+                        $usersToReturn[] = $user;
+                    }
+                }
+            }
+        }
+        return $usersToReturn;
+    }
+    
+    private function getMatches($matches, $dateFrom, $dateTo)
     {
         $filteredMatches = null;
         foreach($matches as $match)
         {
-            if ($filters['dateFrom'] !== null && filters['DateTo'] !== null)
+            if ($dateFrom !== null && $dateTo !== null)
             {
-                if ($match->getDateOfMatch() >= $filters['dateFrom'] && $match->getDateOfMatch() < $filters['dateTo'])
+                if ($match->getDateOfMatch() >= $dateFrom && $match->getDateOfMatch() < $dateTo)
                 {
                     $filteredMatches[] = $match;
                 }
             }
-            elseif ($filters['dateFrom'] === null && filters['DateTo'] !== null)
+            elseif ($dateFrom === null && $dateTo !== null)
             {
-                if ($match->getDateOfMatch() < $filters['dateTo'])
+                if ($match->getDateOfMatch() < $dateTo)
                 {
                     $filteredMatches[] = $match;
                 }
             }
-            elseif ($filters['dateFrom'] !== null && filters['DateTo'] === null)
+            elseif ($dateFrom !== null && $dateTo === null)
             {
-                if ($match->getDateOfMatch() >= $filters['dateFrom'])
+                if ($match->getDateOfMatch() >= $dateFrom)
                 {
                     $filteredMatches[] = $match;
                 }
@@ -54,22 +77,53 @@ class ReportSummaryDataCreatorService {
             else
             {
                 $filteredMatches[] = $match; 
-            }            
+            }                        
         }       
         return $filteredMatches;
     }
     
-    private function getResults(Result $results, User $users, Match $matches)
+    private function getResults($results, $users, $matches)
     {
         $filteredResults = null;
+        
+        foreach($results as $result)
+        {
+            foreach($users as $user)
+            {
+                if ($result->getUserId() === $user->getId())
+                {
+                    foreach($matches as $match)
+                    {
+                        if ($result->getMatchId() === $match->getMatchId())
+                        {
+                            $filteredResults[] = $result;
+                        }
+                    }
+                }
+            }                  
+        }
+        return $filteredResults;
+        
+        /*
         foreach ($results as $result)
         {
-            foreach ($users as $user)
-                if ($result->getUserId() === $user->getId ())
+            if (!empty ($users))
+            {
+               foreach ($users as $user)
                 {
-                    $filteredResults[] = $result;
-                }
+                    if ($result->getUserId() === $user->getId())
+                    {
+                        $filteredResults[] = $result;
+                    } 
+                } 
+            }
+            else
+            {
+                 $filteredResults[] = $result;
+            }
+                                      
         }
+        
         foreach($results as $result)
         {
             foreach ($matches as $match)
@@ -91,7 +145,7 @@ class ReportSummaryDataCreatorService {
                 }
             }
         }
-        return $filteredResults;   
+        return $filteredResults;   */
     }
     
 }
