@@ -1,5 +1,5 @@
 <?php
-declare (strict_types=1);
+declare(strict_types=1);
 
 namespace App\Application\Services;
 
@@ -19,7 +19,7 @@ class CheckIfMatchAddedForUserService {
     
     public function execute(User $user, Match $match)
     {
-        $result = new Result(null,$user->getId(),$match->getMatchId(),null,null,null);
+        $result = new Result(null, $user->getId(), $match->getMatchId(), null, null, null);
         return $this->resultRepo->isResultForUserAdded($result);
     }
 }

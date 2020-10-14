@@ -31,7 +31,7 @@ class ResultController extends AbstractController{
         $lastMatch = $matchRepository->getLastMatch();
         $users = $userRepository->getAllUsers();
         $resultForUserAdded = null;
-        if ($_SERVER['REQUEST_METHOD']=='POST')
+        if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
             $parameters = $request->request->all();
             $nrMatch = $parameters['matchNr']; 
@@ -86,7 +86,7 @@ class ResultController extends AbstractController{
     //żadąć userrepositoryInterface - ogólnie interfejsów
     public function MatchAddedForUser(Request $request, UserRepositoryInterface $userRepo)
     {
-        if ($_SERVER['REQUEST_METHOD']=='GET')
+        if ($_SERVER['REQUEST_METHOD'] === 'GET')
         {
             $user = $userRepo->getByLogin($request->get('user'));
             $user->eraseCredentials();

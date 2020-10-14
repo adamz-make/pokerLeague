@@ -7,14 +7,13 @@ use App\Domain\Services\Utils\RegisterLogicException;
 
 class RegisterService {
     
-    public function execute(string $login,string $mail,string $password,string $checkPassword)
+    public function execute(string $login, string $mail, string $password, string $checkPassword)
     {
         $this->checkMail($mail);
         if ($password !== $checkPassword)
         {
             throw new RegisterLogicException("Hasła się nie zgadzają");
         }
-        
         return true;
     }
     

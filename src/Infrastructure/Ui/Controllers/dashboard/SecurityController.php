@@ -40,7 +40,7 @@ class SecurityController extends AbstractController {
     */   
     public function register(UserPasswordEncoderInterface $passwordEncoder)
     {
-        if ($_SERVER['REQUEST_METHOD']=='POST')
+        if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
             $login = $_POST['login'];
             $password = $_POST['pass'];

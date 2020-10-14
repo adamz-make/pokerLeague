@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Application\Services;
 
@@ -18,7 +19,7 @@ class LoginService{
         $this->userRepo = $userRepo;
     }
     
-    public function execute(string $login,string $password) 
+    public function execute(string $login, string $password) 
     {
         $user = $this->userRepo->getByLogin($login);
         $loginService = new LoginDomainService();

@@ -1,6 +1,6 @@
 <?php
+declare(strict_types=1);
 
-//namespace App\Security;
 namespace App\Infrastructure\Security;
 
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;

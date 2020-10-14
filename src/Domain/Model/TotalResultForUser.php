@@ -1,5 +1,5 @@
 <?php
-declare (strict_types=1);
+declare(strict_types=1);
 
 namespace App\Domain\Model;
 
@@ -13,7 +13,7 @@ class TotalResultForUser {
    private $points;
    private $tokens;
    
-   public function __construct($user,$points, $beers, $tokens)
+   public function __construct($user, $points, $beers, $tokens)
    {
        $this->user = $user;
        $this->beers = $beers;

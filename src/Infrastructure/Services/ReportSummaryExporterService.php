@@ -25,11 +25,11 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         $this->setHeaders($headers, $spreadSheet); // wstawienie nagłówków w tabeli
         $matchesNumberList =  $this->getMatchNumbers($data['Matches']);// pobranie listy nr meczy
         $this->setMatchNumbersList($matchesNumberList, $spreadSheet); // wpisanie listy nr meczy jeden pod drugim
-        $this->setDataForUserAndMatchNr($data,$spreadSheet); // dane dla danego użytkownika w danym meczu
+        $this->setDataForUserAndMatchNr($data, $spreadSheet); // dane dla danego użytkownika w danym meczu
         $this->doSummary($spreadSheet, $data);   //podsumowanie dla każdego gracza w ilu meczach brał udział i jaki ma bilans
         $writer = new Xlsx($spreadSheet);
         $writer->save('report.xlsx');
-        return [getcwd() . '\report.xlsx','report.xlsx'];
+        return [getcwd() . '\report.xlsx', 'report.xlsx'];
     }
 
     /**
@@ -158,13 +158,6 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         }
         return $matchesNrList;
     }
-        
-    
-    
-    private function getBeersFromResult(Result $result)
-    {
-        return $result->getBeers();
-    }
     
     private function getUserColumnNrFromExcel($resultUser, Spreadsheet $spreadSheet)
     {
@@ -242,7 +235,7 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         foreach ($headers as $header)
         {
             $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow($c, $r,$header);
-            $c +=1;
+            $c += 1;
         }            
     }
     

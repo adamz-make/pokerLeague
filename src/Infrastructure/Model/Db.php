@@ -1,5 +1,5 @@
 <?php
-declare (strict_types=1);
+declare(strict_types=1);
 
 namespace App\Infrastructure\Model;
     
@@ -61,10 +61,13 @@ class Db {
             'driver' => 'pdo_mysql',
         ]; 
         
-        try{
+        try
+        {
             $this->connection = \Doctrine\DBAL\DriverManager::getConnection($connectionParams);
-        } catch (Exception $ex) {
-          echo $ex;
+        }
+        catch (Exception $ex)
+        {
+            echo $ex;
         }     
     }    
 }

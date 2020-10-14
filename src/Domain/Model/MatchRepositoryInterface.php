@@ -1,5 +1,5 @@
 <?php
-DECLARE (strict_types=1);
+DECLARE(strict_types=1);
 
 namespace App\Domain\Model;
 

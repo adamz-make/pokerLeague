@@ -1,6 +1,8 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Infrastructure\Ui\Controllers;
+
 use App\Domain\Model\User;
 
 class AbstractController {

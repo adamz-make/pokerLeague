@@ -11,7 +11,7 @@ class CreateReportService {
 
     private $reportRepo;
 
-    public function __construct(ReportRepositoryInterface $reportRepo )
+    public function __construct(ReportRepositoryInterface $reportRepo)
     {
        $this->reportRepo = $reportRepo;
     }

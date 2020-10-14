@@ -18,10 +18,7 @@ class ReportSummaryDataCreatorService {
         $filteredMatches = $this->getMatches($matches, $filters['dateFrom'], $filters['dateTo']);
         $filteredUsers = $this->getUsers($users, $filters['users']);
         $filteredResults = $this->getResults($results, $filteredUsers, $filteredMatches);
-        
-        
-        // i z dwóch powyższych powybierać Rezultaty
-        
+        // i do wyfiltrowanych userow i wyfiltrowanych meczy powybierać Rezultaty        
         $data = ['Matches' => $filteredMatches, 'Users' => $filteredUsers, 'Results' => $filteredResults];
         return $data;
     }
@@ -90,12 +87,10 @@ class ReportSummaryDataCreatorService {
         {
             Throw new NotCorrrectFiltersException ('Niepoprawne parametry filtru');
         }
-        
         if (empty ($filteredMatches))
         {
             Throw new NotCorrrectFiltersException ('Niepoprawne parametry filtru');
-        }
-        
+        }       
         foreach($results as $result)
         {
             foreach($filteredUsers as $user)
