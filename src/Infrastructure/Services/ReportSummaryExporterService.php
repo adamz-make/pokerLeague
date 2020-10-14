@@ -16,14 +16,15 @@ class ReportSummaryExporterService implements ReportExporterInterface{
     
     public function exportToExcel($data): array 
     {
-       dd($data);
-       exit;
+
         $spreadSheet = new Spreadsheet();
         $sheet = $spreadSheet->getActiveSheet();
         $sheet->mergeCells('A1:C1');
-        $sheet->setCellValue('A1', 'Summary Report');   
-        $this->setHeaders($data['Users'], $spreadSheet); //nagłówki w tabeli
-        $this->setMatchNumbersList($this->getMatchNumbers($data['Matches']), $spreadSheet); // nr meczy jeden pod drugim
+        $sheet->setCellValue('A1', 'Summary Report');
+        $headers = $this->getHeaders($data['Users']);// pobranie nagłówkow do tabeli
+        $this->setHeaders($headers, $spreadSheet); // wstawienie nagłówków w tabeli
+        $matchesNumberList =  $this->getMatchNumbers($data['Matches']);// pobranie listy nr meczy
+        $this->setMatchNumbersList($matchesNumberList, $spreadSheet); // wpisanie listy nr meczy jeden pod drugim
         $this->setDataForUserAndMatchNr($data,$spreadSheet); // dane dla danego użytkownika w danym meczu
         $this->doSummary($spreadSheet, $data);   //podsumowanie dla każdego gracza w ilu meczach brał udział i jaki ma bilans
         $writer = new Xlsx($spreadSheet);
@@ -37,19 +38,72 @@ class ReportSummaryExporterService implements ReportExporterInterface{
      */
     public function exportToHtml($data): string  //obiekt który ma informację jacy są użytkownicy, mecze rezultaty itd.
     {
-        $reader = new Readxlsx;
-        $spreadSheet = $reader->load('C:\xampp\htdocs\PokerLeague\public\report.xlsx');
-        $writer = new Html($spreadSheet);
-        $writer->save('asscsa.html');
-        return $spreadSheet->getProperties()->getTitle();
- 
-        
+        $stringToHtml = '<table border="6" >';
+        $headers = $this->getHeaders($data['Users']);
+        $stringToHtml .= '<tr>'; //dodanie wiersza na nagłówki
+        foreach ($headers as $header)
+        {
+            $stringToHtml .= "<td>$header</td>";
+        }      
+        $stringToHtml .= '</tr>';
+        $matchesNumberList = $this->getMatchNumbers($data['Matches']);
 
-        
-        
-        return "Raport Podsumowania Html :$data";
+        foreach ($matchesNumberList as $matchNumber)
+        {
+            $stringToHtml .= "<tr><td>$matchNumber</td>"; 
+            foreach ($data ['Matches'] as $match)
+            {
+                if ($matchNumber === $match->getMatchNr())
+                {
+                    $matchId = $match->getMatchId();
+                    foreach($data['Users'] as $user)
+                    {
+                        $userId = $user->getId();
+                        if (!isset($sumBeers[$user->getLogin()]))
+                        {
+                          $sumBeers[$user->getLogin()] = 0;  
+                        }
+                        $userPlayedMatch = false;
+                        foreach ($data['Results'] as $result)
+                        {
+                            if ($result->getMatchId() === $matchId and $result->getUserId() === $userId)
+                            {
+                                $sumBeers[$user->getLogin()] +=  $result->getBeers();
+                                $stringToHtml .= '<td>' . $sumBeers[$user->getLogin()] . '</td>';
+                                $userPlayedMatch = true;
+                            }
+                        }
+                        if ($userPlayedMatch === false)
+                        {
+                            // .= '<td>' . $sumBeers[$user->getLogin()] . '</td>'; To nie potrzebne bo w Excelu tego też nie ma tam gdzie nie było rozgrywanego meczu, jest puste pole
+                        }
+                    }
+                }
+            } 
+        }
+        $stringToHtml .= '</table><p>Podsumowanie</p><table border="6">';
+        $stringToHtml .='<tr><td>Gracze:</td><td>Liczba Rozegranych meczy:</td><td>Bilans Piw:</td><td>Bilans Żetonów</td></tr>';
+        foreach ($data['Users'] as $user)
+        {
+            $stringToHtml .= '<tr><td>' . $user->getLogin() . '</td>';
+            $playedMatchesByUser = 0;
+            $summaryBeersForUser = 0; 
+            $summaryTokensForUser = 0;   
+            foreach ($data['Results'] as $result)
+            { 
+                if ($result->getUserId() === $user->getId())
+                {
+                    $playedMatchesByUser += 1;
+                    $summaryBeersForUser += $result->getBeers();
+                    $summaryTokensForUser += $result->getTokens();
+                }      
+            }
+                $stringToHtml .= "<td>$playedMatchesByUser</td><td>$summaryBeersForUser</td><td>$summaryTokensForUser</td></tr>"; 
+        }
+        $stringToHtml .= '</table>';     
+        return $stringToHtml;
     }
-    
+
     private function doSummary(Spreadsheet &$spreadSheet, $data)
     {
         $row = $spreadSheet->getActiveSheet()->getHighestRow() + 3;
@@ -83,8 +137,8 @@ class ReportSummaryExporterService implements ReportExporterInterface{
             $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(5, $rowForUsers, $countTokensForUser);
             $rowForUsers += 1;
         }
- 
     }
+    
     private function getBeersFromPreviousResultRow($row, $column, Spreadsheet $spreadSheet)
     {
         if (is_numeric($spreadSheet->getActiveSheet()->getCellByColumnAndRow($column, $row - 1)->getValue()))
@@ -128,7 +182,7 @@ class ReportSummaryExporterService implements ReportExporterInterface{
          return $c;
     }
     
-    private function getUserNameForResult( $result, $users)
+    private function getUserNameForResult($result, $users)
     {
         $userId = $result->getUserId();
         foreach ($users as $user)
@@ -171,15 +225,23 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         return $nrMatch;
     }
     
-    private function setHeaders($users, Spreadsheet &$spreadSheet)
+    private function getHeaders($users)
+    {
+        $headers = ['Nr meczu'];
+        foreach ($users as $user)
+        {
+            $headers[] = $user->getLogin();
+        }         
+        return $headers;
+    }
+    
+    private function setHeaders($headers, Spreadsheet &$spreadSheet)
     {
         $r = 4;
         $c = 1;
-        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow($c, $r, 'Nr meczu');
-        $c += 1;
-        foreach ($users as $user)
+        foreach ($headers as $header)
         {
-            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow($c, $r,$user->getLogin());
+            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow($c, $r,$header);
             $c +=1;
         }            
     }
@@ -205,7 +267,7 @@ class ReportSummaryExporterService implements ReportExporterInterface{
             $resultUser = $this->getUserNameForResult($result, $data['Users']);
             $columnCoordinator = $this->getUserColumnNrFromExcel($resultUser, $spreadSheet);
             $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow($columnCoordinator,
-                    $rowCoordinator, ($this->getBeersFromResult($result) + $this->getBeersFromPreviousResultRow($rowCoordinator,$columnCoordinator, $spreadSheet)));
+                    $rowCoordinator, ($result->getBeers() + $this->getBeersFromPreviousResultRow($rowCoordinator,$columnCoordinator, $spreadSheet)));
         }
     }
 }

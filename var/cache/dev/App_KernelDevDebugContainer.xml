@@ -358,6 +358,7 @@
     <service id="App\Domain\Services\LoginService" class="App\Domain\Services\LoginService" autowire="true" autoconfigure="true"/>
     <service id="App\Domain\Services\RegisterService" class="App\Domain\Services\RegisterService" autowire="true" autoconfigure="true"/>
     <service id="App\Domain\Services\ReportSummaryDataCreatorService" class="App\Domain\Services\ReportSummaryDataCreatorService" autowire="true" autoconfigure="true"/>
+    <service id="App\Domain\Services\Utils\NotCorrrectFiltersException" class="App\Domain\Services\Utils\NotCorrrectFiltersException" autowire="true" autoconfigure="true"/>
     <service id="App\Domain\Services\Utils\RegisterLogicException" class="App\Domain\Services\Utils\RegisterLogicException" autowire="true" autoconfigure="true"/>
     <service id="App\Infrastructure\Factory\FactoryReportSummary" class="App\Infrastructure\Factory\FactoryReportSummary" autowire="true" autoconfigure="true"/>
     <service id="App\Infrastructure\Model\MatchRepository" class="App\Infrastructure\Model\MatchRepository" autowire="true" autoconfigure="true"/>

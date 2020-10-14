@@ -6,6 +6,7 @@ namespace App\Domain\Services;
 use App\Domain\Model\Match;
 use App\Domain\Model\Result;
 use App\Domain\Model\User;
+use App\Domain\Services\Utils\NotCorrrectFiltersException;
 
 class ReportSummaryDataCreatorService {
     
@@ -82,17 +83,26 @@ class ReportSummaryDataCreatorService {
         return $filteredMatches;
     }
     
-    private function getResults($results, $users, $matches)
+    private function getResults($results, $filteredUsers, $filteredMatches)
     {
         $filteredResults = null;
+        if (empty($filteredUsers))
+        {
+            Throw new NotCorrrectFiltersException ('Niepoprawne parametry filtru');
+        }
+        
+        if (empty ($filteredMatches))
+        {
+            Throw new NotCorrrectFiltersException ('Niepoprawne parametry filtru');
+        }
         
         foreach($results as $result)
         {
-            foreach($users as $user)
+            foreach($filteredUsers as $user)
             {
                 if ($result->getUserId() === $user->getId())
                 {
-                    foreach($matches as $match)
+                    foreach($filteredMatches as $match)
                     {
                         if ($result->getMatchId() === $match->getMatchId())
                         {
@@ -103,49 +113,5 @@ class ReportSummaryDataCreatorService {
             }                  
         }
         return $filteredResults;
-        
-        /*
-        foreach ($results as $result)
-        {
-            if (!empty ($users))
-            {
-               foreach ($users as $user)
-                {
-                    if ($result->getUserId() === $user->getId())
-                    {
-                        $filteredResults[] = $result;
-                    } 
-                } 
-            }
-            else
-            {
-                 $filteredResults[] = $result;
-            }
-                                      
-        }
-        
-        foreach($results as $result)
-        {
-            foreach ($matches as $match)
-            {
-                if ($result->getMatchId() === $match->getMatchId())
-                {
-                    $addResult = true;
-                    foreach ($filteredResults as $filteredResult) // sprawdzić trzeba, czy już rezultat nie został dodany w userze (żeby nie dublować)
-                    {
-                        if ($result->getId() === $filteredResult->getId())
-                        {
-                            $addResult = false;
-                        }
-                    }
-                    if ($addResult === true)
-                    {
-                        $filetedResults[] = $result;
-                    }
-                }
-            }
-        }
-        return $filteredResults;   */
-    }
-    
+    } 
 }

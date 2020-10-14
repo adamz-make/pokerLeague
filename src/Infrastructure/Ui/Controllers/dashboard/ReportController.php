@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Infrastructure\Model\UserRepository;
 use App\Infrastructure\Model\MatchRepository;
 use App\Infrastructure\Model\ResultRepository;
+use App\Domain\Services\Utils\NotCorrrectFiltersException;
 
 class ReportController extends AbstractController{
         
@@ -66,17 +67,25 @@ class ReportController extends AbstractController{
         }
         
         $dataCreator->setFilters($reportFilters);
-        $dataCreator->prepareData(new UserRepository(), new ResultRepository(), new MatchRepository() );
-        $reportExporter = $factory->getReportExporter();
-        if ($reportOutput == 'html')
+        try
         {
-            return new Response($reportExporter->exportToHtml($dataCreator->getData()));
-        }
-        elseif ($reportOutput == 'excel')
+            $dataCreator->prepareData(new UserRepository(), new ResultRepository(), new MatchRepository());
+            $reportExporter = $factory->getReportExporter();
+            if ($reportOutput == 'html')
+            {
+                return new Response($reportExporter->exportToHtml($dataCreator->getData()));
+            }
+            elseif ($reportOutput == 'excel')
+            {
+                list($path, $fileName) = $reportExporter->exportToExcel($dataCreator->getData());
+                return $this->file($path, $fileName);
+            }
+            return new Response('Niepoprawne parametry wywołania', 400);
+        } 
+        catch (NotCorrrectFiltersException $ex)
         {
-            list($path, $fileName) = $reportExporter->exportToExcel($dataCreator->getData());
-            return $this->file($path, $fileName);
+            return new Response($ex->getMessage(), 400);
         }
-        return new Response('Niepoprawne parametry wywołania', 400);
+        
     }
 }
