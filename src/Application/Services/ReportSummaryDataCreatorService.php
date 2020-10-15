@@ -33,12 +33,24 @@ class ReportSummaryDataCreatorService implements ReportDataCreatorInterface
 
     public function prepareData() 
     {
-        $matches = $this->matchRepo->getAllMatches();
+        $matches = $this->matchRepo->getMatchesByDate($this->filters->getDateFrom(), $this->filters->getDateTo());
         $results = $this->resultRepo->getAllResults();
-        $users = $this->userRepo->getAllUsers();    
-        $filtersArray = ['dateFrom' => $this->filters->getDateFrom(), 'dateTo' => $this->filters->getDateTo(), 'users' => $this->filters->getUsers()];
+        if (empty($this->filters->getUsers()))
+        {
+            $users = $this->userRepo->getAllUsers();
+        }
+        else
+        {
+            foreach ($this->filters->getUsers() as $user)
+            {
+                $users[] = $this->userRepo->getByLogin($user);
+            }
+        }
+        //$filtersArray = ['dateFrom' => $this->filters->getDateFrom(), 'dateTo' => $this->filters->getDateTo(), 'users' => $this->filters->getUsers()];
         $domainReportSummaryDataCreatorService = new DomainReportSummaryDataCreatorService();
-        $this->data = $domainReportSummaryDataCreatorService->Execute($matches, $users , $results, $filtersArray); 
+        $this->data = $domainReportSummaryDataCreatorService->execute($matches, $users , $results); 
+        dd ($this->data);
+        exit;
     }
     
     /**

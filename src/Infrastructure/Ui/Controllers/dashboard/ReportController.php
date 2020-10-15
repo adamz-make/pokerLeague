@@ -59,13 +59,9 @@ class ReportController extends AbstractController{
         $factory = AbstractReportFactory::getFactory($reportName);
         $dataCreator = $factory->getDataCreator();
         $reportFilters = new ReportFilters();
-        if ($_SERVER['REQUEST_METHOD'] === 'GET')
-        {
-            $reportFilters->setDateFrom($request->query->get('dateFrom'));
-            $reportFilters->setDateTo($request->query->get('dateTo'));
-            $reportFilters->setUsers($request->query->get('users'));  
-        }
-        
+        $reportFilters->setDateFrom($request->query->get('dateFrom'));
+        $reportFilters->setDateTo($request->query->get('dateTo'));
+        $reportFilters->setUsers($request->query->get('users'));  
         $dataCreator->setFilters($reportFilters);
         try
         {

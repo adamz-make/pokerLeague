@@ -7,80 +7,21 @@ use App\Domain\Model\Match;
 use App\Domain\Model\Result;
 use App\Domain\Model\User;
 use App\Domain\Services\Utils\NotCorrrectFiltersException;
+use App\Domain\Model\MatchPlayer;
+use App\Domain\Model\ObjectSummaryReport;
 
 class ReportSummaryDataCreatorService {
     
-    public function Execute($matches, $users, $results, $filters)
+    public function execute($matches, $users, $results)
     {
-        $filteredMatches = null;
-        $filteredUsers = null;
-        $filteredResults = null;
-        $filteredMatches = $this->getMatches($matches, $filters['dateFrom'], $filters['dateTo']);
-        $filteredUsers = $this->getUsers($users, $filters['users']);
-        $filteredResults = $this->getResults($results, $filteredUsers, $filteredMatches);
+        $filteredMatches = $matches;
+        $filteredUsers = $users;
+        $data = $this->getResults($results, $filteredUsers, $filteredMatches);
         // i do wyfiltrowanych userow i wyfiltrowanych meczy powybierać Rezultaty        
-        $data = ['Matches' => $filteredMatches, 'Users' => $filteredUsers, 'Results' => $filteredResults];
         return $data;
     }
     
-    private function getUsers ($users, $filteredUsers)
-    {
-        $usersToReturn = null;
-        if (empty ($filteredUsers))
-        {
-            $usersToReturn = $users;
-        }
-        else
-        {
-            foreach ($users as $user)
-            {
-                foreach ($filteredUsers as $filteredUser)
-                {
-                    if ($user->getLogin() === $filteredUser)
-                    {
-                        $usersToReturn[] = $user;
-                    }
-                }
-            }
-        }
-        return $usersToReturn;
-    }
-    
-    private function getMatches($matches, $dateFrom, $dateTo)
-    {
-        $filteredMatches = null;
-        foreach($matches as $match)
-        {
-            if ($dateFrom !== null && $dateTo !== null)
-            {
-                if ($match->getDateOfMatch() >= $dateFrom && $match->getDateOfMatch() < $dateTo)
-                {
-                    $filteredMatches[] = $match;
-                }
-            }
-            elseif ($dateFrom === null && $dateTo !== null)
-            {
-                if ($match->getDateOfMatch() < $dateTo)
-                {
-                    $filteredMatches[] = $match;
-                }
-            }
-            elseif ($dateFrom !== null && $dateTo === null)
-            {
-                if ($match->getDateOfMatch() >= $dateFrom)
-                {
-                    $filteredMatches[] = $match;
-                }
-            }
-            else
-            {
-                $filteredMatches[] = $match; 
-            }                        
-        }       
-        return $filteredMatches;
-    }
-    
-    private function getResults($results, $filteredUsers, $filteredMatches)
+    private function getResults($results, $filteredUsers, &$filteredMatches)
     {
         $filteredResults = null;
         if (empty($filteredUsers))
@@ -101,12 +42,47 @@ class ReportSummaryDataCreatorService {
                     {
                         if ($result->getMatchId() === $match->getMatchId())
                         {
-                            $filteredResults[] = $result;
+                            $filteredResults [] = $result;
+                            $match->addMatchPlayer(new MatchPlayer($user, $result->getTokens(),$result->getPoints(), $result->getBeers()));
                         }
                     }
                 }
             }                  
         }
-        return $filteredResults;
+        $data = [];
+
+      
+        foreach ($filteredMatches as $match)
+        {
+            foreach ($match->getMatchPlayers() as $player)
+            {
+                $cumulatedBeers = 0;
+                $cumulatedTokens = 0;
+                $cumulatedPoints =0;
+                if (empty($data))
+                {
+                   $userName = $player->getUser()->getLogin();
+                   $data[] = new ObjectSummaryReport($match->getMatchNr(), $userName, $player->getBeers(), $player->getTokens(), $player->getPoints(),
+                           $player->getBeers(), $player->getTokens(), $player->getPoints()); 
+                }
+                else
+                {
+                    foreach ($data as $objSummary)
+                    {
+                        if ($objSummary->getUserName() === $userName)
+                        {
+                            $cumulatedBeers += $objSummary->getBeers();
+                            $cumulatedTokens += $objSummary->getTokens();
+                            $cumulatedPoints += $objSummary->getPoints();
+                        }
+                    }
+                    $data[] = new ObjectSummaryReport($match->getMatchNr(), $userName, $player->getBeers(), $player->getTokens(), $player->getPoints(),
+                           $cumulatedBeers, $cumulatedTokens, $cumulatedPoints); 
+                }
+              
+            }
+            
+        }
+        return $data;   
     } 
 }

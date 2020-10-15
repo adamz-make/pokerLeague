@@ -16,6 +16,12 @@ class ReportSummaryExporterService implements ReportExporterInterface{
     
     public function exportToExcel($data): array 
     {
+        $spreadSheet = new Spreadsheet();
+        $sheet = $spreadSheet->getActiveSheet();
+        $sheet->mergeCells('A1:C1');
+        $sheet->setCellValue('A1', 'Summary Report');
+        
+        
 
         $spreadSheet = new Spreadsheet();
         $sheet = $spreadSheet->getActiveSheet();

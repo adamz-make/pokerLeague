@@ -56,4 +56,27 @@ class MatchRepository implements MatchRepositoryInterface {
         $array = ['nrMeczu' => $match->getMatchNr(), 'dataDodania' => $match->getDateOfMatch()];
         $db->insert($table, $array);        
     }
+    
+    public function getMatchesByDate ($dateFrom, $dateTo): array
+    {
+        $db = Db::getInstance();
+        $sql = 'select Id, nrMeczu, dataDodania from mecze where 1=1';
+        $array = [];
+        if($dateFrom !== null)
+        {
+            $sql .= 'and dataDodania >=?';
+            $array[] = $dateFrom;
+        }
+        if ($dateTo !== null)
+        {
+            $sql .= 'and dataDodania <?';
+            $array[] = $dateTo;  
+        }
+        $result = $db->select($sql, $array);
+        foreach ($result as $row)
+        {
+            $matchArray[]= new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+        }
+        return $matchArray;      
+    }
 }
