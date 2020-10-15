@@ -60,11 +60,11 @@ class MatchRepository implements MatchRepositoryInterface {
     public function getMatchesByDate ($dateFrom, $dateTo): array
     {
         $db = Db::getInstance();
-        $sql = 'select Id, nrMeczu, dataDodania from mecze where 1=1';
+        $sql = 'select Id, nrMeczu, dataDodania from mecze where 1=1 ';
         $array = [];
         if($dateFrom !== null)
         {
-            $sql .= 'and dataDodania >=?';
+            $sql .= 'and dataDodania >=? ';
             $array[] = $dateFrom;
         }
         if ($dateTo !== null)

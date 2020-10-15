@@ -49,8 +49,6 @@ class ReportSummaryDataCreatorService implements ReportDataCreatorInterface
         //$filtersArray = ['dateFrom' => $this->filters->getDateFrom(), 'dateTo' => $this->filters->getDateTo(), 'users' => $this->filters->getUsers()];
         $domainReportSummaryDataCreatorService = new DomainReportSummaryDataCreatorService();
         $this->data = $domainReportSummaryDataCreatorService->execute($matches, $users , $results); 
-        dd ($this->data);
-        exit;
     }
     
     /**
