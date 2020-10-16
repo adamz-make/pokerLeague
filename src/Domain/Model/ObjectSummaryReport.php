@@ -28,6 +28,11 @@ class ObjectSummaryReport
         $this->cumulatedPoints =$cumulatedPoints;
     }
     
+    public function getNrMatch()
+    {
+        return $this->nrMatch;
+    }
+    
     public function getUserName()
     {
         return $this->userName;
@@ -46,5 +51,20 @@ class ObjectSummaryReport
     public function getPoints()
     {
         return $this->points;
+    }
+    
+    public function getCumulatedBeers()
+    {
+        return $this->cumulatedBeers;
+    }
+    
+    public function getCumulatedPoints()
+    {
+        return $this->cumulatedPoints;
+    }
+    
+    public function getCumulatedTokens()
+    {
+        return $this->cumulatedTokens;
     }
 }

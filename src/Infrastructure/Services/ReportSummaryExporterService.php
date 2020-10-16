@@ -20,10 +20,41 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         $sheet = $spreadSheet->getActiveSheet();
         $sheet->mergeCells('A1:C1');
         $sheet->setCellValue('A1', 'Summary Report');
+        //Dane
+        $nrMatch ='';
+        $r = 4;
+        $c = 1;
+        foreach ($data as $record)
+        {
+            if ($nrMatch === '' || $nrMatch === $record->getNrMatch())
+            {
+                $nrMatch = $record->getNrMatch();
+                
+                $sheet->setCellValueByColumnAndRow($c, $r, $record->getBeers());//liczba piw
+                $sheet->setCellValueByColumnAndRow($c, $r + 1, $record->getCumulatedBeers());//skumulowane piwa
+                $c += 1;
+             
+            }
+            else
+            {
+                $c = 1;
+                $nrMatch = $record->getNrMatch();
+                $r +=2;  
+                $sheet->setCellValueByColumnAndRow($c, $r, $record->getBeers());//liczba piw
+                $sheet->setCellValueByColumnAndRow($c, $r + 1, $record->getCumulatedBeers());//skumulowane piwa
+            }
+            
+                  
+        }
+        $writer = new Xlsx($spreadSheet);
+        $writer->save('report.xlsx');
+        return [getcwd() . '\report.xlsx', 'report.xlsx'];
         
+        dd($data);
+        exit;
         
 
-        $spreadSheet = new Spreadsheet();
+        /*$spreadSheet = new Spreadsheet();
         $sheet = $spreadSheet->getActiveSheet();
         $sheet->mergeCells('A1:C1');
         $sheet->setCellValue('A1', 'Summary Report');
@@ -35,7 +66,7 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         $this->doSummary($spreadSheet, $data);   //podsumowanie dla każdego gracza w ilu meczach brał udział i jaki ma bilans
         $writer = new Xlsx($spreadSheet);
         $writer->save('report.xlsx');
-        return [getcwd() . '\report.xlsx', 'report.xlsx'];
+        return [getcwd() . '\report.xlsx', 'report.xlsx'];*/
     }
 
     /**
