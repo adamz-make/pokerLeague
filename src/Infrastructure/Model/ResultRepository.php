@@ -7,6 +7,7 @@ use App\Domain\Model\Result;
 use App\Domain\Model\ResultRepositoryInterface;
 use App\Domain\Model\TotalResultForUser;
 use App\Infrastructure\Model\UserRepository;
+use App\Domain\Model\Match;
 
 class ResultRepository implements ResultRepositoryInterface{
     
@@ -58,7 +59,19 @@ class ResultRepository implements ResultRepositoryInterface{
             $resultArray[] = new Result($row['id'], $row['idUsera'], $row['idMeczu'], $row['LiczbaPunktow'], $row['liczbaPiw'], $row['LiczbaZetonow']);  
         }
         return $resultArray;
+    }
+    //w 1 zapytaniu to chcę pobierać, dlatego przekazuję tablicę meczy, czy mi jest to potrzebne??
+    public function getResultsByMatchAndUser($matchesArray): array
+    {
+        foreach($matchesArray as $match)
+        {
+            $matchesNumbersString .= $match->getMatchNr() . ',';
+        }
+            
+            
+            
         
     }
+            
     
 }

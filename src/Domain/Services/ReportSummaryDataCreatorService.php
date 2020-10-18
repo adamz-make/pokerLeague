@@ -9,31 +9,34 @@ use App\Domain\Model\User;
 use App\Domain\Services\Utils\NotCorrrectFiltersException;
 use App\Domain\Model\MatchPlayer;
 use App\Domain\Model\ObjectSummaryReport;
+use App\Domain\Model\SummaryReport;
 
 class ReportSummaryDataCreatorService {
     
-    public function execute($matches, $users, $results)
+    public function execute($matches, $users)
     {
         $filteredMatches = $matches;
         $filteredUsers = $users;
-        $filteredResults = $this->getResults($results, $filteredUsers, $filteredMatches);
-        foreach ($filteredResults as $filteredResult)
+        $summaryReportObject = $this->getDataForReport($filteredMatches);
+        $filteredSummaryReportObject = [];
+        foreach ($summaryReportObject as $object)
         {
-            $userId = $filteredResult->getUserId();
-            $user = $this->getUser($filteredUsers, $userId);
-            $matchId = $filteredResult->getMatchId();
-            $match = $this->getMatch($filteredMatches, $matchId);
-            $match->addMatchPlayer(new MatchPlayer($user, $filteredResult->getTokens(), $filteredResult->getPoints(), $filteredResult->getBeers()));       
+            foreach ($filteredUsers as $user)
+            {
+                if ($object->getUserName() === $user->getLogin())
+                {
+                    $filteredSummaryReportObject[] = $object;
+                } 
+            }
         }
-        // filtered Matches mam mecze razem match playersami (czyli kto grał i ile żetonów)
-        
-        
-        $data = $this->getDataForReport($filteredMatches);    
-        return $data;
+            $summaryReport = new SummaryReport();
+            $summaryReport->setSummaryObjectReports($filteredSummaryReportObject);
+        return $summaryReport;
     }
     
     private function getDataForReport($filteredMatches)
     {
+        $objectSummaryReport = [];
        foreach ($filteredMatches as $match)
        {
            foreach ($match->getMatchPlayers() as $matchPlayer)
@@ -43,8 +46,7 @@ class ReportSummaryDataCreatorService {
             $cumulatedTokens[$matchPlayer->getUser()->getLogin()] = 0;
         }
        }
-        
-        
+                
         foreach ($filteredMatches as $match)
         {
             foreach ($match->getMatchPlayers() as $matchPlayer)
@@ -57,6 +59,8 @@ class ReportSummaryDataCreatorService {
                 $cumulatedPoints[$matchPlayer->getUser()->getLogin()] += $points;
                 $cumulatedBeers[$matchPlayer->getUser()->getLogin()] += $beers;
                 $cumulatedTokens[$matchPlayer->getUser()->getLogin()] += $tokens;
+                //sprobowac dodać klase Summary Report, w której $objectSummaryReport byłby polem, tak abym mógł zwrócić jeden obiekt, który miał by
+                // pole $objectSummaryReport z arrayem wszystkich objectSummaryReport
                 $objectSummaryReport[] = new ObjectSummaryReport($nrMatch, $userName, $beers, $tokens, $points,$cumulatedBeers[$matchPlayer->getUser()->getLogin()],
                         $cumulatedTokens[$matchPlayer->getUser()->getLogin()], $cumulatedPoints[$matchPlayer->getUser()->getLogin()]);
             }

@@ -34,7 +34,9 @@ class ReportSummaryDataCreatorService implements ReportDataCreatorInterface
     public function prepareData() 
     {
         $matches = $this->matchRepo->getMatchesByDate($this->filters->getDateFrom(), $this->filters->getDateTo());
-        $results = $this->resultRepo->getAllResults();
+        //rezultaty nie są mi potrzebne, bo wyciągam mecze a jak mecze przeszłły na domene to tam są rezultaty
+        //rezultaty też lepiej by było wyciągnąć z SQl, na podstawie nr meczy i użytkowników
+        //$results = $this->resultRepo->getAllResults();
         if (empty($this->filters->getUsers()))
         {
             $users = $this->userRepo->getAllUsers();
@@ -48,7 +50,7 @@ class ReportSummaryDataCreatorService implements ReportDataCreatorInterface
         }
         //$filtersArray = ['dateFrom' => $this->filters->getDateFrom(), 'dateTo' => $this->filters->getDateTo(), 'users' => $this->filters->getUsers()];
         $domainReportSummaryDataCreatorService = new DomainReportSummaryDataCreatorService();
-        $this->data = $domainReportSummaryDataCreatorService->execute($matches, $users , $results); 
+        $this->data = $domainReportSummaryDataCreatorService->execute($matches, $users); 
     }
     
     /**

@@ -11,70 +11,89 @@ use App\Domain\Model\Result;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Html;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as Readxlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ReportSummaryExporterService implements ReportExporterInterface{
     
-    public function exportToExcel($data): array 
+    public function exportToExcel($data, $toHtml = false) 
     {
+        $data = $data->getSummaryObjectReports();
         $spreadSheet = new Spreadsheet();
         $sheet = $spreadSheet->getActiveSheet();
         $sheet->mergeCells('A1:C1');
         $sheet->setCellValue('A1', 'Summary Report');
         //Dane
+        $userColumnNr = $this->setUserNumberList($data);
+        $sheet->setCellValueByColumnAndRow(1,3,'Nr meczu');
+        foreach ($userColumnNr as $header => $column)
+        {
+            $sheet->setCellValueByColumnAndRow($column +1, 3, $header); // w 3 wierszu są nagłówki, a kolumna +1 bo od 2 kolumny wpisujemy
+        }
+        $matchNrList = $this->getMatchNrList($data);
+        foreach ($matchNrList as $matchNr => $row)
+        {
+           $sheet->setCellValueByColumnAndRow(1, $row, $matchNr);
+           $sheet->setCellValueByColumnAndRow(1, $row + 1, "Podsumowanie rozegranych kolejek");  
+        }
+        //Spróbować tak napisać, że gdybyśmy chcieli żeby wpadał dodatkowy wiersz to żeby to można było łatwo przerobić
         $nrMatch ='';
-        $r = 4;
-        $c = 1;
+       // $r = 4;
+        $lastRow = 0;
         foreach ($data as $record)
         {
             if ($nrMatch === '' || $nrMatch === $record->getNrMatch())
             {
                 $nrMatch = $record->getNrMatch();
-                
-                $sheet->setCellValueByColumnAndRow($c, $r, $record->getBeers());//liczba piw
-                $sheet->setCellValueByColumnAndRow($c, $r + 1, $record->getCumulatedBeers());//skumulowane piwa
-                $c += 1;
-             
+                $sheet->setCellValueByColumnAndRow($userColumnNr[$record->getUserName()] + 1, $matchNrList[$record->getNrMatch()],
+                        $record->getBeers());//liczba piw
+                $sheet->setCellValueByColumnAndRow($userColumnNr[$record->getUserName()] + 1, $matchNrList[$record->getNrMatch()] + 1,
+                        $record->getCumulatedBeers());//skumulowane piwa
+                if (checkLimit)
+                {
+                    
+                }
             }
             else
             {
-                $c = 1;
                 $nrMatch = $record->getNrMatch();
-                $r +=2;  
-                $sheet->setCellValueByColumnAndRow($c, $r, $record->getBeers());//liczba piw
-                $sheet->setCellValueByColumnAndRow($c, $r + 1, $record->getCumulatedBeers());//skumulowane piwa
+               // $r +=2;  
+                $sheet->setCellValueByColumnAndRow($userColumnNr[$record->getUserName()] + 1, $matchNrList[$record->getNrMatch()],
+                        $record->getBeers());//liczba piw
+                $sheet->setCellValueByColumnAndRow($userColumnNr[$record->getUserName()] + 1, $matchNrList[$record->getNrMatch()] + 1, 
+                        $record->getCumulatedBeers());//skumulowane piwa
             }
-            
-                  
+            $lastRow = $matchNrList[$record->getNrMatch()];
         }
+        $this->doSummary($spreadSheet, $data, $lastRow);
         $writer = new Xlsx($spreadSheet);
-        $writer->save('report.xlsx');
-        return [getcwd() . '\report.xlsx', 'report.xlsx'];
-        
-        dd($data);
-        exit;
-        
-
-        /*$spreadSheet = new Spreadsheet();
-        $sheet = $spreadSheet->getActiveSheet();
-        $sheet->mergeCells('A1:C1');
-        $sheet->setCellValue('A1', 'Summary Report');
-        $headers = $this->getHeaders($data['Users']);// pobranie nagłówkow do tabeli
-        $this->setHeaders($headers, $spreadSheet); // wstawienie nagłówków w tabeli
-        $matchesNumberList =  $this->getMatchNumbers($data['Matches']);// pobranie listy nr meczy
-        $this->setMatchNumbersList($matchesNumberList, $spreadSheet); // wpisanie listy nr meczy jeden pod drugim
-        $this->setDataForUserAndMatchNr($data, $spreadSheet); // dane dla danego użytkownika w danym meczu
-        $this->doSummary($spreadSheet, $data);   //podsumowanie dla każdego gracza w ilu meczach brał udział i jaki ma bilans
-        $writer = new Xlsx($spreadSheet);
-        $writer->save('report.xlsx');
-        return [getcwd() . '\report.xlsx', 'report.xlsx'];*/
+        if ($toHtml === false)
+        {    
+            $writer->save('report.xlsx');
+            return [getcwd() . '\report.xlsx', 'report.xlsx'];
+        }
+        else
+        {
+            $response =  new StreamedResponse(
+                function () use ($writer) {
+                    $writer->save('php://output');
+                }
+            );
+            $response->headers->set('Content-Type', 'application/vnd.ms-excel');
+            $response->headers->set('Content-Disposition', 'attachment;filename="ExportScan.xls"');
+            $response->headers->set('Cache-Control','max-age=0');
+            return $response;
+        }        
     }
-
     /**
      * 
      * @return string zwrócić gotowy raport do wyświetlenie
      */
     public function exportToHtml($data): string  //obiekt który ma informację jacy są użytkownicy, mecze rezultaty itd.
     {
+        return $this->exportToExcel($data, true);
+        
+        
+        
         $stringToHtml = '<table border="6" >';
         $headers = $this->getHeaders($data['Users']);
         $stringToHtml .= '<tr>'; //dodanie wiersza na nagłówki
@@ -140,42 +159,77 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         $stringToHtml .= '</table>';     
         return $stringToHtml;
     }
-
-    private function doSummary(Spreadsheet &$spreadSheet, $data)
+    
+    private function checkLimit()
     {
-        $row = $spreadSheet->getActiveSheet()->getHighestRow() + 3;
-        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(2, $row, 'Podsumowanie:');
-        $row += 1;
-        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(2, $row, 'Gracze:');
-        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(3, $row, 'LiczbaMeczy:');
-        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(4, $row, 'LiczbaPiw:');
-        $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(5, $row, 'LiczbaZetonow:');
-        $row +=1;
-        $rowForUsers = $row;
-
-        foreach ($data['Users'] as $user)
-        {
-            $countMatchesForUser = 0;
-            $countBeersForUser = 0;
-            $countTokensForUser = 0;
-            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(2, $rowForUsers, $user->getLogin());
-            foreach ($data['Results'] as $result)
-            {
-                if ($user->getId() === $result->getUserId())
-                {
-                    $countMatchesForUser += 1;
-                    $countBeersForUser += $result->getBeers();
-                    $countTokensForUser += $result->getTokens();
-                    
-                }
-            }
-            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(3, $rowForUsers, $countMatchesForUser);
-            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(4, $rowForUsers, $countBeersForUser);
-            $spreadSheet->getActiveSheet()->setCellValueByColumnAndRow(5, $rowForUsers, $countTokensForUser);
-            $rowForUsers += 1;
-        }
+        return random_int(0, 100) > 50;
     }
     
+    private function doSummary(Spreadsheet $spreadSheet, $data, $lastRow)
+    {
+        $sheet = $spreadSheet->getActiveSheet();
+        $row = $lastRow +3;
+        $sheet->setCellValueByColumnAndRow(1, $row, 'Podsumowanie:');
+        $row += 1;
+        $sheet->setCellValueByColumnAndRow(1, $row, 'Gracze:');
+        $sheet->setCellValueByColumnAndRow(2, $row, 'Podsumowanie Piw');
+        $sheet->setCellValueByColumnAndRow(3, $row, 'Podsumowanie Punktów');
+        $sheet->setCellValueByColumnAndRow(4, $row, 'Podsumowanie Żetonów');
+        
+        $userNumberList = $this->setUserNumberList($data);
+        foreach ($userNumberList as $user => $number)
+        {
+            $sheet->setCellValueByColumnAndRow(1, $row + $number, $user);
+            $lastObjectForUser[$user] = $this->getLastObjectForUser($data, $user);
+            $sheet->setCellValueByColumnAndRow(2, $row + $number, $lastObjectForUser[$user]->getCumulatedBeers()); // zamień to żeby z excela pobierał
+            $sheet->setCellValueByColumnAndRow(3, $row + $number, $lastObjectForUser[$user]->getCumulatedPoints());
+            $sheet->setCellValueByColumnAndRow(4, $row + $number, $lastObjectForUser[$user]->getCumulatedTokens());
+        }       
+    }
+    private function getLastObjectForUser($data, $userName)
+    {
+        $lastObject = null;
+        foreach ($data as $object)
+        {
+            if ($object->getUsername() === $userName)
+            {
+                $lastObject = $object;
+            }
+        }
+        return $lastObject;
+    }
+    
+    
+    private function getMatchNrList($data): array
+    {
+        $rowMatchNr = [];
+        $row = 4; // od 4 wiersza wpisujemy
+        foreach ($data as $record)
+        {
+            if (empty($rowMatchNr[$record->getNrMatch()]))
+            {
+                $rowMatchNr[$record->getNrMatch()] = $row;
+                $row += 2;
+            }
+        }
+        return $rowMatchNr;   
+    }
+    
+    private function  setUserNumberList($data): array
+    {
+        $userColumnNr = [];
+        $number = 1; //dane dotyczące użytkowników wpisujemy od 2 kolumny
+        foreach ($data as $record)
+        {
+            if (!key_exists($record->getUserName(), $userColumnNr))
+            {
+                $userColumnNr[$record->getUserName()] = $number;
+                $number += 1;
+            }
+        }
+        return $userColumnNr;
+    }
+
     private function getBeersFromPreviousResultRow($row, $column, Spreadsheet $spreadSheet)
     {
         if (is_numeric($spreadSheet->getActiveSheet()->getCellByColumnAndRow($column, $row - 1)->getValue()))

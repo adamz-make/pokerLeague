@@ -6,5 +6,5 @@ namespace App\Domain\Model;
 interface ReportExporterInterface {
     
     public function exportToHtml($data): string;
-    public function exportToExcel($data): array;    
+    public function exportToExcel($data, $toHtml = false);
 }

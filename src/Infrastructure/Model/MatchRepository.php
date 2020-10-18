@@ -5,6 +5,7 @@ namespace App\Infrastructure\Model;
 
 use App\Domain\Model\Match;
 use App\Domain\Model\MatchRepositoryInterface;
+use App\Domain\Model\MatchPlayer;
 
 class MatchRepository implements MatchRepositoryInterface {
 
@@ -17,7 +18,9 @@ class MatchRepository implements MatchRepositoryInterface {
         if (!empty ($result))
         {
             $row = reset($result);
-            return new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+            $match = new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+            $this->applyMatchPlayers($match);
+            return $match;
         }
         return null;        
     }
@@ -30,7 +33,9 @@ class MatchRepository implements MatchRepositoryInterface {
         $result = $db->select($sql, $array);
         foreach ($result as $row)
         {
-            $matchArray[]= new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+            $match = new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+            $this->applyMatchPlayers($match);
+            $matchArray[] = $match;
         }
         return $matchArray;      
     }
@@ -44,7 +49,9 @@ class MatchRepository implements MatchRepositoryInterface {
         if (!empty ($result))
         {
             $row = reset($result);
-            return new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+            $match = new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+            $this->applyMatchPlayers($match);
+            return $match;
         }
         return null;   
     }
@@ -57,11 +64,12 @@ class MatchRepository implements MatchRepositoryInterface {
         $db->insert($table, $array);        
     }
     
-    public function getMatchesByDate ($dateFrom, $dateTo): array
+    public function getMatchesByDate ($dateFrom, $dateTo): ?array
     {
         $db = Db::getInstance();
         $sql = 'select Id, nrMeczu, dataDodania from mecze where 1=1 ';
         $array = [];
+        $matchArray = [];
         if($dateFrom !== null)
         {
             $sql .= 'and dataDodania >=? ';
@@ -75,8 +83,31 @@ class MatchRepository implements MatchRepositoryInterface {
         $result = $db->select($sql, $array);
         foreach ($result as $row)
         {
-            $matchArray[]= new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+            $match = new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+            $this->applyMatchPlayers($match);
+            $matchArray[] = $match;
         }
         return $matchArray;      
+    }
+    
+    private function applyMatchPlayers(Match $match)
+    {
+        // Na podstawie $match wyciągam dane z Result Repository i USer Repository
+        // w tej metodzie robiłbym $match->addMatchPlayer($matchPlayer);
+        $resultRepo = new ResultRepository();
+        $userRepo = new UserRepository();
+        $results = $resultRepo->getAllResults();
+        foreach ($results as $result)
+        {
+            if ($result->getMatchId() === $match->getMatchId())
+            {
+                $user = $userRepo->getById($result->getUserId());
+                $beers = $result->getBeers();
+                $tokens = $result->getTokens();
+                $points = $result->getPoints();
+                $matchPlayer = new MatchPlayer($user, $tokens, $points, $beers);
+                $match->addMatchPlayer($matchPlayer);         
+            }
+        }
     }
 }
