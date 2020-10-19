@@ -30,6 +30,40 @@ class ReportSummaryExporterService implements ReportExporterInterface{
             $sheet->setCellValueByColumnAndRow($column +1, 3, $header); // w 3 wierszu są nagłówki, a kolumna +1 bo od 2 kolumny wpisujemy
         }
         $matchNrList = $this->getMatchNrList($data);
+
+
+        $matchRow = 4;
+        foreach ($data as $object)
+        {
+            if (isset($matchNr))
+            {
+                if ($object->getNrMatch() !== $matchNr)
+                {
+                    $matchRow += 2;
+                    $sheet->setCellValueByColumnAndRow(1, $matchRow, $object->getNrMatch());
+                }
+                $matchNr = $object->getNrMatch();
+                $sheet->setCellValueByColumnAndRow(1, $matchRow + 1, 'Podsumowanie: ');
+                $sheet->setCellValueByColumnAndRow($userColumnNr[$object->getUserName()] + 1, $matchRow,
+                        $object->getBeers());//liczba piw
+                $sheet->setCellValueByColumnAndRow($userColumnNr[$object->getUserName()] + 1, $matchRow +1, 
+                        $object->getCumulatedBeers());
+            }
+            else
+            {     
+                $matchNr = $object->getNrMatch();
+                $sheet->setCellValueByColumnAndRow(1, $matchRow, $object->getNrMatch());
+                $sheet->setCellValueByColumnAndRow(1, $matchRow + 1, 'Podsumowanie: ');
+                $sheet->setCellValueByColumnAndRow($userColumnNr[$object->getUserName()] + 1, $matchRow,
+                        $object->getBeers());//liczba piw
+                $sheet->setCellValueByColumnAndRow($userColumnNr[$object->getUserName()] + 1, $matchRow + 1, 
+                        $object->getCumulatedBeers());
+            }
+            $lastRow = $matchRow; 
+        }
+          
+         
+        /*
         foreach ($matchNrList as $matchNr => $row)
         {
            $sheet->setCellValueByColumnAndRow(1, $row, $matchNr);
@@ -64,6 +98,7 @@ class ReportSummaryExporterService implements ReportExporterInterface{
             }
             $lastRow = $matchNrList[$record->getNrMatch()];
         }
+        */
         $this->doSummary($spreadSheet, $data, $lastRow);
         $writer = new Xlsx($spreadSheet);
         if ($toHtml === false)
@@ -73,14 +108,18 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         }
         else
         {
+            //$response = new StreamedResponse();
             $response =  new StreamedResponse(
                 function () use ($writer) {
                     $writer->save('php://output');
                 }
             );
             $response->headers->set('Content-Type', 'application/vnd.ms-excel');
-            $response->headers->set('Content-Disposition', 'attachment;filename="ExportScan.xls"');
+            $response->headers->set('Content-Disposition', 'attachment;filename="ExportScan.xlsx"');
             $response->headers->set('Cache-Control','max-age=0');
+            /*$response->setCallback(function () use ($writer) {
+                    $writer->save('php://output');
+                });*/
             return $response;
         }        
     }
