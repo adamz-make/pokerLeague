@@ -67,7 +67,8 @@ class ResultController extends AbstractController{
            'match' => $match,
            'lastMatch' => $lastMatch,
            'users' => $users,
-           'resultForUserAdded' => $resultForUserAdded
+           'resultForUserAdded' => $resultForUserAdded,
+           'usersCount' => count($users)
        ]);        
     }
     
