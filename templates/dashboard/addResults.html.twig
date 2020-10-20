@@ -41,7 +41,7 @@
                     {% endif %}
                 </div>
                 {% for i in 0.. usersCount -1  %}
-                    //<div class ="user"><input type ="text" id ="user {{ i }}">{{ users[i].login }}></div>
+                    <div class ="user"><input type ="text" id ="user {{ i }}">{{ users[i].login }}></div>
                     <select  onchange="userHasAddedMatch({{ i }})" id = "user{{ i }}"  name ="user">
                         {% for user in users%}
                             <option  value ={{ user.login }}>{{ user.login }} </option>
