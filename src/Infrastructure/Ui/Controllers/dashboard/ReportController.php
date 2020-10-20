@@ -56,6 +56,11 @@ class ReportController extends AbstractController{
      */
     public function getReports(Request $request, string $reportName, string $reportOutput)
     {
+        if ($this->getUser() == null)
+        {
+            header('Location: /home');
+            exit;
+        }
         $factory = AbstractReportFactory::getFactory($reportName);
         $dataCreator = $factory->getDataCreator();
         $reportFilters = new ReportFilters();

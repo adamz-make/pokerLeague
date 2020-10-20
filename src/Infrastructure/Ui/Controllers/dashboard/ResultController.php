@@ -14,6 +14,7 @@ use App\Infrastructure\Model\ResultRepository;
 use App\Domain\Model\Match;
 use App\Application\Services\AddResultService;
 use App\Application\Services\CreateRankingService;
+use App\Domain\Model\User;
 
 class ResultController extends AbstractController{
 
@@ -27,10 +28,11 @@ class ResultController extends AbstractController{
             header('Location: /home');
             exit;
         }
+        $resultForUserAdded = null;
         $match = null;
         $lastMatch = $matchRepository->getLastMatch();
         $users = $userRepository->getAllUsers();
-        $resultForUserAdded = null;
+        array_unshift($users, new User (null,"Wybierz Gracza", null, null));
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
             $parameters = $request->request->all();
@@ -88,18 +90,26 @@ class ResultController extends AbstractController{
     {
         if ($_SERVER['REQUEST_METHOD'] === 'GET')
         {
-            $user = $userRepo->getByLogin($request->get('user'));
-            $user->eraseCredentials();
+            //$user = $userRepo->getByLogin($request->get('user'));
+            //$user->eraseCredentials();
             $matchRepo = new MatchRepository();
             $match = $matchRepo->getMatchByNr($request->get('matchNr'));
-            if ($user === null || $match === null)
+            if (!empty ($match))
+            {
+                 foreach ($match->getMatchPlayers() as $matchPlayer)
+                {
+                    $matchPlayer->getUser()->eraseCredentials();
+                }
+            }
+            if ($match === null)
             {
                 return new Response(json_encode([
                     'matchResult' => null
                 ]));
             }
-            $checkifMatchAddedForUserService = new CheckIfMatchAddedForUserService(new ResultRepository());
-            if (($result =$checkifMatchAddedForUserService->execute($user, $match)) !== null)
+            //czy to potrzebne?
+            /*$checkifMatchAddedForUserService = new CheckIfMatchAddedForUserService(new ResultRepository());
+            if (($result = $checkifMatchAddedForUserService->execute($user, $match)) !== null)
             {
                 $outData = [
                     'user' => $user,
@@ -107,7 +117,8 @@ class ResultController extends AbstractController{
                     'result' => $result
                 ];                
                 return new Response(json_encode($outData));  
-            }
+            }*/
+            return new Response(json_encode(['matchResult' => $match]));
         }
         return new Response(json_encode([
             'matchResult' => null

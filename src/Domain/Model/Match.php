@@ -53,7 +53,7 @@ class Match implements \JsonSerializable{
 
     public function jsonSerialize() 
     {
-        return ['id' => $this->id, 'matchNr' => $this->matchNr, 'dateOfMatch' => $this->dateOfMatch];
+        return ['id' => $this->id, 'matchNr' => $this->matchNr, 'dateOfMatch' => $this->dateOfMatch, 'matchPlayers' => $this->matchPlayers];
     }
 
 }

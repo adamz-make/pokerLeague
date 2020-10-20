@@ -1,4 +1,4 @@
-    .content{
+/*    .content{
         padding-top: 5%;
         padding-left: 5%;
         margin-left: 28%;
@@ -37,7 +37,7 @@
     }
     .inputResult{
         background-color: gray;
-        /*opacity:0.1;*/
+        opacity:0.1;
         width: 20%;
         color: black;
     }
@@ -53,6 +53,6 @@
     #points, #beers, #tokens{
         width:100%;
     }
-    
+    */
     
 

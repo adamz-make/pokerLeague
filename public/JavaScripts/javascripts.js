@@ -4,18 +4,19 @@ function myFunction(){
     /*var value = $(this).val();*/
 };
 
-function userHasAddedMatch()
+function userHasAddedMatch(i = null)
 {
     /*document.getElementById("test").innerHTML ="siema";*/
-    let user = document.getElementById("user");
+    //let user = document.getElementById("user" + i);
     let matchNr = document.getElementById("nrMatch");
    $.ajax({
         url: "/home/addResults/MatchAddedForUser",
         type: "GET",
-	data: "user=" + user.options[user.selectedIndex].value + "&matchNr=" + matchNr.value
+	data: "matchNr=" + matchNr.value
     }).done(function(result) {
-
-        document.getElementById("ResultForUserExist").innerHTML = "";
+        
+        
+        document.getElementById("ResultForUserExist" + i).innerHTML = "";
         document.getElementById("beers").value = "";
         document.getElementById("tokens").value = "";
         document.getElementById("points").value = "";

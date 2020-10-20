@@ -5,7 +5,7 @@ namespace App\Domain\Model;
 
 use App\Domain\Model\User;
 
-class MatchPlayer {
+class MatchPlayer implements \JsonSerializable{
     /**
      *
      * @var User
@@ -42,5 +42,11 @@ class MatchPlayer {
     {
         return $this->beers;
     }
-    
+
+    public function jsonSerialize()
+    {
+        return ['user' => $this->user, 'tokens' => $this->tokens, 'points' => $this->points, 'beers' => $this->beers];
+        
+    }
+
 }
