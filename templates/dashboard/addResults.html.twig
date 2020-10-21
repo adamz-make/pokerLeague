@@ -40,13 +40,9 @@
                     <div class ="matchNr"></div><div><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="1" name ="matchNr"></div>
                     {% endif %}
                 </div>
-                {% for i in 0.. usersCount -1  %}
-                    <div class ="user"><input type ="text" id ="user {{ i }}">{{ users[i].login }}></div>
-                    <select  onchange="userHasAddedMatch({{ i }})" id = "user{{ i }}"  name ="user">
-                        {% for user in users%}
-                            <option  value ={{ user.login }}>{{ user.login }} </option>
-                        {% endfor %}                
-                    </select>
+                {% set i = 0  %}
+                {% for user in users%}
+                    <div class ="user"></div><div><input type ="text" id ="{{ user.login }}" value="{{ user.login }}" readonly></div>
                     <div class ="inputResult">
                         <div class ="inputTitle">
                             <div class = "inputTitles">Punkty</div>
@@ -59,6 +55,7 @@
                             <div class = "inputValues"><input type ="text" id="tokens{{ i }}" name ="tokens"></div>
                         </div>   
                     </div>
+                        {% set i = i+1 %}  
                 {% endfor %}
                 <div class ="savebtn"><input id ="savebtn" type ="submit" value="Zapisz"></div>
             </form>

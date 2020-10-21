@@ -32,7 +32,7 @@ class ResultController extends AbstractController{
         $match = null;
         $lastMatch = $matchRepository->getLastMatch();
         $users = $userRepository->getAllUsers();
-        array_unshift($users, new User (null,"Wybierz Gracza", null, null));
+       //array_unshift($users, new User (null,"Wybierz Gracza", null, null));
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
             $parameters = $request->request->all();

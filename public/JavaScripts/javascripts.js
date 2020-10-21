@@ -18,23 +18,18 @@ function userHasAddedMatch()
             i = 0;
             if (resultJson.result !== null)
             {
-                alert (resultJson.matchResult.matchNr + "mecz");
                 for (var key in resultJson.matchResult.matchPlayers)
                 {
                     document.getElementById("ResultForUserExist").innerHTML = "";
                     document.getElementById("beers" + i).value = "";
                     document.getElementById("tokens" + i).value = "";
                     document.getElementById("points" + i).value = "";
-                    alert (key + "key");
-                    let value = resultJson.matchResult.matchPlayers[key].beers;
-                    alert (value + "alo");
                     document.getElementById("beers" + i).value = resultJson.matchResult.matchPlayers[key].beers;
                     document.getElementById("tokens" + i).value = resultJson.matchResult.matchPlayers[key].tokens;
                     document.getElementById("points" + i).value = resultJson.matchResult.matchPlayers[key].points;
                     //document.getElementById("ResultForUserExist").innerHTML = "Użytkownik o loginie " + resultJson.user.login + " ma już dodany wynik do meczu nr " + resultJson.match.matchNr;
                     i += 1;
                 }
-                // = resultJson.match.matchPlayers;
             }
     });    
   /*let xhr = new XMLHttpRequest();
