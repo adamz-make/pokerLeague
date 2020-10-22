@@ -15,6 +15,8 @@ use App\Domain\Model\Match;
 use App\Application\Services\AddResultService;
 use App\Application\Services\CreateRankingService;
 use App\Domain\Model\User;
+use App\Application\Services\GetMatchPlayersService;
+use App\Infrastructure\Model\UserRepository;
 
 class ResultController extends AbstractController{
 
@@ -35,11 +37,31 @@ class ResultController extends AbstractController{
        //array_unshift($users, new User (null,"Wybierz Gracza", null, null));
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
+            
+            
             $parameters = $request->request->all();
+            //$i = 0;
+            //$parametersUser = null;
+            /*DD($parameters);
+            exit;
+
+            foreach (array_keys($parameters) as $keyParameter)
+            {
+                if (substr($keyParameter, strlen($keyParameter) - 1, 1) == $i)                
+                {
+                     $parametersUser[$parameters["user_$i"]] = $parameters[$keyParameter];
+                }    
+                $i += 1;
+            }
+            dd ($parametersUser);
+            exit;
+            */
             $nrMatch = $parameters['matchNr']; 
             $match = $matchRepository->getMatchByNr($nrMatch);
-            $userLogin = $parameters['user'];
-            $user = $userRepository->getByLogin($userLogin);
+            //$userLogin = $parameters['user'];
+            //$user = $userRepository->getByLogin($userLogin);
+            $getMatchPlayersService = new GetMatchPlayersService(new UserRepository());
+            $matchPlayers = $getMatchPlayersService->execute($parameters);
             if ($match === null)
             {
                 if ($lastMatch !== null)
@@ -56,7 +78,7 @@ class ResultController extends AbstractController{
             $addResultService = new AddResultService(new ResultRepository());
             try
             {
-             $result = $addResultService->execute($user, $match, $parameters);   
+                $result = $addResultService->execute($user, $match, $getMatchPlayersService);   
             } 
             catch (ResultAddedForUserException $ex)
             {
