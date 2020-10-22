@@ -37,31 +37,13 @@ class ResultController extends AbstractController{
        //array_unshift($users, new User (null,"Wybierz Gracza", null, null));
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
-            
-            
             $parameters = $request->request->all();
-            //$i = 0;
-            //$parametersUser = null;
-            /*DD($parameters);
-            exit;
-
-            foreach (array_keys($parameters) as $keyParameter)
-            {
-                if (substr($keyParameter, strlen($keyParameter) - 1, 1) == $i)                
-                {
-                     $parametersUser[$parameters["user_$i"]] = $parameters[$keyParameter];
-                }    
-                $i += 1;
-            }
-            dd ($parametersUser);
-            exit;
-            */
             $nrMatch = $parameters['matchNr']; 
             $match = $matchRepository->getMatchByNr($nrMatch);
             //$userLogin = $parameters['user'];
             //$user = $userRepository->getByLogin($userLogin);
             $getMatchPlayersService = new GetMatchPlayersService(new UserRepository());
-            $matchPlayers = $getMatchPlayersService->execute($parameters);
+            $matchPlayers = $getMatchPlayersService->execute($parameters);            
             if ($match === null)
             {
                 if ($lastMatch !== null)
@@ -75,11 +57,17 @@ class ResultController extends AbstractController{
                 $matchRepository->add($match); //dodaje do bazy danych i automatycznie mam nadany nr ID
                 $match = $matchRepository->getMatchByNr($nrMatch); // jeszcze raz pobieram, bo przekazuje bez ID - konstruktor tworzy z null  (dwie linie wyżej)
             }
+            foreach ($matchPlayers as $matchPlayer)
+            {
+                $match->addMatchPlayer($matchPlayer);
+            }
+            
             $addResultService = new AddResultService(new ResultRepository());
             try
             {
-                $result = $addResultService->execute($user, $match, $getMatchPlayersService);   
+                $addResultService->execute($match);  
             } 
+           
             catch (ResultAddedForUserException $ex)
             {
                 $resultForUserAdded = $ex->getMessage();
@@ -109,12 +97,10 @@ class ResultController extends AbstractController{
      * @Route(path="/home/addResults/MatchAddedForUser", name="matchAddedForUser")
      */
     //żadąć userrepositoryInterface - ogólnie interfejsów
-    public function MatchAddedForUser(Request $request, UserRepositoryInterface $userRepo)
+    public function MatchAddedForUser(Request $request)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'GET')
         {
-            //$user = $userRepo->getByLogin($request->get('user'));
-            //$user->eraseCredentials();
             $matchRepo = new MatchRepository();
             $match = $matchRepo->getMatchByNr($request->get('matchNr'));
             if (!empty ($match))
@@ -130,17 +116,6 @@ class ResultController extends AbstractController{
                     'matchResult' => null
                 ]));
             }
-            //czy to potrzebne?
-            /*$checkifMatchAddedForUserService = new CheckIfMatchAddedForUserService(new ResultRepository());
-            if (($result = $checkifMatchAddedForUserService->execute($user, $match)) !== null)
-            {
-                $outData = [
-                    'user' => $user,
-                    'match' => $match,
-                    'result' => $result
-                ];                
-                return new Response(json_encode($outData));  
-            }*/
             return new Response(json_encode(['matchResult' => $match]));
         }
         return new Response(json_encode([

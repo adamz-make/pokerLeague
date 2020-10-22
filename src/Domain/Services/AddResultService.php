@@ -6,11 +6,17 @@ namespace App\Domain\Services\Utils;
 use App\Domain\Model\User;
 use App\Domain\Model\Match;
 use App\Domain\Model\Result;
+use App\Domain\Model\MatchPlayer;
 
 class AddResultService {
     
-    public function execute(User $user, Match $match, $params)
+    public function execute(Match $match)
     {
-        return new Result(null, $user->getId(), $match->getMatchId(), $params['points'], $params['beers'], $params['tokens']);        
+        foreach ($match->getMatchPlayers() as $matchPlayer)
+        {
+            $result[] = new Result (null, $matchPlayer->getUser()->getId(), $match->getMatchId(), $matchPlayer->getPoints(), $matchPlayer->getBeers(),
+                                    $matchPlayer->getTokens());
+        }    
+        return $result;
     }
 }

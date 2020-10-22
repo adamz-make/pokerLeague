@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Application\Services;
 
-use App\Domain\Model\GetMatchPlayersService as GetMatchPlayersDomainService;
+use App\Domain\Services\GetMatchPlayersService as GetMatchPlayersDomainService;
 use App\Domain\Model\UserRepositoryInterface;
 
 class GetMatchPlayersService
