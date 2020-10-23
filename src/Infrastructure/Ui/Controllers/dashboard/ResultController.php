@@ -7,7 +7,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Domain\Model\MatchRepositoryInterface;
 use App\Domain\Model\UserRepositoryInterface;
-use App\Infrastructure\Model\MatchRepository;
 use Symfony\Component\HttpFoundation\Response;
 use App\Application\Services\CheckIfMatchAddedForUserService;
 use App\Infrastructure\Model\ResultRepository;
@@ -17,19 +16,21 @@ use App\Application\Services\CreateRankingService;
 use App\Domain\Model\User;
 use App\Application\Services\GetMatchPlayersService;
 use App\Infrastructure\Model\UserRepository;
+use App\Domain\Model\ResultRepositoryInterface;
 
 class ResultController extends AbstractController{
 
      /**
      * @Route(path="/home/addResults", name="addResults")
      */    
-    public function addResults(Request $request,MatchRepositoryInterface $matchRepository, UserRepositoryInterface $userRepository)
+    public function addResults(Request $request,MatchRepositoryInterface $matchRepository, UserRepositoryInterface $userRepository, ResultRepositoryInterface $resultRepo)
     {
         if ($this->getUser() == null)
         {
             header('Location: /home');
             exit;
         }
+         //do requesta przekazywany jest parametr czy poszło to z zapisu czy z aktualizacji danych
         $resultForUserAdded = null;
         $match = null;
         $lastMatch = $matchRepository->getLastMatch();
@@ -40,10 +41,8 @@ class ResultController extends AbstractController{
             $parameters = $request->request->all();
             $nrMatch = $parameters['matchNr']; 
             $match = $matchRepository->getMatchByNr($nrMatch);
-            //$userLogin = $parameters['user'];
-            //$user = $userRepository->getByLogin($userLogin);
-            $getMatchPlayersService = new GetMatchPlayersService(new UserRepository());
-            $matchPlayers = $getMatchPlayersService->execute($parameters);            
+            $getMatchPlayersService = new GetMatchPlayersService($userRepository);
+            $matchPlayers = $getMatchPlayersService->execute($parameters);      
             if ($match === null)
             {
                 if ($lastMatch !== null)
@@ -62,7 +61,8 @@ class ResultController extends AbstractController{
                 $match->addMatchPlayer($matchPlayer);
             }
             
-            $addResultService = new AddResultService(new ResultRepository());
+            // rozdzielenie tutaj na to czy jest to pierwsze dodanie czy aktualizacja danych 
+            $addResultService = new AddResultService($resultRepo);
             try
             {
                 $addResultService->execute($match);  
@@ -97,11 +97,10 @@ class ResultController extends AbstractController{
      * @Route(path="/home/addResults/MatchAddedForUser", name="matchAddedForUser")
      */
     //żadąć userrepositoryInterface - ogólnie interfejsów
-    public function MatchAddedForUser(Request $request)
+    public function MatchAddedForUser(Request $request, MatchRepositoryInterface $matchRepo)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'GET')
         {
-            $matchRepo = new MatchRepository();
             $match = $matchRepo->getMatchByNr($request->get('matchNr'));
             if (!empty ($match))
             {
