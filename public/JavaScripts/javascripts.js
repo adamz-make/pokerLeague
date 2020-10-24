@@ -38,20 +38,10 @@ function userHasAddedMatch()
             {   // powinno zerować poszczególne inputy, nie wiem jak to zrobić
                 let inputs = document.getElementsByClassName('inputResult');
                 for (var i =0; i<inputs.length; ++i)
-                {
-                    alert(inputs.length);
-                   var dataArray = {'points': document.getElementById('point' + i),'beers': document.getElementById('beers' + i),
-                                        'tokens': document.getelementById ('tokens' + i)};
-                   //po dataArray to trzeba zrobić ale w JS to co zrobiłem powyżejn jest obiektem nie tablicą
-                   let points = document.getElementById('point' + i);
-                   let beers = document.getElementById('beers' + i);
-                   let tokens = document.getelementById ('tokens' + i);
-                   
-                   // let texts = inputs[i].element.getElementById('points2');
-                  //  alert (texts);
-                    inputs[i].style.backgroundColor = "red";
-                    //inputs[i]
-                    //inputs[i] = "";
+                {   
+                    document.getElementById('points' + i).value = '';
+                    document.getElementById('beers' + i).value = '';
+                    document.getElementById ('tokens' + i).value = '';
                 }
                 let savebtn = document.querySelector('.savebtn');
                 savebtn.innerHTML = '<input id ="savebtn" type ="submit" value="Zapisz">';
