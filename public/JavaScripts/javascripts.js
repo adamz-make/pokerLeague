@@ -27,15 +27,13 @@ function userHasAddedMatch()
                     document.getElementById("beers" + i).value = resultJson.matchResult.matchPlayers[key].beers;
                     document.getElementById("tokens" + i).value = resultJson.matchResult.matchPlayers[key].tokens;
                     document.getElementById("points" + i).value = resultJson.matchResult.matchPlayers[key].points;
-                   
-                    //document.getElementById("ResultForUserExist").innerHTML = "Użytkownik o loginie " + resultJson.user.login + " ma już dodany wynik do meczu nr " + resultJson.match.matchNr;
                     i += 1;
                 }
                 let saveBtn = document.querySelector('.savebtn');
                 saveBtn.innerHTML = '<input id ="savebtn" type ="submit" value="Zaktualizuj Dane">';             
             }
             else
-            {   // powinno zerować poszczególne inputy, nie wiem jak to zrobić
+            {   
                 let inputs = document.getElementsByClassName('inputResult');
                 for (var i =0; i<inputs.length; ++i)
                 {   
