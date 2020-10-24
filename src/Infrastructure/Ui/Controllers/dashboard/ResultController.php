@@ -30,7 +30,6 @@ class ResultController extends AbstractController{
             header('Location: /home');
             exit;
         }
-         //do requesta przekazywany jest parametr czy poszło to z zapisu czy z aktualizacji danych
         $resultForUserAdded = null;
         $match = null;
         $lastMatch = $matchRepository->getLastMatch();
@@ -61,7 +60,6 @@ class ResultController extends AbstractController{
                 $match->addMatchPlayer($matchPlayer);
             }
             
-            // rozdzielenie tutaj na to czy jest to pierwsze dodanie czy aktualizacja danych 
             $addResultService = new AddResultService($resultRepo);
             try
             {

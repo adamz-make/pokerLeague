@@ -38,6 +38,11 @@ class Db {
         return $stmt->fetchAllAssociative();
     }
     
+    public function update($table, $arrayData, $arrayFilters)
+    {
+        $this->connection->update($table, $arrayData, $arrayFilters);       
+    }
+    
     public function insert ($table, $array)
     {
         try

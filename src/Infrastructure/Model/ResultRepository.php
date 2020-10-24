@@ -9,9 +9,33 @@ use App\Domain\Model\TotalResultForUser;
 use App\Infrastructure\Model\UserRepository;
 use App\Domain\Model\Match;
 
-class ResultRepository implements ResultRepositoryInterface{
+class ResultRepository implements ResultRepositoryInterface
+{
     
-    public function add(Result $result)
+    public function persist(Result $result)
+    {
+        $db = Db::getInstance();
+        $resultAdded = $this->isResultForUserAdded($result);
+        if ($resultAdded === null)
+        {
+            $this->add($result);
+        }
+        else
+        {
+            $this->update($result);
+        }
+    }
+    
+    private function update(Result $result)
+    {
+        $db = Db::getInstance();
+        $table = 'wyniki';
+        $arrayData = ['LiczbaPiw' => $result->getBeers(), 'LiczbaPunktow' => $result->getPoints(), 'LiczbaZetonow' => $result->getTokens()];
+        $arrayFilters = ['Id' => $result->getId()];
+        $db->update($table, $arrayData, $arrayFilters);
+    }
+    
+    private function add(Result $result)
     {
         $db = Db::getInstance();
         $table = 'wyniki';
@@ -20,7 +44,7 @@ class ResultRepository implements ResultRepositoryInterface{
         $db->insert($table, $array);        
     }
     
-    public function isResultForUserAdded(Result $result): ?Result
+    private function isResultForUserAdded(Result $result): ?Result
     {
         $db = Db::getInstance();
         $sql = 'select Id, idUsera, IdMeczu, liczbaPunktow, LiczbaPiw, LiczbaZetonow from wyniki where idUsera =? and idMeczu=?';

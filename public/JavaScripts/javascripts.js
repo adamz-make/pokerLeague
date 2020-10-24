@@ -32,27 +32,29 @@ function userHasAddedMatch()
                     i += 1;
                 }
                 let saveBtn = document.querySelector('.savebtn');
-                saveBtn.innerHTML = '';
-                let flagUpdate = document.getElementById('flagUpdate');
-                flagUpdate.value = 1;                
-                let updateBtn = document.querySelector('.updatebtn');
-                updateBtn.innerHTML = '<input id ="updatebtn" type ="submit" value="Zaktualizuj Dane">';
+                saveBtn.innerHTML = '<input id ="savebtn" type ="submit" value="Zaktualizuj Dane">';             
             }
             else
-            {   /* powinno zerować poszczególne inputy, nie wiem jak to zrobić
-                let inputs = document.getElementsByClassName('inputValues');
+            {   // powinno zerować poszczególne inputy, nie wiem jak to zrobić
+                let inputs = document.getElementsByClassName('inputResult');
                 for (var i =0; i<inputs.length; ++i)
                 {
-                    let texts = inputs[i].element.getElementById('points2');
-                    alert (texts);
+                    alert(inputs.length);
+                   var dataArray = {'points': document.getElementById('point' + i),'beers': document.getElementById('beers' + i),
+                                        'tokens': document.getelementById ('tokens' + i)};
+                   //po dataArray to trzeba zrobić ale w JS to co zrobiłem powyżejn jest obiektem nie tablicą
+                   let points = document.getElementById('point' + i);
+                   let beers = document.getElementById('beers' + i);
+                   let tokens = document.getelementById ('tokens' + i);
+                   
+                   // let texts = inputs[i].element.getElementById('points2');
+                  //  alert (texts);
                     inputs[i].style.backgroundColor = "red";
-                    inputs[i]
+                    //inputs[i]
                     //inputs[i] = "";
-                }*/
+                }
                 let savebtn = document.querySelector('.savebtn');
-                savebtn.innerHTML = '<input id ="savebtn" type ="submit" name ="flagUpdate" value="Zapisz">';
-                let updateBtn  = document.querySelector('.updatebtn');
-                updateBtn.innerHTML = "";
+                savebtn.innerHTML = '<input id ="savebtn" type ="submit" value="Zapisz">';
             }
     });    
   /*let xhr = new XMLHttpRequest();

@@ -24,7 +24,7 @@ class AddResultService {
         $results =  $domainAddResultService->execute($match);
         foreach($results as $result)
         {
-            $this->resultRepo->add($result);
+            $this->resultRepo->persist($result);
             
         }
     }
