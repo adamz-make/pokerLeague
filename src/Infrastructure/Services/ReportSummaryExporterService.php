@@ -12,6 +12,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Html;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as Readxlsx;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 
 class ReportSummaryExporterService implements ReportExporterInterface{
     
@@ -63,23 +65,26 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         }
           
         $this->doSummary($spreadSheet, $data, $lastRow);
-        $writer = new Xlsx($spreadSheet);
+        
         if ($toHtml === false)
         {    
+            $writer = new Xlsx($spreadSheet);
             $writer->save('report.xlsx');
             return [getcwd() . '\report.xlsx', 'report.xlsx'];
         }
         else
         {
+            $writer = IOFactory::createWriter($spreadSheet,'Html');
             //$response = new StreamedResponse();
-            $response =  new StreamedResponse(
+            /*$response =  new StreamedResponse(
                 function () use ($writer) {
                     $writer->save('php://output');
                 }
-            );
-            $response->headers->set('Content-Type', 'application/vnd.ms-excel');
-            $response->headers->set('Content-Disposition', 'attachment;filename="ExportScan.xlsx"');
-            $response->headers->set('Cache-Control','max-age=0');
+            );*/
+            $response = $writer->save('php://output');
+           // $response->headers->set('Content-Type', 'application/vnd.ms-excel');
+            //$response->headers->set('Content-Disposition', 'attachment;filename="ExportScan.xlsx"');
+            //$response->headers->set('Cache-Control','max-age=0');
             /*$response->setCallback(function () use ($writer) {
                     $writer->save('php://output');
                 });*/
@@ -90,7 +95,7 @@ class ReportSummaryExporterService implements ReportExporterInterface{
      * 
      * @return string zwrócić gotowy raport do wyświetlenie
      */
-    public function exportToHtml($data): string  //obiekt który ma informację jacy są użytkownicy, mecze rezultaty itd.
+    public function exportToHtml($data): ?string  //obiekt który ma informację jacy są użytkownicy, mecze rezultaty itd.
     {
         return $this->exportToExcel($data, true);
         
@@ -183,7 +188,7 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         {
             $sheet->setCellValueByColumnAndRow(1, $row + $number, $user);
             $lastObjectForUser[$user] = $this->getLastObjectForUser($data, $user);
-            $beersValueRange = "=" . $this->encodeNumberToColumn(1 + $number) . $lastRow;
+            $beersValueRange = "=" . $this->encodeNumberToColumn(1 + $number) . ($lastRow + 1) ;
             $sheet->setCellValueByColumnAndRow(2, $row + $number,$beersValueRange);
             $sheet->setCellValueByColumnAndRow(3, $row + $number, $lastObjectForUser[$user]->getCumulatedPoints());
             $sheet->setCellValueByColumnAndRow(4, $row + $number, $lastObjectForUser[$user]->getCumulatedTokens());
@@ -207,12 +212,8 @@ class ReportSummaryExporterService implements ReportExporterInterface{
             case 6:
                 return 'F';
              default:
-                return null;
-            
+                return null;   
         }
-            
-        
-        
     }
     private function getLastObjectForUser($data, $userName)
     {

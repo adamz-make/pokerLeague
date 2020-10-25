@@ -66,7 +66,7 @@ class ReportController extends AbstractController{
         $reportFilters = new ReportFilters();
         $reportFilters->setDateFrom($request->query->get('dateFrom'));
         $reportFilters->setDateTo($request->query->get('dateTo'));
-        $reportFilters->setUsers($request->query->get('users'));  
+        $reportFilters->setUsers($request->query->get('users'));
         $dataCreator->setFilters($reportFilters);
         try
         {
