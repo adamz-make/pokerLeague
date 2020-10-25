@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Application\Services;
 
-use App\Domain\Services\GetMatchPlayersService as GetMatchPlayersDomainService;
 use App\Domain\Model\UserRepositoryInterface;
+use App\Domain\Model\MatchPlayer;
 
 class GetMatchPlayersService
 {
@@ -15,20 +15,11 @@ class GetMatchPlayersService
         $this->userRepo = $userRepo;
     }
     
-   public function execute($parameters): ?array
+   public function execute($userLogin, $beers, $points, $tokens):?MatchPlayer
    {
        //parametry przenieść do nowej klasy (w payload) i tutaj przekazać obiekt $parameters
-       dd ($parameters);
-       exit;
-       $users = null;
-       foreach (array_keys($parameters) as $key)
-       {
-           if (substr($key, 0, strlen('user')) === 'user')
-           {
-               $users[] = $this->userRepo->getByLogin($parameters[$key]);
-           }
-       }
-       $getMatchPlayersDomainService = new GetMatchPlayersDomainService();
-       return $getMatchPlayersDomainService->execute($users, $parameters);
+        $user = null;
+        $user = $this->userRepo->getByLogin($userLogin);
+        return new MatchPlayer ($user, $tokens, $points, $beers);
    }
 }

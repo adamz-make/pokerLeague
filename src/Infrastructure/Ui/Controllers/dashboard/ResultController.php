@@ -17,7 +17,7 @@ use App\Domain\Model\User;
 use App\Application\Services\GetMatchPlayersService;
 use App\Infrastructure\Model\UserRepository;
 use App\Domain\Model\ResultRepositoryInterface;
-use App\Application\Payload\FilteredPlayers;
+use App\Application\Payload\ResultParameters;
 
 class ResultController extends AbstractController{
 
@@ -36,6 +36,9 @@ class ResultController extends AbstractController{
         // jak mecz na punkty to przeliczam na punkty. Jak zrobić w smsie mam od Przemka.
         
         //nie dodawaj wszystkich graczy na raz. Trzeba dodać jakieś pole wyboru żeby pokazały się pola do wynoru dla kolejnego gracza
+        // przy punktach (czyli np 1 - miejsce 50 pkt, 2 - 20 itd) to trzeba pamietać, że jak się aktualizuje dane to tak na prawdę, je trzeba by
+        // dodać ponownie od 0. Bo gracz który miał 50 pkt po aktualizacji graczy może mieć 25 pkt (z 1 miejsca może spaść na 2)
+        
         if ($this->getUser() == null)
         {
             header('Location: /home');
@@ -51,10 +54,12 @@ class ResultController extends AbstractController{
             $parameters = $request->request->all();
             $nrMatch = $parameters['matchNr']; 
             $match = $matchRepository->getMatchByNr($nrMatch);
-            $filteredPlayers = new FilteredPlayers();
-            $filteredPlayers->setUsers($parameters['users']);
             $getMatchPlayersService = new GetMatchPlayersService($userRepository);
-            $matchPlayers = $getMatchPlayersService->execute($parameters);      
+            foreach (array_keys($parameters['users']) as $key)
+            {
+                $matchPlayers[] = $getMatchPlayersService->execute($parameters['users'][$key], $parameters['beers'][$key], $parameters['tokens'][$key],
+                                    $parameters['points'][$key]);
+            }
             if ($match === null)
             {
                 if ($lastMatch !== null)
