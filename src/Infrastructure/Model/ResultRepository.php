@@ -22,7 +22,8 @@ class ResultRepository implements ResultRepositoryInterface
         }
         else
         {
-            $this->update($result);
+            $this->update(new Result ($resultAdded->getId(),$result->getUserId(), $result->getMatchId(), $result->getPoints(),
+                                        $result->getBeers(), $result->getTokens()));
         }
     }
     

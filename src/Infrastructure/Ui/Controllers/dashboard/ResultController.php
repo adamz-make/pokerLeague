@@ -18,6 +18,7 @@ use App\Application\Services\GetMatchPlayersService;
 use App\Infrastructure\Model\UserRepository;
 use App\Domain\Model\ResultRepositoryInterface;
 use App\Application\Payload\ResultParameters;
+use App\Infrastructure\Factory\MatchFactory\AbstractMatchFactory;
 
 class ResultController extends AbstractController{
 
@@ -39,6 +40,12 @@ class ResultController extends AbstractController{
         // przy punktach (czyli np 1 - miejsce 50 pkt, 2 - 20 itd) to trzeba pamietać, że jak się aktualizuje dane to tak na prawdę, je trzeba by
         // dodać ponownie od 0. Bo gracz który miał 50 pkt po aktualizacji graczy może mieć 25 pkt (z 1 miejsca może spaść na 2)
         
+        
+        //Wybiorę jaki typ meczu, podam stawkę startową.
+//W przypadku meczu ligowego zostanie wysłany formularz.
+//I na podstawie wszystkich wyników każdy z uczestników otrzyma jakąś liczbę punktów.
+
+//W przypadku meczu na piwa potrzeba podać ile każdy z graczy ma żetonów i je przeliczyć na piwa.
         if ($this->getUser() == null)
         {
             header('Location: /home');
@@ -48,15 +55,18 @@ class ResultController extends AbstractController{
         $match = null;
         $lastMatch = $matchRepository->getLastMatch();
         $users = $userRepository->getAllUsers();
-       //array_unshift($users, new User (null,"Wybierz Gracza", null, null));
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {
             $parameters = $request->request->all();
-            $nrMatch = $parameters['matchNr']; 
+            $nrMatch = $parameters['matchNr'];
+            $factoryMatch = AbstractMatchFactory::getFactory($parameters ['matchType']);
+            $countTokensService = $factoryMatch->getTokensCountService();
+            $rulesToMatch = $factoryMatch->getRulesToMatch($startPoints); // tutaj będę miał ifnoramcję ile było żetonów na start, ale potrzebuje jeszcze ile wkupów było
+            $countTokensService = $factoryMatch->getTokensCountService($rulesToMatch);
             $match = $matchRepository->getMatchByNr($nrMatch);
             $getMatchPlayersService = new GetMatchPlayersService($userRepository);
             foreach (array_keys($parameters['users']) as $key)
-            {
+            {// beers/ points będzie trzeba wyliczyć nie będzie podawane przez usera
                 $matchPlayers[] = $getMatchPlayersService->execute($parameters['users'][$key], $parameters['beers'][$key], $parameters['tokens'][$key],
                                     $parameters['points'][$key]);
             }
