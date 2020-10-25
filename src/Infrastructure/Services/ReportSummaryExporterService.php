@@ -62,43 +62,6 @@ class ReportSummaryExporterService implements ReportExporterInterface{
             $lastRow = $matchRow; 
         }
           
-         
-        /*
-        foreach ($matchNrList as $matchNr => $row)
-        {
-           $sheet->setCellValueByColumnAndRow(1, $row, $matchNr);
-           $sheet->setCellValueByColumnAndRow(1, $row + 1, "Podsumowanie rozegranych kolejek");  
-        }
-        //Spróbować tak napisać, że gdybyśmy chcieli żeby wpadał dodatkowy wiersz to żeby to można było łatwo przerobić
-        $nrMatch ='';
-       // $r = 4;
-        $lastRow = 0;
-        foreach ($data as $record)
-        {
-            if ($nrMatch === '' || $nrMatch === $record->getNrMatch())
-            {
-                $nrMatch = $record->getNrMatch();
-                $sheet->setCellValueByColumnAndRow($userColumnNr[$record->getUserName()] + 1, $matchNrList[$record->getNrMatch()],
-                        $record->getBeers());//liczba piw
-                $sheet->setCellValueByColumnAndRow($userColumnNr[$record->getUserName()] + 1, $matchNrList[$record->getNrMatch()] + 1,
-                        $record->getCumulatedBeers());//skumulowane piwa
-                if (checkLimit)
-                {
-                    
-                }
-            }
-            else
-            {
-                $nrMatch = $record->getNrMatch();
-               // $r +=2;  
-                $sheet->setCellValueByColumnAndRow($userColumnNr[$record->getUserName()] + 1, $matchNrList[$record->getNrMatch()],
-                        $record->getBeers());//liczba piw
-                $sheet->setCellValueByColumnAndRow($userColumnNr[$record->getUserName()] + 1, $matchNrList[$record->getNrMatch()] + 1, 
-                        $record->getCumulatedBeers());//skumulowane piwa
-            }
-            $lastRow = $matchNrList[$record->getNrMatch()];
-        }
-        */
         $this->doSummary($spreadSheet, $data, $lastRow);
         $writer = new Xlsx($spreadSheet);
         if ($toHtml === false)
@@ -220,10 +183,36 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         {
             $sheet->setCellValueByColumnAndRow(1, $row + $number, $user);
             $lastObjectForUser[$user] = $this->getLastObjectForUser($data, $user);
-            $sheet->setCellValueByColumnAndRow(2, $row + $number, $lastObjectForUser[$user]->getCumulatedBeers()); // zamień to żeby z excela pobierał
+            $beersValueRange = "=" . $this->encodeNumberToColumn(1 + $number) . $lastRow;
+            $sheet->setCellValueByColumnAndRow(2, $row + $number,$beersValueRange);
             $sheet->setCellValueByColumnAndRow(3, $row + $number, $lastObjectForUser[$user]->getCumulatedPoints());
             $sheet->setCellValueByColumnAndRow(4, $row + $number, $lastObjectForUser[$user]->getCumulatedTokens());
         }       
+    }
+    
+    private function encodeNumberToColumn($number)
+    {
+        switch ($number)
+        {
+            case 1:
+                return 'A';
+            case 2:
+                return 'B';
+            case 3:
+                return 'C';
+            case 4:
+                return 'D';
+            case 5:
+                return 'E';
+            case 6:
+                return 'F';
+             default:
+                return null;
+            
+        }
+            
+        
+        
     }
     private function getLastObjectForUser($data, $userName)
     {
