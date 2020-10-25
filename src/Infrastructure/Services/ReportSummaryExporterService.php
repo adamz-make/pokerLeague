@@ -17,7 +17,27 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ReportSummaryExporterService implements ReportExporterInterface{
     
-    public function exportToExcel($data, $toHtml = false) 
+    public function exportToExcel($data) 
+    {       
+        $spreadSheet = $this->prepareSpreadSheet($data);
+        $writer = new Xlsx($spreadSheet);
+        $writer->save('report.xlsx');
+        return [getcwd() . '\report.xlsx', 'report.xlsx'];
+       
+    }
+    /**
+     * 
+     * @return string zwrócić gotowy raport do wyświetlenie
+     */
+    public function exportToHtml($data): ?string  //obiekt który ma informację jacy są użytkownicy, mecze rezultaty itd.
+    {
+        $spreadSheet = $this->prepareSpreadSheet($data);
+        $writer = IOFactory::createWriter($spreadSheet,'Html');
+        $response = $writer->save('php://output');
+        return $response;
+    }
+    
+    private function prepareSpreadSheet($data)
     {
         $data = $data->getSummaryObjectReports();
         $spreadSheet = new Spreadsheet();
@@ -65,106 +85,7 @@ class ReportSummaryExporterService implements ReportExporterInterface{
         }
           
         $this->doSummary($spreadSheet, $data, $lastRow);
-        
-        if ($toHtml === false)
-        {    
-            $writer = new Xlsx($spreadSheet);
-            $writer->save('report.xlsx');
-            return [getcwd() . '\report.xlsx', 'report.xlsx'];
-        }
-        else
-        {
-            $writer = IOFactory::createWriter($spreadSheet,'Html');
-            //$response = new StreamedResponse();
-            /*$response =  new StreamedResponse(
-                function () use ($writer) {
-                    $writer->save('php://output');
-                }
-            );*/
-            $response = $writer->save('php://output');
-           // $response->headers->set('Content-Type', 'application/vnd.ms-excel');
-            //$response->headers->set('Content-Disposition', 'attachment;filename="ExportScan.xlsx"');
-            //$response->headers->set('Cache-Control','max-age=0');
-            /*$response->setCallback(function () use ($writer) {
-                    $writer->save('php://output');
-                });*/
-            return $response;
-        }        
-    }
-    /**
-     * 
-     * @return string zwrócić gotowy raport do wyświetlenie
-     */
-    public function exportToHtml($data): ?string  //obiekt który ma informację jacy są użytkownicy, mecze rezultaty itd.
-    {
-        return $this->exportToExcel($data, true);
-        
-        
-        
-        $stringToHtml = '<table border="6" >';
-        $headers = $this->getHeaders($data['Users']);
-        $stringToHtml .= '<tr>'; //dodanie wiersza na nagłówki
-        foreach ($headers as $header)
-        {
-            $stringToHtml .= "<td>$header</td>";
-        }      
-        $stringToHtml .= '</tr>';
-        $matchesNumberList = $this->getMatchNumbers($data['Matches']);
-
-        foreach ($matchesNumberList as $matchNumber)
-        {
-            $stringToHtml .= "<tr><td>$matchNumber</td>"; 
-            foreach ($data ['Matches'] as $match)
-            {
-                if ($matchNumber === $match->getMatchNr())
-                {
-                    $matchId = $match->getMatchId();
-                    foreach($data['Users'] as $user)
-                    {
-                        $userId = $user->getId();
-                        if (!isset($sumBeers[$user->getLogin()]))
-                        {
-                          $sumBeers[$user->getLogin()] = 0;  
-                        }
-                        $userPlayedMatch = false;
-                        foreach ($data['Results'] as $result)
-                        {
-                            if ($result->getMatchId() === $matchId and $result->getUserId() === $userId)
-                            {
-                                $sumBeers[$user->getLogin()] +=  $result->getBeers();
-                                $stringToHtml .= '<td>' . $sumBeers[$user->getLogin()] . '</td>';
-                                $userPlayedMatch = true;
-                            }
-                        }
-                        if ($userPlayedMatch === false)
-                        {
-                            // .= '<td>' . $sumBeers[$user->getLogin()] . '</td>'; To nie potrzebne bo w Excelu tego też nie ma tam gdzie nie było rozgrywanego meczu, jest puste pole
-                        }
-                    }
-                }
-            } 
-        }
-        $stringToHtml .= '</table><p>Podsumowanie</p><table border="6">';
-        $stringToHtml .='<tr><td>Gracze:</td><td>Liczba Rozegranych meczy:</td><td>Bilans Piw:</td><td>Bilans Żetonów</td></tr>';
-        foreach ($data['Users'] as $user)
-        {
-            $stringToHtml .= '<tr><td>' . $user->getLogin() . '</td>';
-            $playedMatchesByUser = 0;
-            $summaryBeersForUser = 0; 
-            $summaryTokensForUser = 0;   
-            foreach ($data['Results'] as $result)
-            { 
-                if ($result->getUserId() === $user->getId())
-                {
-                    $playedMatchesByUser += 1;
-                    $summaryBeersForUser += $result->getBeers();
-                    $summaryTokensForUser += $result->getTokens();
-                }      
-            }
-                $stringToHtml .= "<td>$playedMatchesByUser</td><td>$summaryBeersForUser</td><td>$summaryTokensForUser</td></tr>"; 
-        }
-        $stringToHtml .= '</table>';     
-        return $stringToHtml;
+        return $spreadSheet;
     }
     
     private function checkLimit()

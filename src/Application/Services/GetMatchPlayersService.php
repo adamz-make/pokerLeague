@@ -12,11 +12,14 @@ class GetMatchPlayersService
     
     public function __construct(UserRepositoryInterface $userRepo)
     { 
-        $this->userRepo =$userRepo;
+        $this->userRepo = $userRepo;
     }
     
    public function execute($parameters): ?array
    {
+       //parametry przenieść do nowej klasy (w payload) i tutaj przekazać obiekt $parameters
+       dd ($parameters);
+       exit;
        $users = null;
        foreach (array_keys($parameters) as $key)
        {

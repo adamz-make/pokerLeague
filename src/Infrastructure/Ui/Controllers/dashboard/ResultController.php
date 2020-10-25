@@ -17,6 +17,7 @@ use App\Domain\Model\User;
 use App\Application\Services\GetMatchPlayersService;
 use App\Infrastructure\Model\UserRepository;
 use App\Domain\Model\ResultRepositoryInterface;
+use App\Application\Payload\FilteredPlayers;
 
 class ResultController extends AbstractController{
 
@@ -25,6 +26,16 @@ class ResultController extends AbstractController{
      */    
     public function addResults(Request $request,MatchRepositoryInterface $matchRepository, UserRepositoryInterface $userRepository, ResultRepositoryInterface $resultRepo)
     {
+        // podajemy tylko liczbę żetonów i na jej podstawie wyliczane są piwa oraz punkty, przy podawaniu meczu podawać informację ile punktów za ile żetonów, ile piw za ile za żetonow
+        // W tym powyższym skorzystać z abstract factory i z strategy
+        // bridge i decorator
+        // Powyższr mam na skypie (12 październik) od Przemka
+        
+        
+        //jak mecz na piwa to raczej nie nie na punkty i na odwórt (chociąz mogą być wyjątki) - wzorzec strategia. Jak mecz na piwa, to wyliczam ilość piw,
+        // jak mecz na punkty to przeliczam na punkty. Jak zrobić w smsie mam od Przemka.
+        
+        //nie dodawaj wszystkich graczy na raz. Trzeba dodać jakieś pole wyboru żeby pokazały się pola do wynoru dla kolejnego gracza
         if ($this->getUser() == null)
         {
             header('Location: /home');
@@ -40,6 +51,8 @@ class ResultController extends AbstractController{
             $parameters = $request->request->all();
             $nrMatch = $parameters['matchNr']; 
             $match = $matchRepository->getMatchByNr($nrMatch);
+            $filteredPlayers = new FilteredPlayers();
+            $filteredPlayers->setUsers($parameters['users']);
             $getMatchPlayersService = new GetMatchPlayersService($userRepository);
             $matchPlayers = $getMatchPlayersService->execute($parameters);      
             if ($match === null)
