@@ -5,10 +5,19 @@ namespace App\Application\Payload;
 
 Abstract class RulesToMatch 
 {
-    private $TokensOnStart;
+    private $tokensOnStart;
     
-    static function getMatchType($matchType)
+    public function  getTokensOnStart()
     {
-        
+        return $tokensOnStart;
     }
+    
+    public function setTokensOnStart($tokensOnStart)
+    {
+        $this->tokensOnStart = $tokensOnStart;
+    }
+    
+    
+    
+
 }

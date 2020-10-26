@@ -28,23 +28,44 @@
     <div class ="content">
         <div class ="form">
             <form method ="POST">
-                <div class ="nrMatch">
-                    {% if match != null %}
+                <div class ="match">
+                    <div class ="matchType">
+                        <select name ="matchType" id ="matchType">
+                            <option value ="Mecz na piwa">Mecz na piwa</option>
+                            <option value ="Mecz ligowy">Mecz ligowy</option>
+                        </select>
+                    </div>
+                    <div class ="tokensOnStart">
+                        <div class ="tokensOnStartText">Podaj liczbę żetonów z jaką startują gracze</div>
+                        <div class ="TokensOnStartValue"><input type= "text" name ="tokensOnStart"></div>
+                    </div>
+                    <div class="countTokensToBeers">
+                        <div class ="countTokensToBeersText" id ="countTokensToBeersText"></div>
+                        <div class ="countTokensToBeersValue" id ="countTokensToBeersValue"></div>  
+                    </div>
+                    
+                    <div class ="nrMatch">
+                        {% if match != null %}
+                            <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
+                            <div class ="matchNr"><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ match.matchNr }}" name ="matchNr"></div>
+                        {% elseif lastMatch!=null %}
                         <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
-                        <div class ="matchNr"></div><div><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ match.matchNr }}" name ="matchNr"></div>
-                    {% elseif lastMatch!=null %}
-                    <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
-                    <div class ="matchNr"></div><div><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ lastMatch.matchNr + 1}}" name ="matchNr"></div>
-                    {% else %}
-                    <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
-                    <div class ="matchNr"></div><div><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="1" name ="matchNr"></div>
-                    {% endif %}
+                        <div class ="matchNr"><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ lastMatch.matchNr + 1}}" name ="matchNr"></div>
+                        {% else %}
+                        <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
+                        <div class ="matchNr"><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="1" name ="matchNr"></div>
+                        {% endif %}
+                    </div>
                 </div>
-                {% set i = 0  %}
-                {% for user in users%}
-                    <!--zamaist przekazywać user {i} to przeakzać tablicę name ="user[]" -->
-                    <div class ="user">
-                        <div><input type ="text" id ="{{ user.login }}" name ="users[] = {{ user.login }}" value="{{ user.login }}" readonly></div>
+                    <div class ="user" id ="user">
+                       <!-- <div><input type ="text" id ="{#{ user.login# }#}" name ="users[] = {#{ user.login }#}" value="{#{ user.login }#}" readonly></div>-->
+                        <div id="usersHtml">
+                            <select>
+                                {% for user in users%}
+                                    <option value ="{{ user.login }}">{{ user.login }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                         <div class ="inputResult">
                             <div class ="inputTitle">
                                 <div class = "inputTitles">Punkty</div>
@@ -52,16 +73,16 @@
                                 <div class ="inputTitles">Żetony</div>
                             </div>
                             <div class ="inputValue">
-                                <div class = "inputValues"><input type="text" id="points{{ i }}" name ="points[]"></div>
-                                <div class ="inputValues"><input  type="text" id="beers{{ i }}" name ="beers[]" ></div>
-                                <div class = "inputValues"><input type ="text" id="tokens{{ i }}" name ="tokens[]"></div>
+                                <div class = "inputValues"><input type="text" id="points" name ="points[]"></div>
+                                <div class ="inputValues"><input  type="text" id="beers" name ="beers[]" ></div>
+                                <div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]"></div>
                             </div>   
                         </div>
                     </div>    
-                        {% set i = i + 1 %}  
-                {% endfor %}
                 <div class ="savebtn"><input id ="savebtn" type ="submit" value="Zapisz"></div>
-            </form>              
+                <div class="addNextUser"><input  type ="button" id ="addNextUser" value = "Dodaj kolejnego gracza"></div>
+            </form>
+            
         </div>
         {% if resultForUserAdded != null %}
         {{ resultForUserAdded }}

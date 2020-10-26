@@ -59,9 +59,14 @@ class ResultController extends AbstractController{
         {
             $parameters = $request->request->all();
             $nrMatch = $parameters['matchNr'];
-            $factoryMatch = AbstractMatchFactory::getFactory($parameters ['matchType']);
+            $factoryMatch = AbstractMatchFactory::getFactory($parameters['matchType']);
             $countTokensService = $factoryMatch->getTokensCountService();
-            $rulesToMatch = $factoryMatch->getRulesToMatch($startPoints); // tutaj będę miał ifnoramcję ile było żetonów na start, ale potrzebuje jeszcze ile wkupów było
+            $rulesToMatch = $factoryMatch->getRulesToMatch(); // tutaj będę miał ifnoramcję ile było żetonów na start, ale potrzebuje jeszcze ile wkupów było
+            $rulesToMatch->setTokensOnStart($parameters['countTokensToBeers']);
+            if ($rulesToMatch instanceof RulesToBeerMatch)
+            {
+                $rulesToMatch->setConversionRate($conversionRate);
+            }
             $countTokensService = $factoryMatch->getTokensCountService($rulesToMatch);
             $match = $matchRepository->getMatchByNr($nrMatch);
             $getMatchPlayersService = new GetMatchPlayersService($userRepository);
