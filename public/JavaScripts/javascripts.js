@@ -18,26 +18,27 @@ function userHasAddedMatch()
             i = 0;
             if (resultJson.matchResult !== null)
             {
-                for (var key in resultJson.matchResult.matchPlayers)
+                let firstUser = true;
+                for (var matchPlayerNumber in resultJson.matchResult.matchPlayers)
                 {
-                    let user = resultJson.matchResult.matchPlayers[key].user.login;
-                    let beers = resultJson.matchResult.matchPlayers[key].beers;
-                    let tokens = resultJson.matchResult.matchPlayers[key].tokens;
-                    let points = resultJson.matchResult.matchPlayers[key].points;
-                    addInputWithData (resultJson.matchResult.matchPlayers)
-                    //addInputWithData (user, beers, tokens, points);
-                    //document.getElementById("ResultForUserExist").innerHTML = "";
-                    
-                    //document.getElementById("beers" + i).value = resultJson.matchResult.matchPlayers[key].beers;
-                   // document.getElementById("tokens" + i).value = resultJson.matchResult.matchPlayers[key].tokens;
-                   // document.getElementById("points" + i).value = resultJson.matchResult.matchPlayers[key].points;
-                    i += 1;
+                    let user = resultJson.matchResult.matchPlayers[matchPlayerNumber].user.login;
+                    let beers = resultJson.matchResult.matchPlayers[matchPlayerNumber].beers;
+                    let tokens = resultJson.matchResult.matchPlayers[matchPlayerNumber].tokens;
+                    let points = resultJson.matchResult.matchPlayers[matchPlayerNumber].points; 
+                    addInputWithData (user, beers, tokens, points, firstUser);
+                    firstUser = false;
                 }
                 let saveBtn = document.querySelector('.savebtn');
                 saveBtn.innerHTML = '<input id ="savebtn" type ="submit" value="Zaktualizuj Dane">';             
             }
             else
             {   
+                
+                let optionValue =document.getElementById('usersHtml').innerHTML;
+                alert (optionValue);
+                optionValue = optionValue.replace('<option value="' + user + '"','<option selected="" value="' + user + '"');
+                
+                
                 let inputs = document.getElementsByClassName('inputResult');
                 for (var i =0; i<inputs.length; ++i)
                 {   
@@ -51,22 +52,25 @@ function userHasAddedMatch()
     });    
 
 }
-function addInputWithData(matchPlayers)
-//function addInputWithData(user, beers, tokens, points)
+
+function addInputWithData(user, beers, tokens, points, firstUser)
 {
-    for (var key in matchPlayers)
-    {
-        alert (matchPlayers[key].user.login);
-    }
     let optionValue =document.getElementById('usersHtml').innerHTML;
+    optionValue = optionValue.replace('<option value="' + user + '"','<option selected="" value="' + user + '"'); 
     
-    //'<input type="text" value ="' + user +'" readonly>';
     let string ='<div id="usersHtml">' + optionValue + '</div><div class ="inputResult">' +
                     '<div class ="inputTitle"><div class = "inputTitles">Punkty</div><div class ="inputTitles">Piwa</div><div class ="inputTitles">Żetony</div></div>' +
                             '<div class ="inputValue"><div class = "inputValues"><input type="text" id="points" name ="points[]" value="' + points + '"></div>' +
                                 '<div class ="inputValues"><input  type="text" id="beers" name ="beers[]" value = "' + beers + '" ></div>' +
                                 '<div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]" value = "' + tokens +'"></div> </div></div>';
-    document.getElementById('user').innerHTML += string;
+    if (firstUser === true)
+    {
+       document.getElementById('user').innerHTML = string; 
+    }
+    else
+    {
+        document.getElementById('user').innerHTML += string;
+    } 
 }
 
 $(document).ready(function() {
