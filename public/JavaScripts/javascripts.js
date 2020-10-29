@@ -59,10 +59,9 @@ function addInputWithData(user, beers, tokens, points, firstUser)
     optionValue = optionValue.replace('<option value="' + user + '"','<option selected="" value="' + user + '"'); 
     
     let string ='<div id="usersHtml">' + optionValue + '</div><div class ="inputResult">' +
-                    '<div class ="inputTitle"><div class = "inputTitles">Punkty</div><div class ="inputTitles">Piwa</div><div class ="inputTitles">Żetony</div></div>' +
-                            '<div class ="inputValue"><div class = "inputValues"><input type="text" id="points" name ="points[]" value="' + points + '"></div>' +
-                                '<div class ="inputValues"><input  type="text" id="beers" name ="beers[]" value = "' + beers + '" ></div>' +
-                                '<div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]" value = "' + tokens +'"></div> </div></div>';
+                    '<div class ="inputTitle"><div class ="inputTitles">Żetony</div></div>' +
+                            '<div class ="inputValue">' +'\
+                    <div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]" value = "' + tokens +'"></div></div>';
     if (firstUser === true)
     {
        document.getElementById('user').innerHTML = string; 
@@ -78,23 +77,20 @@ $('#matchType').on("change", function(){
 
     if ($(this).val() === 'Mecz ligowy')
     {
-        document.getElementById('countTokensToBeersText').innerHTML = '';
-        document.getElementById ('countTokensToBeersValue').innerHTML = '';
+        document.getElementById('TokensToBeersConversionText').innerHTML = '';
+        document.getElementById ('TokensToBeersConversionValue').innerHTML = '';
     }
     else
     {
-        document.getElementById('countTokensToBeersText').innerHTML = 'Podaj przelicznik żetonów za jedno piwo';
-        document.getElementById ('countTokensToBeersValue').innerHTML = '<input type="text" name="countTokensToBeers">';   
+        document.getElementById('TokensToBeersConversionText').innerHTML = 'Podaj przelicznik żetonów za jedno piwo';
+        document.getElementById ('TokensToBeersConversionValue').innerHTML = '<input type="text" name="countTokensToBeers">';   
     }
 })
 $('#addNextUser').on("click", function(){
     let optionValue =document.getElementById('usersHtml').innerHTML;
     let string ='<div>' + optionValue + '</div><div class ="inputResult">' +
-                    '<div class ="inputTitle"><div class = "inputTitles">Punkty</div><div class ="inputTitles">Piwa</div><div class ="inputTitles">Żetony</div></div>' +
-                            '<div class ="inputValue"><div class = "inputValues"><input type="text" id="points" name ="points[]"></div>' +
-                                '<div class ="inputValues"><input  type="text" id="beers" name ="beers[]" ></div>' +
-                                '<div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]"></div> </div></div>';
-
+                    '<div class ="inputTitle"><div class ="inputTitles">Żetony</div></div>' +
+                            '<div class ="inputValue"><div class = "inputValues"><div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]"></div> </div></div>';
     document.getElementById('user').innerHTML += string;
 })
 });

@@ -31,19 +31,18 @@
                 <div class ="match">
                     <div class ="matchType">
                         <select name ="matchType" id ="matchType">
-                            <option value ="Mecz na piwa">Mecz na piwa</option>
                             <option value ="Mecz ligowy">Mecz ligowy</option>
+                            <option value ="Mecz na piwa">Mecz na piwa</option>
                         </select>
                     </div>
                     <div class ="tokensOnStart">
                         <div class ="tokensOnStartText">Podaj liczbę żetonów z jaką startują gracze</div>
                         <div class ="TokensOnStartValue"><input type= "text" name ="tokensOnStart"></div>
                     </div>
-                    <div class="countTokensToBeers">
-                        <div class ="countTokensToBeersText" id ="countTokensToBeersText"></div>
-                        <div class ="countTokensToBeersValue" id ="countTokensToBeersValue"></div>  
-                    </div>
-                    
+                    <div class="TokensToBeersConversion">
+                        <div class ="TokensToBeersConversionText" id ="TokensToBeersConversionText"></div>
+                        <div class ="TokensToBeersConversionValue" id ="TokensToBeersConversionValue"></div>  
+                    </div>                    
                     <div class ="nrMatch">
                         {% if match != null %}
                             <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
@@ -68,13 +67,9 @@
                         </div>
                         <div class ="inputResult">
                             <div class ="inputTitle">
-                                <div class = "inputTitles">Punkty</div>
-                                <div class ="inputTitles">Piwa</div>
                                 <div class ="inputTitles">Żetony</div>
                             </div>
                             <div class ="inputValue">
-                                <div class = "inputValues"><input type="text" id="points" name ="points[]"></div>
-                                <div class ="inputValues"><input  type="text" id="beers" name ="beers[]" ></div>
                                 <div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]"></div>
                             </div>   
                         </div>

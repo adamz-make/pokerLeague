@@ -62,7 +62,7 @@ class ResultController extends AbstractController{
             $factoryMatch = AbstractMatchFactory::getFactory($parameters['matchType']);
             $countTokensService = $factoryMatch->getTokensCountService();
             $rulesToMatch = $factoryMatch->getRulesToMatch(); // tutaj będę miał ifnoramcję ile było żetonów na start, ale potrzebuje jeszcze ile wkupów było
-            $rulesToMatch->setTokensOnStart($parameters['countTokensToBeers']);
+            $rulesToMatch->setTokensOnStart($parameters['tokensOnStart']);
             if ($rulesToMatch instanceof RulesToBeerMatch)
             {
                 $rulesToMatch->setConversionRate($conversionRate);
