@@ -60,20 +60,17 @@ class ResultController extends AbstractController{
             $parameters = $request->request->all();
             $nrMatch = $parameters['matchNr'];
             $factoryMatch = AbstractMatchFactory::getFactory($parameters['matchType']);
-            $countTokensService = $factoryMatch->getTokensCountService();
             $rulesToMatch = $factoryMatch->getRulesToMatch(); // tutaj będę miał ifnoramcję ile było żetonów na start, ale potrzebuje jeszcze ile wkupów było
             $rulesToMatch->setTokensOnStart($parameters['tokensOnStart']);
-            if ($rulesToMatch instanceof RulesToBeerMatch)
-            {
-                $rulesToMatch->setConversionRate($conversionRate);
-            }
-            $countTokensService = $factoryMatch->getTokensCountService($rulesToMatch);
-            $match = $matchRepository->getMatchByNr($nrMatch);
+            $conversionRate = $rulesToMatch instanceof RulesToBeerMatch? $parameters('countTokensToBeers'):null;
+            $rulesToMatch->setConversionRate($conversionRate);
+            $countTokensService = $factoryMatch->getTokensCountService();
+            $match = $matchRepository->getMatchByNr($nrMatch);         
             $getMatchPlayersService = new GetMatchPlayersService($userRepository);
             foreach (array_keys($parameters['users']) as $key)
             {// beers/ points będzie trzeba wyliczyć nie będzie podawane przez usera
-                $matchPlayers[] = $getMatchPlayersService->execute($parameters['users'][$key], $parameters['beers'][$key], $parameters['tokens'][$key],
-                                    $parameters['points'][$key]);
+                $pointsOrBeers = $countTokensService->execute($rulesToMatch, $users, $users[$key], $tokens);
+                $matchPlayers[] = $getMatchPlayersService->execute($parameters['users'][$key], $rulesToMatch, $pointsOrBeers);
             }
             if ($match === null)
             {

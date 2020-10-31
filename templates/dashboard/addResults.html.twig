@@ -59,9 +59,9 @@
                     <div class ="user" id ="user">
                        <!-- <div><input type ="text" id ="{#{ user.login# }#}" name ="users[] = {#{ user.login }#}" value="{#{ user.login }#}" readonly></div>-->
                         <div id="usersHtml">
-                            <select>
+                            <select name ="users[]">
                                 {% for user in users%}
-                                    <option value ="{{ user.login }}">{{ user.login }}</option>
+                                    <option value ="{{ user.login }}" >{{ user.login }}</option>
                                 {% endfor %}
                             </select>
                         </div>

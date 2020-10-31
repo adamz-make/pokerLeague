@@ -5,6 +5,7 @@ namespace App\Application\Services;
 
 use App\Domain\Model\UserRepositoryInterface;
 use App\Domain\Model\MatchPlayer;
+use App\Application\Payload\AbstractRulesToMatch;
 
 class GetMatchPlayersService
 {
@@ -15,7 +16,7 @@ class GetMatchPlayersService
         $this->userRepo = $userRepo;
     }
     
-   public function execute($userLogin, $beers, $points, $tokens):?MatchPlayer
+   public function execute($userLogin, AbstractRulesToMatch $rulesToMatch, $tokens):?MatchPlayer
    {
        //parametry przenieść do nowej klasy (w payload) i tutaj przekazać obiekt $parameters
         $user = null;

@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace App\Application\Payload;
 
-Abstract class RulesToMatch 
+Abstract class AbstractRulesToMatch 
 {
     private $tokensOnStart;
+    private $conversionRate = [];
     
     public function  getTokensOnStart()
     {
@@ -17,7 +18,10 @@ Abstract class RulesToMatch
         $this->tokensOnStart = $tokensOnStart;
     }
     
+     public function getConversionRate()
+    {
+        return $this->conversionRate;
+    }
     
-    
-
+    abstract public function setConversionRate($conversionRate = null);
 }

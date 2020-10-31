@@ -3,17 +3,10 @@ declare(strict_types=1);
 
 namespace App\Application\Payload;
 
-class RulesToBeerMatch extends RulesToMatch
+class RulesToBeerMatch extends AbstractRulesToMatch
 {
-    private $conversionRate; // ile żetonow to 1 piwo
-    
-    public function getConversionRate()
+    public function setConversionRate($conversionRate = null)
     {
-        return $this->conversionRate;
-    }
-    
-    public function setConversionRate($conversionRate)
-    {
-        $this->conversionRate = $conversionRate;
+        $this->conversionRate[] = $conversionRate;
     }
 }
