@@ -1,4 +1,4 @@
-/*    .content{
+    .content{
         padding-top: 5%;
         padding-left: 5%;
         margin-left: 28%;
@@ -9,7 +9,6 @@
     }
     .form{
         height: 100%;
-        width: 50%;
     }
     .nrMatch{
         width: 90%;
@@ -25,7 +24,7 @@
         background-color: rgba(0,0,0,0.5);
     }
     
-    .matchText{
+/*    .matchText{
         float: left;
         width:50%
     }

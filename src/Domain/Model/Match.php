@@ -10,12 +10,13 @@ class Match implements \JsonSerializable{
     private $matchNr = "";
     private $dateOfMatch = "";
     private $matchPlayers =[];
-    
-    public function __construct($id, $matchNr, $dateOfMatch)
+    private $matchType;
+    public function __construct($id, $matchNr, $dateOfMatch, ?string $matchType)
     {
-        $this->id = $id;
+        $this->id = $id;s
         $this->matchNr = $matchNr;
         $this->dateOfMatch = $dateOfMatch;
+        $this->matchType = $matchType;
     }
     
     public function getMatchPlayers()

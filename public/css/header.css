@@ -12,7 +12,7 @@ ul,li{
     display: block;
     color: black;
     text-align: center;
-    padding: 14px 16px;
+    padding: 14px 16px;s
     text-decoration: none;
     }
     ul {
@@ -25,6 +25,6 @@ ul,li{
         float:left;
         font-size: 130%;
         margin-left: 25%;
-        width: 50%;
+        width: 100%;
         
     }
