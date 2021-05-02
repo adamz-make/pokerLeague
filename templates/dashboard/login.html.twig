@@ -8,8 +8,8 @@
     <body>
         <div class ="login">
                 <form  method="POST">
-                     <p><input id = "loginInput" type="text" name="login"></p>
-                     <p><input id = "loginInput" type="password" name="pass"></p>
+                     <p><input class = "loginInput" type="text" name="login"></p>
+                     <p><input class = "loginInput" type="password" name="pass"></p>
                      <input id= "loginBtn" type="submit" value = "Zaloguj się">
                      <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                 </form>

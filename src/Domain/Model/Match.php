@@ -13,7 +13,7 @@ class Match implements \JsonSerializable{
     private $matchType;
     public function __construct($id, $matchNr, $dateOfMatch, ?string $matchType)
     {
-        $this->id = $id;s
+        $this->id = $id;
         $this->matchNr = $matchNr;
         $this->dateOfMatch = $dateOfMatch;
         $this->matchType = $matchType;

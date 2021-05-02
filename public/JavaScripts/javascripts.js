@@ -73,19 +73,26 @@ function addInputWithData(user, beers, tokens, points, firstUser)
 }
 
 $(document).ready(function() {
-$('#matchType').on("change", function(){
+    $('.btnTypeMatch').on("click", function () {
+        var type = document.getElementById('matchType').getAttribute('value');
+        if (type.replace('Checked','') === 'meczLigowy') {
+            document.getElementById('TokensToBeersConversionText').innerHTML = '';
+            document.getElementById('TokensToBeersConversionValue').innerHTML = '';
+            if(document.getElementById('TokensToBeersConversionVisible') != null){
+                document.getElementById('TokensToBeersConversionVisible').setAttribute('id','TokensToBeersConversion');
+            }
 
-    if ($(this).val() === 'Mecz ligowy')
-    {
-        document.getElementById('TokensToBeersConversionText').innerHTML = '';
-        document.getElementById ('TokensToBeersConversionValue').innerHTML = '';
-    }
-    else
-    {
-        document.getElementById('TokensToBeersConversionText').innerHTML = 'Podaj przelicznik żetonów za jedno piwo';
-        document.getElementById ('TokensToBeersConversionValue').innerHTML = '<input type="text" name="countTokensToBeers">';   
-    }
-})
+ //           document.getElementById('TokensToBeersConversion').innerHTML = '<div class="TokensToBeersConversion" style = "display:none">';
+        } else {
+            if(document.getElementById('TokensToBeersConversion') != null){
+                document.getElementById('TokensToBeersConversion').setAttribute('id','TokensToBeersConversionVisible');
+            }
+            document.getElementById('TokensToBeersConversionText').innerHTML = 'Podaj przelicznik żetonów za jedno piwo';
+            document.getElementById('TokensToBeersConversionValue').innerHTML = '<input type="text" id="convertPointsToBeer" name="countTokensToBeers">';
+        }
+    })
+});
+/*
 $('#addNextUser').on("click", function(){
     let optionValue =document.getElementById('usersHtml').innerHTML;
     let string ='<div>' + optionValue + '</div><div class ="inputResult">' +
@@ -94,7 +101,7 @@ $('#addNextUser').on("click", function(){
     document.getElementById('user').innerHTML += string;
 })
 });
-
+*/
 
 
 

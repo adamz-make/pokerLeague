@@ -1,13 +1,105 @@
 <html>
     <head>
      <meta charset="UTF-8">
+       <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous"> !-->
      <link rel="stylesheet" href="/css/header.css">
      <link rel="stylesheet" href="/css/addResults.css">
-     <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
      <script src="/JavaScripts/javascripts.js"></script>
        
     </head>
     <body>
+    <script>
+        function changeCheckBox(id){
+            var elements = document.getElementsByClassName('checkMatchType');
+            for (let i = 0; i <= elements.length -1; i++)
+            {
+                if (elements[i].id != id)
+                {
+                    elements[i].checked = false;
+                }
+            }
+        }
+
+        function checkIfBothAreNotChecked(className) {
+            var elements = document.getElementsByClassName(className);
+            for(var i =0; i < elements.length; i++)
+            {
+                if (elements[i].getAttribute('value') == '1')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function changeColor(id) {
+            var element = document.getElementById(id);
+            var elementsClass = document.getElementsByClassName('btnTypeMatch');
+            var bothNotChecked = checkIfBothAreNotChecked('btnTypeMatch');
+
+            for (var step = 0; step < elementsClass.length; step++) {
+                if (elementsClass[step].getAttribute('id') == id && !bothNotChecked) {
+                    if (elementsClass[step].getAttribute('value') =='0') {
+                        elementsClass[step].setAttribute('value', '1');
+                        elementsClass[step].setAttribute('id',elementsClass[step].getAttribute('id').concat('Checked'));
+                        document.getElementById('matchType').setAttribute('value', elementsClass[step].getAttribute('id'));
+                    } else {
+                        elementsClass[step].setAttribute('value', '0');
+                        elementsClass[step].setAttribute('id', elementsClass[step].getAttribute('id').replace('Checked',''));
+                    }
+                } else if (elementsClass[step].getAttribute('id') != id && !bothNotChecked) {
+                    if (elementsClass[step].getAttribute('value') =='0') {
+                        elementsClass[step].setAttribute('value', '1');
+                        elementsClass[step].setAttribute('id',elementsClass[step].getAttribute('id').concat('Checked'));
+                        document.getElementById('matchType').setAttribute('value', elementsClass[step].getAttribute('id'));
+                    } else {
+                        elementsClass[step].setAttribute('value', '0');
+                        elementsClass[step].setAttribute('id', elementsClass[step].getAttribute('id').replace('Checked',''));
+
+                    }
+                }
+                if (bothNotChecked)
+                {
+
+                    if (elementsClass[step].getAttribute('id') == id)
+                    {
+                        elementsClass[step].setAttribute('value', '1');
+                        elementsClass[step].setAttribute('id',elementsClass[step].getAttribute('id').concat('Checked'));
+                        document.getElementById('matchType').setAttribute('value', elementsClass[step].getAttribute('id'));
+                    }
+                }
+
+
+
+            }
+           /* window.alert(elements.length);
+            elementName
+
+                if (element.getAttribute('value') == '0') {
+                    var drugiElement = document.getElementById('btnMeczChecked');
+                    if (drugiElement != null)
+                    {
+                        drugiElement.setAttribute('value','0');
+                        drugiElement.setAttribute('id','btnMecz');
+                    }
+                    element.setAttribute('value', '1');
+                    element.setAttribute('id', 'btnMeczChecked');
+                } else {
+                    var drugiElement = document.getElementById('btnMecz');
+                    if (drugiElement != null)
+                    {
+                        drugiElement.setAttribute('value','1)');
+                        drugiElement.setAttribute('id','btnMeczChecked');
+                    }
+                    element.setAttribute('value', '0');
+                    element.setAttribute('id', 'btnMecz');
+                }*/
+        }
+    </script>
+
+
               
         {% if validationErrors is defined %}
     {% for item in validationErrors %}
@@ -30,16 +122,23 @@
             <form method ="POST">
                 <div class ="match">
                     <div class ="matchType">
-                        <select name ="matchType" id ="matchType">
-                            <option value ="Mecz ligowy">Mecz ligowy</option>
-                            <option value ="Mecz na piwa">Mecz na piwa</option>
-                        </select>
+                        <div class ="tokensOnStart">
+                            <div class ="tokensOnStartText">Podaj liczbę żetonów z jaką startują gracze</div>
+                            <div class ="TokensOnStartValue"><input type= "text" id = "inputTokensOnStart" name ="tokensOnStart"></div>
+                        </div>
+                        <div class="buttons">
+                            <div class ="btnTypeMatch" value = "0" id ="meczNaPunkty"  onclick  ="changeColor(id)">
+                                mecz na punkty
+                            </div>
+                            <div class ="btnTypeMatch" value = "0" id ="meczLigowy"  onclick ="changeColor(id)">
+                                mecz ligowy
+                            </div>
+                            <div id ="matchType" value = "0" ></div>
+                        </div>
+
                     </div>
-                    <div class ="tokensOnStart">
-                        <div class ="tokensOnStartText">Podaj liczbę żetonów z jaką startują gracze</div>
-                        <div class ="TokensOnStartValue"><input type= "text" name ="tokensOnStart"></div>
-                    </div>
-                    <div class="TokensToBeersConversion">
+
+                    <div class="TokensToBeersConversion" id = "TokensToBeersConversion">
                         <div class ="TokensToBeersConversionText" id ="TokensToBeersConversionText"></div>
                         <div class ="TokensToBeersConversionValue" id ="TokensToBeersConversionValue"></div>  
                     </div>                    
@@ -57,22 +156,23 @@
                     </div>
                 </div>
                     <div class ="user" id ="user">
-                       <!-- <div><input type ="text" id ="{#{ user.login# }#}" name ="users[] = {#{ user.login }#}" value="{#{ user.login }#}" readonly></div>-->
                         <div id="usersHtml">
-                            <select name ="users[]">
+                            <div class = "userSelect" id ="userSelect">Gracz:</div>
+                            <select class = "userSelect" id ="userSelectChoose" name ="users[]">
                                 {% for user in users%}
-                                    <option value ="{{ user.login }}" >{{ user.login }}</option>
+                                    <option value ="{{ user.login }}" id = "userSelect" >{{ user.login }}</option>
                                 {% endfor %}
                             </select>
-                        </div>
-                        <div class ="inputResult">
-                            <div class ="inputTitle">
-                                <div class ="inputTitles">Żetony</div>
+                            <div class ="inputResult">
+                                <div class ="inputTitle">
+                                    <div class ="inputTitles">Liczba żetonów:</div>
+                                </div>
+                                <div class ="inputValue">
+                                    <div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]"></div>
+                                </div>
                             </div>
-                            <div class ="inputValue">
-                                <div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]"></div>
-                            </div>   
                         </div>
+
                     </div>    
                 <div class ="savebtn"><input id ="savebtn" type ="submit" value="Zapisz"></div>
                 <div class="addNextUser"><input  type ="button" id ="addNextUser" value = "Dodaj kolejnego gracza"></div>
@@ -85,6 +185,5 @@
         
         <div id ="ResultForUserExist"></div>
     </div>
-
     </body>
 </html>

@@ -7,9 +7,10 @@ and open the template in the editor.
     Created on : 2020-09-23, 12:06:37
     Author     : adamz
 */
-    #loginInput{    
-        background-color: gray;
-        /*opacity:0.1;*/
+
+    .loginInput{
+        background-color: #dddddd;
+        opacity:0.9;
         width: 20%;
         height: 30px;
         color: black;
@@ -17,13 +18,14 @@ and open the template in the editor.
     #loginBtn
     {
         
-        background-color: black;
+        background-color: #e74545;
         color: white;
         width: 20.5%;
         height: 45px;
+        font-weight: bold;
     }
     .login{
-        margin-left: 15%;
+        margin-left: 25%;
         margin-top: 15%;
     }
     .choose{
@@ -33,7 +35,6 @@ and open the template in the editor.
     }
     a{
         text-decoration:none;
-        color: black;
     }
      .register{
         margin-left: 15%;
@@ -44,10 +45,10 @@ and open the template in the editor.
     
     float: left;
     }
+
     
     li a {
     display: block;
-    color: black;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -57,9 +58,9 @@ and open the template in the editor.
     margin: 0;
     padding: 0;
     }
-    .header{
+    /*.header{
         float:left;
         width: 100%;
-    }
+    }*/
     
     

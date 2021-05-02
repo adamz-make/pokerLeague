@@ -5,26 +5,40 @@ ul,li{
     
     a{
         text-decoration:none;
-        color: black;
     }
+
     
     li a {
     display: block;
-    color: black;
     text-align: center;
-    padding: 14px 16px;s
+    padding: 14px 16px;
     text-decoration: none;
+    color: white;
     }
+
+    li a:hover {
+        background-color: #222222;
+        transition-delay: 0.1s;
+        border-radius: 10px;
+    }
+
     ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     }
-    .header{
+    li {
+    background-color: #f10f0f;
+        border-radius: 10px;
+        margin-left: 10px;
+
+    }
+
+    .header {
         padding-top: 1%;
         float:left;
         font-size: 130%;
-        margin-left: 25%;
-        width: 100%;
+        margin-left: 35%;
+        width: 80%;
         
     }
