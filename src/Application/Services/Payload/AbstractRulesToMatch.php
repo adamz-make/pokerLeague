@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace App\Application\Payload;
 
-Abstract class AbstractRulesToMatch 
+Abstract class AbstractRulesToMatch
 {
     private $tokensOnStart;
-    private $conversionRate = [];
+    protected $conversionRate;
     
     public function  getTokensOnStart()
     {
-        return $tokensOnStart;
+        return $this->tokensOnStart;
     }
     
     public function setTokensOnStart($tokensOnStart)

@@ -6,13 +6,18 @@ namespace App\Application\Services;
 use App\Domain\Model\TokensCountInterface;
 use App\Application\Payload\AbstractRulesToMatch;
 
-class CountTokensToBeersService
+class CountTokensToBeersService implements  TokensCountInterface
 {
     public function execute(AbstractRulesToMatch $rulesToMatch, $user, $users, $tokens)
     {
         $tokensOnStart = $rulesToMatch->getTokensOnStart();
         $conversionRate = $rulesToMatch->getConversionRate();
-        return ($tokens - $tokensOnStart)/$conversionRate;  
+        return ($tokens - $tokensOnStart) / $conversionRate;
+
     }
 
+    public function calculateTokens()
+    {
+
+    }
 }

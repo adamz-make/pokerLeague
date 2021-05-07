@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Application\Payload;
 
-class RulesToLeagueMatch extends AbstractRulesToMatch
+use App\Domain\Model\RulesMatchInterface;
+
+class RulesToLeagueMatch extends AbstractRulesToMatch implements RulesMatchInterface
 {
     public function setConversionRate($conversionRate = null)
     {

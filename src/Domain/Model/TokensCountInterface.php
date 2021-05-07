@@ -5,5 +5,5 @@ namespace App\Domain\Model;
 
 interface TokensCountInterface
 {
-    public function calculateTokens();
+     public function calculateTokens();
 }

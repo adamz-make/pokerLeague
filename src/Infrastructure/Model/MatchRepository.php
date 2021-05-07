@@ -12,13 +12,13 @@ class MatchRepository implements MatchRepositoryInterface {
     public function getLastMatch(): ?Match
     {
         $db = Db::getInstance();
-        $sql = 'select Id, nrMeczu, dataDodania from mecze order by nrMeczu desc limit 1'; 
+        $sql = 'select Id, nrMeczu, dataDodania, typMeczu from mecze order by nrMeczu desc limit 1';
         $array = [];
         $result = $db->select($sql, $array);
         if (!empty ($result))
         {
             $row = reset($result);
-            $match = new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+            $match = new Match($row['Id'], $row['nrMeczu'], $row['dataDodania'], $row['typMeczu']);
             $this->applyMatchPlayers($match);
             return $match;
         }
@@ -43,13 +43,13 @@ class MatchRepository implements MatchRepositoryInterface {
     public function getMatchByNr($nr): ?Match
     {
         $db = Db::getInstance();
-        $sql = 'select Id, nrMeczu, dataDodania from mecze where nrMeczu =?'; 
+        $sql = 'select Id, nrMeczu, dataDodania, typMeczu from mecze where nrMeczu =?';
         $array = [$nr];
         $result = $db->select($sql, $array);
         if (!empty ($result))
         {
             $row = reset($result);
-            $match = new Match($row['Id'], $row['nrMeczu'], $row['dataDodania']);
+            $match = new Match($row['Id'], $row['nrMeczu'], $row['dataDodania'], $row['typMeczu']);
             $this->applyMatchPlayers($match);
             return $match;
         }

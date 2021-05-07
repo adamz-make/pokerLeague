@@ -79,6 +79,7 @@ class ResultRepository implements ResultRepositoryInterface
         $sql = 'select id,idUsera, idMeczu, liczbaPiw, LiczbaPunktow, LiczbaZetonow  from wyniki';
         $array =[];
         $result = $db->select($sql, $array);
+        $resultArray = [];
         foreach($result as $row)
         {
             $resultArray[] = new Result($row['id'], $row['idUsera'], $row['idMeczu'], $row['LiczbaPunktow'], $row['liczbaPiw'], $row['LiczbaZetonow']);  

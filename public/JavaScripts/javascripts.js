@@ -64,7 +64,7 @@ function addInputWithData(user, beers, tokens, points, firstUser)
                     <div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]" value = "' + tokens +'"></div></div>';
     if (firstUser === true)
     {
-       document.getElementById('user').innerHTML = string; 
+       document.getElementById('user').innerHTML = string;
     }
     else
     {
@@ -73,6 +73,10 @@ function addInputWithData(user, beers, tokens, points, firstUser)
 }
 
 $(document).ready(function() {
+    ("#dialog_komunikat2").dialog({
+        autoOpen: false,
+        title: 'Basic Dialog'
+    });
     $('.btnTypeMatch').on("click", function () {
         var type = document.getElementById('matchType').getAttribute('value');
         if (type.replace('Checked','') === 'meczLigowy') {
@@ -91,17 +95,20 @@ $(document).ready(function() {
             document.getElementById('TokensToBeersConversionValue').innerHTML = '<input type="text" id="convertPointsToBeer" name="countTokensToBeers">';
         }
     })
-});
-/*
-$('#addNextUser').on("click", function(){
+
+$('.addNextUser').on("click", function(){
     let optionValue =document.getElementById('usersHtml').innerHTML;
+    window.alert(optionValue);
     let string ='<div>' + optionValue + '</div><div class ="inputResult">' +
-                    '<div class ="inputTitle"><div class ="inputTitles">Żetony</div></div>' +
-                            '<div class ="inputValue"><div class = "inputValues"><div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]"></div> </div></div>';
+                    /*'<div class ="inputTitle"><div class ="inputTitles">Żetony</div></div>' +
+                            '<div class ="inputValue"><div class = "inputValues"><div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]"></div> </div>*/'</div>';
     document.getElementById('user').innerHTML += string;
 })
+$('.showResults').on("click", function(){
+    ('#dialog_komunikat2').dialog('open');
 });
-*/
+});
+
 
 
 

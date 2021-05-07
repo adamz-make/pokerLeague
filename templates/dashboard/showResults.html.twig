@@ -1,0 +1,140 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous"> !-->
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/addResults.css">
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script src="/JavaScripts/javascripts.js"></script>
+
+</head>
+<body>
+<script>
+    function changeCheckBox(id){
+        var elements = document.getElementsByClassName('checkMatchType');
+        for (let i = 0; i <= elements.length -1; i++)
+        {
+            if (elements[i].id != id)
+            {
+                elements[i].checked = false;
+            }
+        }
+    }
+
+    function checkIfBothAreNotChecked(className) {
+        var elements = document.getElementsByClassName(className);
+        for(var i =0; i < elements.length; i++)
+        {
+            if (elements[i].getAttribute('value') == '1')
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function changeColor(id) {
+        var element = document.getElementById(id);
+        var elementsClass = document.getElementsByClassName('btnTypeMatch');
+        var bothNotChecked = checkIfBothAreNotChecked('btnTypeMatch');
+
+        for (var step = 0; step < elementsClass.length; step++) {
+            if (elementsClass[step].getAttribute('id') == id && !bothNotChecked) {
+                if (elementsClass[step].getAttribute('value') =='0') {
+                    elementsClass[step].setAttribute('value', '1');
+                    elementsClass[step].setAttribute('id',elementsClass[step].getAttribute('id').concat('Checked'));
+                    document.getElementById('matchType').setAttribute('value', elementsClass[step].getAttribute('id'));
+                } else {
+                    elementsClass[step].setAttribute('value', '0');
+                    elementsClass[step].setAttribute('id', elementsClass[step].getAttribute('id').replace('Checked',''));
+                }
+            } else if (elementsClass[step].getAttribute('id') != id && !bothNotChecked) {
+                if (elementsClass[step].getAttribute('value') =='0') {
+                    elementsClass[step].setAttribute('value', '1');
+                    elementsClass[step].setAttribute('id',elementsClass[step].getAttribute('id').concat('Checked'));
+                    document.getElementById('matchType').setAttribute('value', elementsClass[step].getAttribute('id'));
+                } else {
+                    elementsClass[step].setAttribute('value', '0');
+                    elementsClass[step].setAttribute('id', elementsClass[step].getAttribute('id').replace('Checked',''));
+
+                }
+            }
+            if (bothNotChecked)
+            {
+
+                if (elementsClass[step].getAttribute('id') == id)
+                {
+                    elementsClass[step].setAttribute('value', '1');
+                    elementsClass[step].setAttribute('id',elementsClass[step].getAttribute('id').concat('Checked'));
+                    document.getElementById('matchType').setAttribute('value', elementsClass[step].getAttribute('id'));
+                }
+            }
+        }
+</script>
+
+<div class ="header">
+    <nav>
+        <ul>
+            <li><a href ="{{ url('addResults') }}">Dodaj Wyniki</a></li>
+            <li><a href ="{{ url('ranking') }}">Ranking</a></li>
+            <li><a href ="">Nagrody</a></li>
+            <li><a href ="{{ url('logout') }}">Wyloguj się</a></li>
+        </ul>
+    </nav>
+</div>
+<div class ="content">
+    <div class ="form">
+        <form method ="POST">
+            <div class ="match">
+                <div class ="matchType">
+                    <div class ="tokensOnStart">
+                        <div class ="tokensOnStartText">Podaj liczbę żetonów z jaką startują gracze</div>
+                        <div class ="TokensOnStartValue"><input type= "text" id = "inputTokensOnStart" name ="tokensOnStart"></div>
+                    </div>
+                    <div class="buttons">
+                        <div class ="btnTypeMatch" value = "0" id ="meczNaPunkty"  onclick  ="changeColor(id)">
+                            mecz na punkty
+                        </div>
+                        <div class ="btnTypeMatch" value = "0" id ="meczLigowy"  onclick ="changeColor(id)">
+                            mecz ligowy
+                        </div>
+                        <div> <input type = "hidden" name ="matchType" id ="matchType" value = "0" ></div>
+                    </div>
+
+                </div>
+
+                <div class="TokensToBeersConversion" id = "TokensToBeersConversion">
+                    <div class ="TokensToBeersConversionText" id ="TokensToBeersConversionText"></div>
+                    <div class ="TokensToBeersConversionValue" id ="TokensToBeersConversionValue"></div>
+                </div>
+                <div class ="nrMatch">
+                    <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
+                </div>
+            </div>
+            <div class ="user" id ="user">
+                <div id="usersHtml">
+                    <div class = "userSelect" id ="userSelect">Gracz:</div>
+                    <select class = "userSelect" id ="userSelectChoose" name ="users[]">
+                    </select>
+                    <div class ="inputResult">
+                        <div class ="inputTitle">
+                            <div class ="inputTitles">Liczba żetonów:</div>
+                        </div>
+                        <div class ="inputValue">
+                            <div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class ="savebtn"><input id ="savebtn" type ="submit" value="Zapisz"></div>
+            <div class="addNextUser"><input  type ="button" id ="addNextUser" value = "Dodaj kolejnego gracza"></div>
+            <div class="showResults"><input  type ="button" id ="showResults" value = "Pokaż wszystkie wyniki"></div>
+        </form>
+
+    </div>
+    <div id ="ResultForUserExist"></div>
+</div>
+</body>
+</html>

@@ -98,8 +98,6 @@
                 }*/
         }
     </script>
-
-
               
         {% if validationErrors is defined %}
     {% for item in validationErrors %}
@@ -133,7 +131,7 @@
                             <div class ="btnTypeMatch" value = "0" id ="meczLigowy"  onclick ="changeColor(id)">
                                 mecz ligowy
                             </div>
-                            <div id ="matchType" value = "0" ></div>
+                            <div> <input type = "hidden" name ="matchType" id ="matchType" value = "0" ></div>
                         </div>
 
                     </div>
@@ -143,14 +141,12 @@
                         <div class ="TokensToBeersConversionValue" id ="TokensToBeersConversionValue"></div>  
                     </div>                    
                     <div class ="nrMatch">
+                        <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
                         {% if match != null %}
-                            <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
                             <div class ="matchNr"><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ match.matchNr }}" name ="matchNr"></div>
                         {% elseif lastMatch!=null %}
-                        <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
                         <div class ="matchNr"><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="{{ lastMatch.matchNr + 1}}" name ="matchNr"></div>
                         {% else %}
-                        <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
                         <div class ="matchNr"><input type ="text" onchange ="userHasAddedMatch()" id="nrMatch" value ="1" name ="matchNr"></div>
                         {% endif %}
                     </div>
@@ -176,6 +172,7 @@
                     </div>    
                 <div class ="savebtn"><input id ="savebtn" type ="submit" value="Zapisz"></div>
                 <div class="addNextUser"><input  type ="button" id ="addNextUser" value = "Dodaj kolejnego gracza"></div>
+                <div class="showResults"><input  type ="button" id ="showResults" value = "Pokaż wszystkie wyniki"></div>
             </form>
             
         </div>

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Factory\MatchFactory;
 
+use App\Application\Payload\AbstractRulesToMatch;
+use App\Domain\Model\RulesMatchInterface;
 use App\Infrastructure\Factory\MatchFactory\AbstractMatchFactory;
 use App\Application\Services\CountTokensToBeersService;
 use App\Application\Payload\RulesToBeerMatch;
@@ -16,10 +18,9 @@ class BeerMatchFactory extends AbstractMatchFactory
         return new CountTokensToBeersService();
     }
 
-    public function getRulesToMatch() 
+    public function getRulesToMatch() : RulesMatchInterface
     {
         return new RulesToBeerMatch();
-        
     }
 
 }

@@ -2,6 +2,9 @@
 
 namespace App\Infrastructure\Ui\Controllers\dashboard;
 
+use App\Application\Payload\AbstractRulesToMatch;
+use App\Application\Payload\RulesToBeerMatch;
+use App\Application\Payload\RulesToLeagueMatch;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,26 +65,30 @@ class ResultController extends AbstractController{
             $factoryMatch = AbstractMatchFactory::getFactory($parameters['matchType']);
             $rulesToMatch = $factoryMatch->getRulesToMatch(); // tutaj będę miał ifnoramcję ile było żetonów na start, ale potrzebuje jeszcze ile wkupów było
             $rulesToMatch->setTokensOnStart($parameters['tokensOnStart']);
-            $conversionRate = $rulesToMatch instanceof RulesToBeerMatch? $parameters('countTokensToBeers'):null;
+            $conversionRate = $rulesToMatch instanceof RulesToBeerMatch ? $parameters['countTokensToBeers']:null;
             $rulesToMatch->setConversionRate($conversionRate);
             $countTokensService = $factoryMatch->getTokensCountService();
             $match = $matchRepository->getMatchByNr($nrMatch);         
             $getMatchPlayersService = new GetMatchPlayersService($userRepository);
+            $tokens = $parameters['tokens'];
+
             foreach (array_keys($parameters['users']) as $key)
             {// beers/ points będzie trzeba wyliczyć nie będzie podawane przez usera
-                $pointsOrBeers = $countTokensService->execute($rulesToMatch, $users, $users[$key], $tokens);
-                $matchPlayers[] = $getMatchPlayersService->execute($parameters['users'][$key], $rulesToMatch, $pointsOrBeers);
+                $pointsOrBeers = $countTokensService->execute($rulesToMatch, $users, $users[$key], $tokens[$key]);
+                $matchPlayers[] = $getMatchPlayersService->execute($parameters['users'][$key], $rulesToMatch, $tokens[$key] , $pointsOrBeers);
             }
+
             if ($match === null)
             {
                 if ($lastMatch !== null)
                 {
-                   $match = new Match(null,$lastMatch->getMatchNr() + 1, date("Y-m-d H:i:s"));  // to dodane jeżeli peirwszy mecz nie jest dodany
+                   $match = new Match(null,$lastMatch->getMatchNr() + 1, date("Y-m-d H:i:s"), $parameters['matchType']);  // to dodane jeżeli peirwszy mecz nie jest dodany
                 }
                 else
                 {
-                   $match = new Match(null, 1, date("Y-m-d H:i:s")); 
+                   $match = new Match(null, 1, date("Y-m-d H:i:s"), $parameters['matchType']);
                 }
+
                 $matchRepository->add($match); //dodaje do bazy danych i automatycznie mam nadany nr ID
                 $match = $matchRepository->getMatchByNr($nrMatch); // jeszcze raz pobieram, bo przekazuje bez ID - konstruktor tworzy z null  (dwie linie wyżej)
             }
@@ -108,6 +115,15 @@ class ResultController extends AbstractController{
            'resultForUserAdded' => $resultForUserAdded,
            'usersCount' => count($users)
        ]);        
+    }
+
+    /**
+     * @Route(path="/home/pokazWyniki", name="pokazWyniki")
+     */
+    public function pokazWyniki()
+    {
+        return $this->render('dashboard/showResults.html.twig');
+
     }
     
      /**
@@ -145,6 +161,7 @@ class ResultController extends AbstractController{
             }
             return new Response(json_encode(['matchResult' => $match]));
         }
+
         return new Response(json_encode([
             'matchResult' => null
         ]));

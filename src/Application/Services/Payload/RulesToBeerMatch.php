@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Application\Payload;
 
-class RulesToBeerMatch extends AbstractRulesToMatch
+use App\Domain\Model\RulesMatchInterface;
+
+class RulesToBeerMatch extends AbstractRulesToMatch implements RulesMatchInterface
 {
     public function setConversionRate($conversionRate = null)
     {
-        $this->conversionRate[] = $conversionRate;
+        $this->conversionRate = $conversionRate;
     }
 }
