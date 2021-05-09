@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous"> !-->
     <link rel="stylesheet" href="/css/header.css">
-    <link rel="stylesheet" href="/css/addResults.css">
+    <link rel="stylesheet" href="/css/showAllResults.css">
     <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <script src="/JavaScripts/javascripts.js"></script>
@@ -84,57 +84,45 @@
     </nav>
 </div>
 <div class ="content">
-    <div class ="form">
-        <form method ="POST">
-            <div class ="match">
-                <div class ="matchType">
-                    <div class ="tokensOnStart">
-                        <div class ="tokensOnStartText">Podaj liczbę żetonów z jaką startują gracze</div>
-                        <div class ="TokensOnStartValue"><input type= "text" id = "inputTokensOnStart" name ="tokensOnStart"></div>
-                    </div>
-                    <div class="buttons">
-                        <div class ="btnTypeMatch" value = "0" id ="meczNaPunkty"  onclick  ="changeColor(id)">
-                            mecz na punkty
-                        </div>
-                        <div class ="btnTypeMatch" value = "0" id ="meczLigowy"  onclick ="changeColor(id)">
-                            mecz ligowy
-                        </div>
-                        <div> <input type = "hidden" name ="matchType" id ="matchType" value = "0" ></div>
-                    </div>
+    <table>
+        <tr>
+            <th></th>
+            <th>Nr meczu</th>
+            <th>Data Meczu</th>
+            <th>Typ Meczu</th>
+            <th>Liczba Żetonów</th>
+            <th>Liczba Punktów</th>
+            <th>Liczba Piw</th>
+            <th></th>
+        </tr>
 
-                </div>
-
-                <div class="TokensToBeersConversion" id = "TokensToBeersConversion">
-                    <div class ="TokensToBeersConversionText" id ="TokensToBeersConversionText"></div>
-                    <div class ="TokensToBeersConversionValue" id ="TokensToBeersConversionValue"></div>
-                </div>
-                <div class ="nrMatch">
-                    <div class ="matchText">Dodajesz Wyniki do meczu nr</div>
-                </div>
-            </div>
-            <div class ="user" id ="user">
-                <div id="usersHtml">
-                    <div class = "userSelect" id ="userSelect">Gracz:</div>
-                    <select class = "userSelect" id ="userSelectChoose" name ="users[]">
-                    </select>
-                    <div class ="inputResult">
-                        <div class ="inputTitle">
-                            <div class ="inputTitles">Liczba żetonów:</div>
-                        </div>
-                        <div class ="inputValue">
-                            <div class = "inputValues"><input type ="text" id="tokens" name ="tokens[]"></div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class ="savebtn"><input id ="savebtn" type ="submit" value="Zapisz"></div>
-            <div class="addNextUser"><input  type ="button" id ="addNextUser" value = "Dodaj kolejnego gracza"></div>
-            <div class="showResults"><input  type ="button" id ="showResults" value = "Pokaż wszystkie wyniki"></div>
-        </form>
-
-    </div>
-    <div id ="ResultForUserExist"></div>
+        {%for match in matches %}                
+            <tr>
+                <td></td>
+                <td>{{ match.matchNr }}</td>
+                <td>{{ match.dateOfMatch }}</td>   
+                {% for user in users %}
+                <tr>
+                    <td>{{user.login}}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    {% for matchPlayer in match.matchPlayers %}                  
+                        {% if user.id == matchPlayer.user.id  %}
+                            <td>{{ matchPlayer.tokens }}</td>
+                            <td>{{ matchPlayer.points }}</td>
+                            <td>{{ matchPlayer.beers }}</td>
+                            <td>Edytuj Rekord</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        
+        
+    </table>
+    
 </div>
 </body>
 </html>

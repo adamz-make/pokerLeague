@@ -11,6 +11,7 @@
     </head>
     <body>
     <script>
+        
         function changeCheckBox(id){
             var elements = document.getElementsByClassName('checkMatchType');
             for (let i = 0; i <= elements.length -1; i++)
@@ -172,7 +173,8 @@
                     </div>    
                 <div class ="savebtn"><input id ="savebtn" type ="submit" value="Zapisz"></div>
                 <div class="addNextUser"><input  type ="button" id ="addNextUser" value = "Dodaj kolejnego gracza"></div>
-                <div class="showResults"><input  type ="button" id ="showResults" value = "Pokaż wszystkie wyniki"></div>
+                <a href ={{ url('showAllResults')}} target="_blank">Pokaż wszystkie wyniki</a>
+                <div class="showResults"><input  type ="button" id ="showAllResults" value = "Pokaż wszystkie wyniki"></div>
             </form>
             
         </div>

@@ -118,11 +118,14 @@ class ResultController extends AbstractController{
     }
 
     /**
-     * @Route(path="/home/pokazWyniki", name="pokazWyniki")
+     * @Route(path="/home/showAllResults", name="showAllResults")
      */
-    public function pokazWyniki()
+    public function showAllResults(MatchRepositoryInterface $matchRepository, UserRepositoryInterface $userRepository, ResultRepositoryInterface $resultRepo)
     {
-        return $this->render('dashboard/showResults.html.twig');
+        $matches = $matchRepository->getAllMatches();
+        $users = $userRepository->getAllUsers();
+        return $this->render('dashboard/showResults.html.twig',['matches' =>$matches,
+                'users' => $users]);
 
     }
     

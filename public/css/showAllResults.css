@@ -1,0 +1,30 @@
+
+.content{
+    margin-left: 100px;
+}
+
+tr{
+    border-width: thick;
+    border-color: black;
+    border-collapse: separate;
+    border: 3mm ridge yellow;
+}
+
+th{
+    width: 60px;
+    margin-left: 15px;
+    border-width: inherit;
+    border-color: inherit;
+    border: inherit;
+}
+
+
+
+
+td{
+    width: 60px;
+    margin-left: 15px;
+    border-width: inherit;
+    border-color: inherit;
+    border: inherit;
+}
