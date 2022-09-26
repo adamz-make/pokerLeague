@@ -73,10 +73,11 @@ function addInputWithData(user, beers, tokens, points, firstUser)
 }
 
 $(document).ready(function() {
+    /*prompt('halo','alo');
     ("#dialog_komunikat2").dialog({
         autoOpen: false,
         title: 'Basic Dialog'
-    });
+    });*/
     $('.btnTypeMatch').on("click", function () {
         var type = document.getElementById('matchType').getAttribute('value');
         if (type.replace('Checked','') === 'meczLigowy') {

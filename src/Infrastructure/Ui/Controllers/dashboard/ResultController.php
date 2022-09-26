@@ -78,22 +78,17 @@ class ResultController extends AbstractController{
                 $matchPlayers[] = $getMatchPlayersService->execute($parameters['users'][$key], $rulesToMatch, $tokens[$key] , $pointsOrBeers);
             }
 
-            if ($match === null)
-            {
-                if ($lastMatch !== null)
-                {
+            if ($match === null) {
+                if ($lastMatch !== null) {
                    $match = new Match(null,$lastMatch->getMatchNr() + 1, date("Y-m-d H:i:s"), $parameters['matchType']);  // to dodane jeżeli peirwszy mecz nie jest dodany
-                }
-                else
-                {
+                } else {
                    $match = new Match(null, 1, date("Y-m-d H:i:s"), $parameters['matchType']);
                 }
 
                 $matchRepository->add($match); //dodaje do bazy danych i automatycznie mam nadany nr ID
                 $match = $matchRepository->getMatchByNr($nrMatch); // jeszcze raz pobieram, bo przekazuje bez ID - konstruktor tworzy z null  (dwie linie wyżej)
             }
-            foreach ($matchPlayers as $matchPlayer)
-            {
+            foreach ($matchPlayers as $matchPlayer) {
                 $match->addMatchPlayer($matchPlayer);
             }
             
@@ -106,7 +101,7 @@ class ResultController extends AbstractController{
             catch (ResultAddedForUserException $ex)
             {
                 $resultForUserAdded = $ex->getMessage();
-            }                                                  
+            }
         }
         return $this->render('dashboard/addResults.html.twig', [
            'match' => $match,
@@ -124,8 +119,9 @@ class ResultController extends AbstractController{
     {
         $matches = $matchRepository->getAllMatches();
         $users = $userRepository->getAllUsers();
-        return $this->render('dashboard/showResults.html.twig',['matches' =>$matches,
-                'users' => $users]);
+
+        return $this->render('dashboard/showResults.html.twig',['matches' => json_encode($matches),
+                'users' => $users, 'test' => 5]);
 
     }
     

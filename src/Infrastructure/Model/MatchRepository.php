@@ -60,7 +60,8 @@ class MatchRepository implements MatchRepositoryInterface {
     {
         $db = Db::getInstance();
         $table = 'mecze';
-        $array = ['nrMeczu' => $match->getMatchNr(), 'dataDodania' => $match->getDateOfMatch()];
+        $array = ['nrMeczu' => $match->getMatchNr(), 'dataDodania' => $match->getDateOfMatch(),
+            'typMeczu' => $match->getMatchtype()];
         $db->insert($table, $array);        
     }
     
